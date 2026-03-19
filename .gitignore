@@ -1,0 +1,35 @@
+# Build
+.build/
+.swiftpm/
+
+# Xcode
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Secrets
+Secrets.plist
+
+# Superpowers
+.superpowers/
+
+# Dependencies
+node_modules/
+
+# CocoaPods
+Pods/

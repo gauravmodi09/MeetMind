@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeetMind — Your meetings, remembered.</title>
+<meta name="description" content="Record meetings with one tap. AI generates summaries, decisions, and action items. Voice todos with smart dates. Free forever.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --purple: #6C5CE7;
+  --purple-light: #A29BFE;
+  --purple-dark: #5A4BD1;
+  --success: #00CE9E;
+  --success-dim: #00CE9E33;
+  --recording: #FF4757;
+  --bg: #0B0B10;
+  --bg-surface: #14141E;
+  --bg-card: #1A1A28;
+  --bg-card-hover: #222236;
+  --text: #FFFFFF;
+  --text-muted: #8E8E9A;
+  --text-dim: #5A5A6E;
+  --border: #2A2A3A;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --grain-opacity: 0.035;
+}
+[data-theme="light"] {
+  --bg: #F8F7FC;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-hover: #F0EEFA;
+  --text: #1A1A2E;
+  --text-muted: #6B6B80;
+  --text-dim: #9E9EB0;
+  --border: #E4E4EE;
+  --grain-opacity: 0.02;
+}
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+}
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height: 1.15; }
+
+/* ===== UTILITIES ===== */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 120px 0; position: relative; }
+.section-label {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--purple-light);
+  margin-bottom: 16px;
+}
+.section-title { font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: 20px; }
+.section-subtitle { font-size: 1.15rem; color: var(--text-muted); max-width: 600px; line-height: 1.7; }
+.text-center { text-align: center; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 36px;
+  border-radius: 14px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  border: none; cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 4px 24px #6C5CE744;
+}
+.btn-primary:hover {
+  background: var(--purple-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px #6C5CE766;
+}
+.btn-secondary {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--bg-card-hover); }
+
+/* ===== REVEAL ANIMATIONS ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 16px 0;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(11,11,16,0.7);
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s;
+}
+[data-theme="light"] nav { background: rgba(248,247,252,0.8); }
+nav.scrolled { border-bottom-color: var(--border); }
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.nav-logo {
+  font-family: var(--font-display);
+  font-weight: 700; font-size: 1.3rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-icon {
+  width: 32px; height: 32px;
+  background: var(--purple);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+}
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 0.9rem; color: var(--text-muted); font-weight: 500;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.theme-toggle {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+.theme-toggle:hover { background: var(--bg-card-hover); }
+.nav-cta {
+  padding: 10px 24px;
+  background: var(--purple);
+  color: #fff;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.nav-cta:hover { background: var(--purple-dark); }
+.mobile-menu-btn {
+  display: none;
+  width: 40px; height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.2rem;
+  align-items: center; justify-content: center;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 100px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-mesh {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, #6C5CE722 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 30%, #FF475711 0%, transparent 70%),
+    radial-gradient(ellipse 70% 70% at 50% 80%, #00CE9E0D 0%, transparent 70%);
+}
+[data-theme="light"] .hero-mesh {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, #6C5CE718 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 30%, #FF47570C 0%, transparent 70%),
+    radial-gradient(ellipse 70% 70% at 50% 80%, #00CE9E08 0%, transparent 70%);
+}
+.hero-inner {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.hero-content { max-width: 560px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+.hero-badge-dot {
+  width: 8px; height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 4.2rem);
+  line-height: 1.08;
+  margin-bottom: 24px;
+  letter-spacing: -0.03em;
+}
+.hero h1 .highlight {
+  background: linear-gradient(135deg, var(--purple-light), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-description {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 40px;
+  max-width: 480px;
+}
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+.hero-stats { display: flex; gap: 48px; }
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.hero-stat-value .accent { color: var(--purple-light); }
+.hero-stat-label { font-size: 0.82rem; color: var(--text-dim); }
+
+/* Phone mockup */
+.hero-visual { display: flex; justify-content: center; align-items: center; }
+.phone-mockup {
+  width: 280px;
+  height: 580px;
+  background: #1A1A28;
+  border-radius: 40px;
+  border: 3px solid #333;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+}
+[data-theme="light"] .phone-mockup {
+  background: #1A1A28;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
+}
+.phone-notch {
+  width: 120px; height: 28px;
+  background: #0B0B10;
+  border-radius: 0 0 18px 18px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+.phone-screen { padding: 20px 20px 30px; }
+.phone-screen-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 24px;
+}
+.phone-screen-title { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: #fff; }
+.phone-screen-tag {
+  font-size: 0.65rem;
+  padding: 4px 10px;
+  background: #6C5CE722;
+  color: var(--purple-light);
+  border-radius: 6px;
+  font-weight: 500;
+}
+.phone-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 120px;
+  margin-bottom: 24px;
+}
+.phone-wave-bar {
+  width: 4px;
+  border-radius: 4px;
+  background: linear-gradient(to top, var(--purple), var(--recording));
+  animation: wave 1.5s ease-in-out infinite;
+}
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+.phone-wave-bar:nth-child(1) { height: 40px; animation-delay: 0s; }
+.phone-wave-bar:nth-child(2) { height: 65px; animation-delay: 0.1s; }
+.phone-wave-bar:nth-child(3) { height: 50px; animation-delay: 0.2s; }
+.phone-wave-bar:nth-child(4) { height: 80px; animation-delay: 0.15s; }
+.phone-wave-bar:nth-child(5) { height: 55px; animation-delay: 0.3s; }
+.phone-wave-bar:nth-child(6) { height: 90px; animation-delay: 0.05s; }
+.phone-wave-bar:nth-child(7) { height: 45px; animation-delay: 0.25s; }
+.phone-wave-bar:nth-child(8) { height: 70px; animation-delay: 0.12s; }
+.phone-wave-bar:nth-child(9) { height: 55px; animation-delay: 0.22s; }
+.phone-wave-bar:nth-child(10) { height: 85px; animation-delay: 0.08s; }
+.phone-wave-bar:nth-child(11) { height: 40px; animation-delay: 0.18s; }
+.phone-wave-bar:nth-child(12) { height: 60px; animation-delay: 0.28s; }
+.phone-wave-bar:nth-child(13) { height: 75px; animation-delay: 0.05s; }
+.phone-wave-bar:nth-child(14) { height: 50px; animation-delay: 0.2s; }
+.phone-wave-bar:nth-child(15) { height: 35px; animation-delay: 0.1s; }
+.phone-timer {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 32px;
+  letter-spacing: 0.05em;
+}
+.phone-rec-btn {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--recording);
+  margin: 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 0 8px #FF475722, 0 0 40px #FF475744;
+  position: relative;
+}
+.phone-rec-btn::after {
+  content: '';
+  width: 24px; height: 24px;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* ===== PROBLEM SECTION ===== */
+.problem { background: var(--bg-surface); }
+.problem-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.problem-visual {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.problem-app {
+  padding: 20px 12px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: all 0.3s;
+}
+.problem-app-icon { font-size: 1.8rem; margin-bottom: 8px; }
+.problem-app-name { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+.problem-app.crossed {
+  opacity: 0.4;
+  position: relative;
+}
+.problem-app.crossed::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 2px solid var(--recording);
+  border-radius: 10px;
+  transform: rotate(-3deg);
+  opacity: 0.6;
+}
+.problem h2 span { color: var(--recording); }
+.problem-list {
+  list-style: none;
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.problem-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.problem-list li::before {
+  content: '\2715';
+  color: var(--recording);
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+/* ===== HOW IT WORKS ===== */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 64px;
+}
+.step-card {
+  padding: 40px 32px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.3s;
+}
+.step-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-4px);
+  border-color: var(--purple);
+}
+.step-number {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--purple);
+  opacity: 0.2;
+  position: absolute;
+  top: 20px; right: 24px;
+}
+.step-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 24px;
+}
+.step-icon.record { background: #FF475722; }
+.step-icon.ai { background: #6C5CE722; }
+.step-icon.share { background: #00CE9E22; }
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.step-description { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; }
+
+/* ===== FEATURES ===== */
+.features { background: var(--bg-surface); }
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+}
+.feature-card {
+  padding: 36px 28px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.feature-card:hover {
+  border-color: var(--purple);
+  transform: translateY(-4px);
+}
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  background: var(--bg-surface);
+}
+.feature-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.feature-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; }
+
+/* ===== THE BRIEF ===== */
+.brief-showcase {
+  max-width: 680px;
+  margin: 64px auto 0;
+  border-radius: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.brief-header {
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brief-header-left h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.brief-header-left span { font-size: 0.82rem; color: var(--text-muted); }
+.brief-header-right {
+  display: flex; gap: 8px;
+}
+.brief-tag {
+  font-size: 0.72rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+.brief-tag.duration { background: #6C5CE722; color: var(--purple-light); }
+.brief-tag.client { background: #00CE9E22; color: var(--success); }
+.brief-body { padding: 28px 32px; }
+.brief-section { margin-bottom: 24px; }
+.brief-section:last-child { margin-bottom: 0; }
+.brief-section-title {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--purple-light);
+  margin-bottom: 12px;
+  padding-left: 14px;
+  border-left: 3px solid var(--purple);
+}
+.brief-section p, .brief-section li {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.brief-section ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.brief-section li { padding-left: 14px; }
+.brief-section li::before { margin-right: 8px; }
+.brief-section.decisions li::before { content: '\2714'; color: var(--success); }
+.brief-section.actions li::before { content: '\25CB'; color: var(--purple-light); }
+.brief-section.followups li::before { content: '\2192'; color: var(--text-dim); }
+
+/* ===== COMPARISON ===== */
+.comparison { background: var(--bg-surface); }
+.comparison-table-wrap {
+  margin-top: 64px;
+  overflow-x: auto;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.comparison-table th,
+.comparison-table td {
+  padding: 18px 24px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.comparison-table th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: var(--bg-card);
+}
+.comparison-table th:first-child { width: 200px; }
+.comparison-table td { color: var(--text-muted); }
+.comparison-table tr:last-child td { border-bottom: none; }
+.comparison-table td:first-child {
+  font-weight: 600;
+  color: var(--text);
+}
+.comparison-table .col-highlight {
+  background: #6C5CE70A;
+}
+[data-theme="light"] .comparison-table .col-highlight {
+  background: #6C5CE70D;
+}
+.comparison-table .col-highlight.head-highlight {
+  color: var(--purple);
+}
+.check { color: var(--success); font-weight: 700; }
+.cross { color: var(--recording); font-weight: 700; opacity: 0.7; }
+.meh { color: var(--text-dim); }
+
+/* ===== PRICING ===== */
+.pricing-card {
+  max-width: 520px;
+  margin: 64px auto 0;
+  padding: 56px 48px;
+  border-radius: 24px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.pricing-card::before {
+  content: '';
+  position: absolute;
+  top: -1px; left: 20%; right: 20%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+}
+.pricing-amount {
+  font-family: var(--font-display);
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.pricing-period {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+}
+.pricing-features {
+  list-style: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+.pricing-features li {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.pricing-features li::before {
+  content: '\2714';
+  color: var(--success);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.pricing-note {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  margin-top: 20px;
+  line-height: 1.6;
+}
+
+/* ===== DOWNLOAD CTA ===== */
+.download-cta {
+  text-align: center;
+  padding: 120px 0 140px;
+  position: relative;
+}
+.download-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 50%, #6C5CE715 0%, transparent 70%);
+}
+.download-cta .container { position: relative; z-index: 1; }
+.download-cta h2 {
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
+  margin-bottom: 20px;
+}
+.download-cta p {
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.app-store-badge {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+.app-store-badge:hover { transform: scale(1.05); }
+.app-store-badge svg { height: 56px; }
+
+/* ===== FOOTER ===== */
+footer {
+  padding: 48px 0;
+  border-top: 1px solid var(--border);
+}
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-left { font-size: 0.85rem; color: var(--text-dim); }
+.footer-links {
+  display: flex; gap: 24px; list-style: none;
+}
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text); }
+
+/* ===== MOBILE ===== */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 60px; }
+  .hero-content { max-width: 100%; margin: 0 auto; }
+  .hero-description { margin-left: auto; margin-right: auto; }
+  .hero-buttons { justify-content: center; }
+  .hero-stats { justify-content: center; }
+  .problem-grid { grid-template-columns: 1fr; gap: 48px; }
+  .problem-visual { order: -1; max-width: 360px; margin: 0 auto; }
+  .steps-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .mobile-menu-btn { display: flex; }
+  .comparison-table { font-size: 0.8rem; }
+  .comparison-table th, .comparison-table td { padding: 14px 16px; }
+}
+@media (max-width: 600px) {
+  .section { padding: 80px 0; }
+  .features-grid { grid-template-columns: 1fr; }
+  .hero-stats { flex-direction: column; gap: 16px; }
+  .phone-mockup { width: 240px; height: 500px; }
+  .brief-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .brief-body { padding: 24px 20px; }
+  .pricing-card { padding: 40px 28px; }
+  .footer-inner { flex-direction: column; gap: 20px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">M</div>
+      MeetMind
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#comparison">Compare</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button></li>
+      <li><a href="#download" class="nav-cta">Download</a></li>
+    </ul>
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">&#9776;</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-mesh"></div>
+  <div class="container hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <span class="hero-badge-dot"></span>
+        Now available on the App Store
+      </div>
+      <h1 class="reveal reveal-delay-1">Your meetings,<br><span class="highlight">remembered.</span></h1>
+      <p class="hero-description reveal reveal-delay-2">
+        One tap to record. AI turns your meetings into structured briefs with decisions, action items, and follow-ups. No bots. No subscriptions. Just clarity.
+      </p>
+      <div class="hero-buttons reveal reveal-delay-3">
+        <a href="#download" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+          Download Free
+        </a>
+        <a href="#how-it-works" class="btn btn-secondary">See how it works</a>
+      </div>
+      <div class="hero-stats reveal reveal-delay-4">
+        <div>
+          <div class="hero-stat-value"><span class="accent">216x</span></div>
+          <div class="hero-stat-label">Real-time transcription</div>
+        </div>
+        <div>
+          <div class="hero-stat-value"><span class="accent">$0</span></div>
+          <div class="hero-stat-label">Zero cost</div>
+        </div>
+        <div>
+          <div class="hero-stat-value"><span class="accent">1</span> tap</div>
+          <div class="hero-stat-label">To start recording</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual reveal reveal-delay-2">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-screen-header">
+            <div class="phone-screen-title">Q1 Strategy Review</div>
+            <div class="phone-screen-tag">Acme Corp</div>
+          </div>
+          <div class="phone-waveform">
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+            <div class="phone-wave-bar"></div>
+          </div>
+          <div class="phone-timer">00:24:17</div>
+          <div class="phone-rec-btn"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem" id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="problem-visual reveal">
+        <div class="problem-app crossed"><div class="problem-app-icon">&#127908;</div><div class="problem-app-name">Recorder</div></div>
+        <div class="problem-app crossed"><div class="problem-app-icon">&#128221;</div><div class="problem-app-name">Notes</div></div>
+        <div class="problem-app crossed"><div class="problem-app-icon">&#9745;</div><div class="problem-app-name">Todos</div></div>
+        <div class="problem-app crossed"><div class="problem-app-icon">&#128196;</div><div class="problem-app-name">Docs</div></div>
+        <div class="problem-app crossed"><div class="problem-app-icon">&#128172;</div><div class="problem-app-name">Slack</div></div>
+        <div class="problem-app crossed"><div class="problem-app-icon">&#128197;</div><div class="problem-app-name">Calendar</div></div>
+      </div>
+      <div>
+        <div class="section-label reveal">The problem</div>
+        <h2 class="section-title reveal reveal-delay-1"><span>6 apps</span> for one meeting.</h2>
+        <p class="section-subtitle reveal reveal-delay-2">
+          You record in one app, take notes in another, create tasks in a third, and share via a fourth. Decisions fall through the cracks. Action items get lost.
+        </p>
+        <ul class="problem-list reveal reveal-delay-3">
+          <li>Scrambling to remember what was decided</li>
+          <li>Action items that never make it to your todo list</li>
+          <li>Meeting notes scattered across five different apps</li>
+          <li>Follow-ups that slip through the cracks</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how-it-works">
+  <div class="container text-center">
+    <div class="section-label reveal">How it works</div>
+    <h2 class="section-title reveal reveal-delay-1">Three steps. Zero friction.</h2>
+    <p class="section-subtitle mx-auto reveal reveal-delay-2">
+      From raw conversation to structured brief in under a minute.
+    </p>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-number">01</div>
+        <div class="step-icon record">&#127908;</div>
+        <div class="step-title">Record</div>
+        <div class="step-description">Tap once to start recording any meeting — in person, on a call, or video. No bots join. No awkward announcements. Just you and your mic.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-number">02</div>
+        <div class="step-icon ai">&#9889;</div>
+        <div class="step-title">AI Processes</div>
+        <div class="step-description">Groq transcribes at 216x real-time. Then AI extracts the summary, key decisions, action items, and follow-ups into a clean, structured brief.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-number">03</div>
+        <div class="step-icon share">&#128640;</div>
+        <div class="step-title">Share</div>
+        <div class="step-description">Copy the brief with one tap and paste it anywhere — Slack, email, Notion. Formatted, readable, and ready. Your team stays aligned.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section features" id="features">
+  <div class="container text-center">
+    <div class="section-label reveal">Features</div>
+    <h2 class="section-title reveal reveal-delay-1">Everything you need. Nothing you don't.</h2>
+    <p class="section-subtitle mx-auto reveal reveal-delay-2">
+      Built for people who take real meetings, not product demos.
+    </p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">&#127908;</div>
+        <div class="feature-title">One-Tap Recording</div>
+        <div class="feature-desc">Start recording instantly. Works with in-person, phone, and video meetings. No meeting bots — just local capture.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-icon">&#9889;</div>
+        <div class="feature-title">AI-Powered Briefs</div>
+        <div class="feature-desc">Get structured summaries with decisions, action items, and follow-ups. Not a transcript dump — an actual brief.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-icon">&#128193;</div>
+        <div class="feature-title">Client Folders</div>
+        <div class="feature-desc">Color-coded folders keep meetings organized by client or project. Everything in its place, automatically.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-icon">&#127897;</div>
+        <div class="feature-title">Voice Todos</div>
+        <div class="feature-desc">Say "Call Sarah about the proposal by Friday" and get a todo with the right due date. Smart date parsing, no typing.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-4">
+        <div class="feature-icon">&#8986;</div>
+        <div class="feature-title">Apple Watch</div>
+        <div class="feature-desc">Start and stop recordings from your wrist. Perfect for in-person meetings where pulling out your phone feels wrong.</div>
+      </div>
+      <div class="feature-card reveal reveal-delay-5">
+        <div class="feature-icon">&#9638;</div>
+        <div class="feature-title">Home Screen Widgets</div>
+        <div class="feature-desc">Quick-access widgets for upcoming todos and recent meetings. Your meeting life, always one glance away.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE BRIEF -->
+<section class="section" id="brief">
+  <div class="container text-center">
+    <div class="section-label reveal">The output</div>
+    <h2 class="section-title reveal reveal-delay-1">This is what your team gets.</h2>
+    <p class="section-subtitle mx-auto reveal reveal-delay-2">
+      A real meeting brief, not a wall of transcript. Structured, scannable, and ready to share.
+    </p>
+    <div class="brief-showcase reveal reveal-delay-3">
+      <div class="brief-header">
+        <div class="brief-header-left">
+          <h3>Q1 Strategy Review</h3>
+          <span>March 12, 2026 &middot; 10:00 AM</span>
+        </div>
+        <div class="brief-header-right">
+          <span class="brief-tag duration">47 min</span>
+          <span class="brief-tag client">Acme Corp</span>
+        </div>
+      </div>
+      <div class="brief-body">
+        <div class="brief-section">
+          <div class="brief-section-title">Summary</div>
+          <p>Reviewed Q1 performance against targets. Revenue exceeded forecast by 12%. Team agreed to double down on enterprise pipeline and shift marketing spend from paid to content. New hiring plan for Q2 approved with two senior roles.</p>
+        </div>
+        <div class="brief-section decisions">
+          <div class="brief-section-title">Key Decisions</div>
+          <ul>
+            <li>Shift 40% of marketing budget from paid ads to content strategy</li>
+            <li>Approve hiring plan: Senior AE and Solutions Architect in Q2</li>
+            <li>Push product launch from April 1 to April 15 for additional QA</li>
+          </ul>
+        </div>
+        <div class="brief-section actions">
+          <div class="brief-section-title">Action Items</div>
+          <ul>
+            <li>Sarah: Send revised marketing budget to finance by Friday</li>
+            <li>James: Post both job descriptions by end of week</li>
+            <li>Priya: Update product roadmap and share with stakeholders</li>
+          </ul>
+        </div>
+        <div class="brief-section followups">
+          <div class="brief-section-title">Follow-ups</div>
+          <ul>
+            <li>Schedule pipeline review with sales team (next Tuesday)</li>
+            <li>Revisit launch timeline at next week's standup</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section comparison" id="comparison">
+  <div class="container text-center">
+    <div class="section-label reveal">Why MeetMind</div>
+    <h2 class="section-title reveal reveal-delay-1">Honest comparison.</h2>
+    <p class="section-subtitle mx-auto reveal reveal-delay-2">
+      We respect the competition. Here is how we are different.
+    </p>
+    <div class="comparison-table-wrap reveal reveal-delay-3">
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="col-highlight head-highlight">MeetMind</th>
+            <th>Granola</th>
+            <th>Otter.ai</th>
+            <th>Fireflies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Price</td>
+            <td class="col-highlight"><span class="check">Free forever</span></td>
+            <td>$18/mo</td>
+            <td>$16.99/mo</td>
+            <td>$18/mo</td>
+          </tr>
+          <tr>
+            <td>No meeting bots</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>In-person recording</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>AI structured briefs</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="meh">Basic</span></td>
+            <td><span class="check">&#10003;</span></td>
+          </tr>
+          <tr>
+            <td>Voice todos</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Smart date parsing</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Apple Watch</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+          </tr>
+          <tr>
+            <td>Client folders</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="cross">&#10005;</span></td>
+            <td><span class="meh">Tags</span></td>
+            <td><span class="meh">Labels</span></td>
+          </tr>
+          <tr>
+            <td>Privacy-first (local)</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="cross">Cloud</span></td>
+            <td><span class="cross">Cloud</span></td>
+          </tr>
+          <tr>
+            <td>iOS native</td>
+            <td class="col-highlight"><span class="check">&#10003;</span></td>
+            <td><span class="meh">Mac only</span></td>
+            <td><span class="check">&#10003;</span></td>
+            <td><span class="meh">Web</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="container text-center">
+    <div class="section-label reveal">Pricing</div>
+    <h2 class="section-title reveal reveal-delay-1">Free. Forever.</h2>
+    <p class="section-subtitle mx-auto reveal reveal-delay-2">
+      No trials. No paywalls. No "upgrade to unlock AI." Groq's free tier powers everything.
+    </p>
+    <div class="pricing-card reveal reveal-delay-3">
+      <div class="pricing-amount">$0</div>
+      <div class="pricing-period">per month, forever</div>
+      <ul class="pricing-features">
+        <li>Unlimited meeting recordings</li>
+        <li>AI-powered transcription and briefs</li>
+        <li>Voice todos with smart date parsing</li>
+        <li>Client folder organization</li>
+        <li>Apple Watch support</li>
+        <li>Home screen widgets</li>
+        <li>One-tap copy and share</li>
+        <li>iCloud sync across devices</li>
+      </ul>
+      <a href="#download" class="btn btn-primary" style="width:100%;justify-content:center;">Download MeetMind</a>
+      <div class="pricing-note">Powered by Groq's free API tier. No account required. No credit card. No catch.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DOWNLOAD CTA -->
+<section class="download-cta" id="download">
+  <div class="container">
+    <h2 class="reveal">Stop losing your meetings.</h2>
+    <p class="reveal reveal-delay-1">Download MeetMind and start remembering everything.</p>
+    <div class="reveal reveal-delay-2">
+      <a href="https://apps.apple.com/app/meetmind" class="app-store-badge" aria-label="Download on the App Store">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="168" height="56">
+          <rect width="120" height="40" rx="6" fill="#000"/>
+          <text x="42" y="14" font-family="Arial,sans-serif" font-size="5.5" fill="#fff" font-weight="400">Download on the</text>
+          <text x="42" y="27" font-family="Arial,sans-serif" font-size="12" fill="#fff" font-weight="700">App Store</text>
+          <g transform="translate(12, 7) scale(0.55)" fill="#fff">
+            <path d="M22.4 17.4c0-3.3 2.7-4.9 2.8-5-1.5-2.2-3.9-2.5-4.7-2.6-2-.2-3.9 1.2-4.9 1.2s-2.6-1.2-4.3-1.1c-2.2 0-4.2 1.3-5.4 3.3-2.3 4-.6 9.9 1.6 13.2 1.1 1.6 2.4 3.4 4.1 3.3 1.6-.1 2.3-1.1 4.2-1.1 1.9 0 2.6 1.1 4.3 1 1.8 0 2.9-1.6 4-3.2 1.3-1.8 1.8-3.6 1.8-3.7 0 0-3.5-1.4-3.5-5.3zM19.1 7.8c.9-1.1 1.5-2.6 1.3-4.1-1.3.1-2.8.8-3.8 1.9-.8 1-1.5 2.5-1.3 4 1.4.1 2.9-.7 3.8-1.8z"/>
+          </g>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container footer-inner">
+    <div class="footer-left">&copy; 2026 MeetMind. All rights reserved.</div>
+    <ul class="footer-links">
+      <li><a href="/privacy">Privacy Policy</a></li>
+      <li><a href="/support">Support</a></li>
+      <li><a href="mailto:hello@meetmind.app">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function() {
+  // ===== SCROLL REVEAL =====
+  var revealElements = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealElements.forEach(function(el) { observer.observe(el); });
+
+  // ===== NAV SCROLL EFFECT =====
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function() {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  });
+
+  // ===== THEME TOGGLE =====
+  var MOON = '\u263E';
+  var SUN = '\u2600';
+  var themeToggle = document.getElementById('themeToggle');
+  var html = document.documentElement;
+  var currentTheme = localStorage.getItem('meetmind-theme') || 'dark';
+
+  function applyTheme(theme) {
+    if (theme === 'light') {
+      html.setAttribute('data-theme', 'light');
+      themeToggle.textContent = SUN;
+    } else {
+      html.removeAttribute('data-theme');
+      themeToggle.textContent = MOON;
+    }
+    localStorage.setItem('meetmind-theme', theme);
+  }
+
+  applyTheme(currentTheme);
+
+  themeToggle.addEventListener('click', function() {
+    var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+
+  // ===== SMOOTH SCROLL FOR NAV LINKS =====
+  document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      var target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ===== MOBILE MENU =====
+  var mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  var navLinks = document.querySelector('.nav-links');
+  var menuOpen = false;
+  mobileMenuBtn.addEventListener('click', function() {
+    menuOpen = !menuOpen;
+    navLinks.style.display = menuOpen ? 'flex' : 'none';
+    if (menuOpen) {
+      navLinks.style.flexDirection = 'column';
+      navLinks.style.position = 'absolute';
+      navLinks.style.top = '100%';
+      navLinks.style.left = '0';
+      navLinks.style.right = '0';
+      navLinks.style.background = 'var(--bg-surface)';
+      navLinks.style.padding = '24px';
+      navLinks.style.borderBottom = '1px solid var(--border)';
+      navLinks.style.gap = '20px';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

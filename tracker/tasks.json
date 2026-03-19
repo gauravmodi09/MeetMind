@@ -1,0 +1,974 @@
+[
+  {
+    "id": "MM-001",
+    "title": "Xcode project setup \u2014 iOS + watchOS targets, Core Data model",
+    "desc": "Create Xcode workspace with iOS app target (iOS 17+), watchOS companion app target (watchOS 10+), shared framework for models. Set up folder structure per BRD architecture.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-002",
+    "title": "Design system \u2014 MeetMind purple theme, typography, components",
+    "desc": "Colors (#6C5CE7 primary purple, #00CE9E success green, #FF4757 recording red, #FFA502 gold), SF Pro + Inter fonts, spacing scale, card/button/badge components. Dark mode from day 1.",
+    "category": "design",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-003",
+    "title": "Groq API key onboarding \u2014 settings screen + Keychain storage",
+    "desc": "Settings screen for API key entry, validate key with test API call, store in iOS Keychain (kSecAttrService=com.meetmind.groq), never log or expose key. Graceful re-entry if lookup fails.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-004",
+    "title": "Core Data schema \u2014 Meeting, Transcript, Brief, Todo, Client",
+    "desc": "All entities from BRD Appendix C: Meeting (id, date, duration, audioPath, clientId), Transcript (raw text, timestamps), Brief (title, summary, decisions, actions, key topics), Todo (title, dueDate, priority, clientTag, source), Client (name, color, meetingCount).",
+    "category": "infra",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-005",
+    "title": "Navigation architecture \u2014 TabView + NavigationStack",
+    "desc": "4 tabs: Meetings (home + recording), Todos, Library (by client), Settings. NavigationStack with programmatic routing. Deep link support for widget actions.",
+    "category": "infra",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-006",
+    "title": "App icon, launch screen, onboarding 3-screen tour",
+    "desc": "MeetMind branded app icon (purple gradient brain/mic), launch screen with logo, 3-screen onboarding: 1) Record meetings effortlessly 2) AI structures your notes 3) Voice todos with smart dates.",
+    "category": "design",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-007",
+    "title": "Error handling framework \u2014 network, API, graceful degradation",
+    "desc": "Centralized error handling: network connectivity check, Groq API error parsing (rate limit, auth, server), user-facing error toasts, retry logic with exponential backoff.",
+    "category": "infra",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-008",
+    "title": "Analytics instrumentation \u2014 key user events",
+    "desc": "Track: record_start, record_stop, transcribe_complete, brief_copied, brief_shared, todo_created, todo_completed. PostHog or local analytics for MVP.",
+    "category": "infra",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-009",
+    "title": "AVFoundation recording engine \u2014 M4A, 44.1kHz, mono",
+    "desc": "AVAudioRecorder with M4A (AAC), 44.1kHz sample rate, mono channel, high quality. Save to app Documents directory. Request microphone permission with clear explanation.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-010",
+    "title": "Background recording \u2014 continue when app minimized",
+    "desc": "Enable BackgroundMode: audio in Info.plist. Recording continues when user switches to Zoom/Meet/Teams. Handle app lifecycle events (background, foreground, terminate).",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-011",
+    "title": "Audio interruption handling \u2014 pause/resume gracefully",
+    "desc": "Handle AVAudioSession interruptions: incoming call \u2192 pause, Siri \u2192 pause, other app audio \u2192 duck/pause. Resume recording automatically when interruption ends.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-012",
+    "title": "Recording UI \u2014 waveform, timer, pause/stop buttons",
+    "desc": "Full recording screen: live waveform visualization from audio metering, elapsed time counter (HH:MM:SS), prominent Stop button, optional Pause button. Dark theme during recording.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-013",
+    "title": "Audio compression \u2014 stay under Groq 25MB limit",
+    "desc": "After recording stops, check file size. If >24MB, compress using AVAssetExportSession with lower bitrate while maintaining audio quality sufficient for Whisper transcription.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-014",
+    "title": "3-hour max recording limit with warning",
+    "desc": "Enforce 3-hour maximum per session. Show warning notification at 2h45m. Auto-stop at 3h with save. Display remaining time indicator after 2h.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-015",
+    "title": "Recording system notification \u2014 timer when backgrounded",
+    "desc": "When app enters background during recording, show persistent notification with recording indicator, elapsed time, and Stop action button.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-016",
+    "title": "In-meeting text notes overlay (Granola-style)",
+    "desc": "During recording, show a text field overlay where user can jot quick notes. These notes are passed to the AI along with transcript for enhanced brief generation. User words first, AI enhances.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-017",
+    "title": "Microphone permission flow with explanation",
+    "desc": "Custom permission primer screen explaining why mic access is needed before iOS system dialog. If denied, show settings redirect with instructions.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-018",
+    "title": "Groq Whisper integration \u2014 upload + transcribe",
+    "desc": "POST /openai/v1/audio/transcriptions with model=whisper-large-v3-turbo, response_format=verbose_json. Parse transcript text + word-level timestamps. Store raw transcript in Core Data.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-019",
+    "title": "Groq Llama 3.3 70B \u2014 structured meeting brief",
+    "desc": "POST /openai/v1/chat/completions with llama-3.3-70b-versatile. Custom system prompt for meeting analyst. JSON schema output: title, summary, decisions, action_items, key_topics, client_name.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-020",
+    "title": "AI prompt engineering \u2014 meeting analyst system prompt",
+    "desc": "Craft the system prompt per BRD spec: detect client name, use professional language, flag commitments, mark [unclear] sections. Temperature 0.2, max 1500 tokens. Store in app bundle, user-editable.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-021",
+    "title": "Client/company name detection + auto-folder routing",
+    "desc": "LLM extracts client_name from transcript context. If detected, auto-file meeting under that client folder. If not detected, file under 'General'. User can correct via long-press.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-022",
+    "title": "Action item extraction from meeting transcripts",
+    "desc": "LLM detects commitments: 'I will...', 'We will...', 'By next week...', 'Action item:'. Extract as structured items with owner + due date. Flag as is_mine when user is the committer.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-023",
+    "title": "Transcription queue \u2014 background processing + offline queue",
+    "desc": "Queue meetings for processing using BGTaskScheduler. Retry on failure with exponential backoff. If offline, queue audio files and process when connectivity returns. Show progress indicator.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-024",
+    "title": "[unclear] section marking in transcripts",
+    "desc": "Instruct Whisper/LLM to mark inaudible or unclear sections with [unclear] tag rather than hallucinating content. Display these visually in transcript view.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-025",
+    "title": "Voice todo \u2014 Whisper transcription + Llama date/task parsing",
+    "desc": "Record short voice note (max 2 min), Whisper transcribes, Llama extracts: task description, assignee (self default), target date. Example: 'remind me to send report by Thursday' \u2192 task with due date.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-026",
+    "title": "AI prompt customization \u2014 user-editable in settings",
+    "desc": "Allow user to view and edit the meeting analyst system prompt from Settings. Provide 3 preset styles: Concise, Detailed, Executive. Reset to default option.",
+    "category": "feature",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-027",
+    "title": "Post-processing pipeline orchestration",
+    "desc": "End-to-end flow: record stop \u2192 compress if needed \u2192 upload to Whisper \u2192 parse transcript \u2192 send to Llama \u2192 parse JSON \u2192 save brief + transcript \u2192 extract action items \u2192 create todos \u2192 detect client \u2192 file meeting.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-028",
+    "title": "Meeting list view \u2014 cards with metadata",
+    "desc": "Scrollable list of meeting cards showing: AI-generated title, client badge (color-coded), date/time, duration, action item count. Quick action buttons: Copy Brief, View Full, Share.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-029",
+    "title": "Meeting detail view \u2014 brief + expandable transcript",
+    "desc": "Full meeting view: formatted brief (summary, decisions, action items, key topics), expandable raw transcript section, copy/share buttons at top. Progressive disclosure \u2014 brief first, transcript on expand.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-030",
+    "title": "Client folder system \u2014 auto-create + color-coded badges",
+    "desc": "Automatically create client folders from LLM-detected names. Each client gets a unique color badge. Folder shows meeting count, last meeting date. Tap to see all meetings for that client.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-031",
+    "title": "By-client library view \u2014 folder grid",
+    "desc": "Grid view showing client folders with initials/logo, meeting count, last meeting date. 'General' folder for untagged meetings. Search across all clients.",
+    "category": "design",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-032",
+    "title": "Manual client correction \u2014 long-press to reassign",
+    "desc": "Long-press on meeting card \u2192 show client picker \u2192 select correct client \u2192 meeting re-files to new folder immediately. Update client dictionary for future detection improvement.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-033",
+    "title": "Client dictionary \u2014 user-editable for improved detection",
+    "desc": "Settings screen showing all detected clients. User can add, rename, merge, or delete clients. Dictionary used to improve LLM detection accuracy in future meetings.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-034",
+    "title": "Copy brief to clipboard \u2014 one tap, formatted",
+    "desc": "Primary action on every meeting: copy formatted brief to clipboard. Format per BRD: Meeting Brief header, date/client/duration, summary, decisions, action items, key topics. Ready for email paste.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-035",
+    "title": "Share sheet \u2014 iOS native share for briefs",
+    "desc": "Open iOS share sheet with formatted brief text. Supports: Mail, Messages, WhatsApp, Slack, Notes, Files. Also option to export as .txt file.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-036",
+    "title": "Meeting search \u2014 full-text across briefs and transcripts",
+    "desc": "Search bar in Library tab. Full-text search across meeting titles, brief content, and raw transcripts. Results highlighted with matching text preview.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-037",
+    "title": "Voice todo capture \u2014 mic button + AI parsing",
+    "desc": "Prominent mic button on Todo tab. Record voice (max 2 min), Whisper transcribes, Llama parses task + date + priority. User reviews and confirms before saving.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-038",
+    "title": "Text todo entry \u2014 input field + date picker + priority",
+    "desc": "Text input for typing todos directly. Date picker defaults to today, can select any future date. Priority picker: Low/Medium/High. Optional client tag dropdown.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-039",
+    "title": "Today view \u2014 tasks due today, sorted by priority",
+    "desc": "Primary todo view showing today's tasks. Sorted: High \u2192 Medium \u2192 Low. Each task shows title, client tag, due time if set. Swipe actions for complete/reschedule.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-040",
+    "title": "Upcoming view \u2014 next 7 days grouped by day",
+    "desc": "Weekly view with calendar strip at top. Tasks grouped by day. Shows total per day. Empty days show 'Nothing planned' state.",
+    "category": "design",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-041",
+    "title": "All tasks view \u2014 full list with filters",
+    "desc": "Complete task list with filters: by client tag, by date range, by priority, by source (manual vs from meeting). Sort options: date, priority, client.",
+    "category": "design",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-042",
+    "title": "Swipe left to complete \u2014 green checkmark animation",
+    "desc": "Swipe left gesture reveals green checkmark. On release: task slides out, checkmark animation plays, haptic success feedback. Task moves to Done section.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-043",
+    "title": "Swipe right to reschedule \u2014 inline date picker",
+    "desc": "Swipe right reveals reschedule action. Shows inline date picker to select new date. Task updates and re-sorts in the list.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-044",
+    "title": "Done section \u2014 completed tasks collapsed at bottom",
+    "desc": "Completed tasks move to collapsible 'Done' section at bottom of each view. Shows completion count. Expand to see completed tasks with timestamps.",
+    "category": "design",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-045",
+    "title": "Client tag on todos \u2014 link to client folders",
+    "desc": "Optional client tag on each todo. Tap to select from detected clients. Links todo to client folder context. Filter todos by client in All Tasks view.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-046",
+    "title": "Auto-create todos from meeting action items",
+    "desc": "When meeting processing completes, action items where is_mine=true automatically create todos with 'from meeting' tag, linked to the meeting, with extracted due date.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-047",
+    "title": "watchOS app \u2014 Record/Stop UI + waveform + timer",
+    "desc": "Native watchOS app with simple Record/Stop interface. Show: recording waveform animation, elapsed time, battery level. Use WKAudioRecorderPreset for mic access.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-048",
+    "title": "WatchConnectivity \u2014 transfer audio to iPhone",
+    "desc": "After Watch recording stops, transfer audio file to iPhone via WatchConnectivity framework. iPhone receives and auto-queues for transcription. Show transfer progress on Watch.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-049",
+    "title": "Watch battery warning during recording",
+    "desc": "Monitor Watch battery during recording. Show warning alert when <10%. Suggest stopping and continuing on iPhone. Don't auto-stop \u2014 user decides.",
+    "category": "feature",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-050",
+    "title": "Watch todo complication \u2014 pending task count",
+    "desc": "ClockKit complication showing today's pending todo count. Tap opens MeetMind Watch app todo list. Updates via WatchConnectivity data transfer.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-051",
+    "title": "Watch todo list \u2014 scrollable + mark complete",
+    "desc": "Scrollable list of today's todos on Apple Watch. Tap to mark complete with haptic confirmation. Syncs completion status back to iPhone via WatchConnectivity.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-052",
+    "title": "Double-tap gesture recording start (Genspark-inspired)",
+    "desc": "Support Apple Watch double-tap gesture to instantly start recording. No need to open app \u2014 just tap wrist. Requires watchOS 10+ Ultra/Series 9+.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-053",
+    "title": "Lock Screen widget \u2014 mic icon + tap to record",
+    "desc": "Compact Lock Screen widget showing MeetMind mic icon and 'Record' label. Tapping opens app and auto-starts recording via deep link. WidgetKit + App Intents.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-054",
+    "title": "Home Screen small widget \u2014 meeting count + Record",
+    "desc": "Small (2x2) widget showing today's meeting count and a Record button. Tap Record \u2192 deep-link to app in recording mode. Refreshes every 15 min.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-055",
+    "title": "Home Screen medium widget \u2014 meetings + Record + Todo",
+    "desc": "Medium (4x2) widget showing: today's date, meeting count, last meeting title, Record button, Add Todo button. Two deep-link actions.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-056",
+    "title": "App Intents for widget deep-link actions",
+    "desc": "Configure App Intents to support: StartRecording (opens app in recording mode), AddTodo (opens app in todo capture mode). Used by WidgetKit and Lock Screen widgets.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-057",
+    "title": "Widget data refresh \u2014 timeline every 15 min",
+    "desc": "WidgetKit TimelineProvider with 15-minute refresh intervals. Read meeting count + last meeting from shared App Group UserDefaults. Graceful offline rendering with cached data.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-058",
+    "title": "iCloud sync \u2014 Core Data CloudKit across devices",
+    "desc": "Enable NSPersistentCloudKitContainer for automatic iCloud sync of meetings, todos, clients across iPhone and Apple Watch. Handle merge conflicts gracefully.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-059",
+    "title": "Offline recording queue \u2014 transcribe when connected",
+    "desc": "If no internet during/after recording, queue audio file locally. Monitor network reachability. When connected, process queue in order. Show queued items with status indicator.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-060",
+    "title": "Auto-delete old audio files after processing",
+    "desc": "After successful transcription + brief generation, mark audio for deletion. Configurable retention: delete after 7/14/30 days. Keep briefs and transcripts forever.",
+    "category": "feature",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-061",
+    "title": "Local file management \u2014 disk space tracking",
+    "desc": "Settings shows total disk usage by audio files. Warning when >500MB used. One-tap cleanup of processed audio. Never delete unprocessed audio.",
+    "category": "feature",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-062",
+    "title": "Data export \u2014 meetings + todos as JSON/CSV",
+    "desc": "Export all meetings (briefs + transcripts) and todos as JSON or CSV file. Share via iOS share sheet. Useful for backup and migration.",
+    "category": "feature",
+    "priority": "low",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-063",
+    "title": "Accessibility audit \u2014 VoiceOver, Dynamic Type, reduce motion",
+    "desc": "Full accessibility pass: VoiceOver labels on all interactive elements, Dynamic Type support for all text, respect Reduce Motion preference for animations.",
+    "category": "infra",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-064",
+    "title": "Edge case testing \u2014 large files, network failures, rate limits",
+    "desc": "Test: 3-hour recording upload, network drop mid-transcription, Groq rate limit (7200s/day), empty transcript, corrupt audio, simultaneous recording + todo capture.",
+    "category": "infra",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-065",
+    "title": "App Store screenshots + preview video",
+    "desc": "6.7\" iPhone screenshots for all key screens (recording, brief, library, todos). Apple Watch screenshots. 30-second preview video showing record \u2192 brief \u2192 copy flow.",
+    "category": "design",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-066",
+    "title": "Privacy policy, App Store description, ASO keywords",
+    "desc": "Privacy policy (mic usage, no data sharing, local processing). App Store title/subtitle/description optimized for keywords: meeting notes, AI, recording, transcription, todo.",
+    "category": "infra",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-067",
+    "title": "TestFlight beta + physical device testing",
+    "desc": "Deploy to TestFlight. Test on physical iPhone + Apple Watch. Verify: recording quality, background recording, Watch transfer, widget deep links, iCloud sync.",
+    "category": "infra",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-068",
+    "title": "Post-recording: auto-navigate to meeting brief",
+    "desc": "After pipeline completes, automatically show the meeting detail view with the generated brief instead of staying on processing card.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-069",
+    "title": "Meeting brief loading state \u2014 shimmer placeholders",
+    "desc": "While brief is generating, show shimmer placeholder blocks for each section (summary, decisions, actions) so user knows content is coming.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-070",
+    "title": "Meeting brief \u2014 section-by-section streaming",
+    "desc": "Show each brief section as it arrives from the LLM instead of waiting for complete response. Summary first, then decisions, then actions.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-071",
+    "title": "Recording quality indicator \u2014 live audio level bar",
+    "desc": "Show a small audio quality indicator during recording (green=good, yellow=ok, red=poor). Helps user position microphone correctly.",
+    "category": "design",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-072",
+    "title": "Meeting brief \u2014 edit/refine after generation",
+    "desc": "Allow user to edit the AI-generated brief sections (title, summary, decisions). Inline editing with save button.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-073",
+    "title": "Meeting brief \u2014 regenerate with different prompt style",
+    "desc": "Button to re-run the AI analysis with a different style (Concise/Detailed/Executive) without re-transcribing.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-074",
+    "title": "Todo \u2014 natural language date parsing in text entry",
+    "desc": "Type \"send report by Friday\" and AI auto-detects the due date. No need to manually pick from date picker.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-075",
+    "title": "Todo \u2014 recurring tasks (daily/weekly/monthly)",
+    "desc": "Support recurring todos: \"standup every weekday at 9am\", \"weekly report every Friday\". Auto-create next occurrence on completion.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-076",
+    "title": "Todo \u2014 priority auto-suggestion from context",
+    "desc": "AI suggests priority based on task content: \"urgent\" or \"ASAP\" \u2192 High, \"when you get a chance\" \u2192 Low. User can override.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-077",
+    "title": "Meeting \u2014 auto-detect meeting platform (Zoom/Meet/Teams)",
+    "desc": "Detect if recording happened during a Zoom, Google Meet, or Teams call (via audio session or calendar). Show platform icon on meeting card.",
+    "category": "feature",
+    "priority": "low",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-078",
+    "title": "Meeting \u2014 follow-up reminders for action items",
+    "desc": "For each action item with a due date, auto-create a local notification reminder 1 day before. \"Reminder: Send spot instance config doc \u2014 due tomorrow\"",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-079",
+    "title": "Meeting \u2014 sentiment analysis per discussion topic",
+    "desc": "AI tags each discussion topic as positive/neutral/negative/heated. Visual indicator on the brief (green/gray/orange/red dots next to topics).",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-080",
+    "title": "Meeting \u2014 compare briefs across meetings with same client",
+    "desc": "When viewing a client folder, show \"This week vs last week\" comparison: topics that recurred, action items carried over, new decisions.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-081",
+    "title": "Meeting \u2014 key quotes extraction",
+    "desc": "AI extracts 2-3 important direct quotes from the transcript with speaker attribution. \"Mitchell said: That is the biggest compliment I think you can get.\"",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-082",
+    "title": "Meeting \u2014 timeline/chapters view",
+    "desc": "Break the meeting into chapters (Introduction, Discussion, Action Items, Wrap-up) with timestamps. Tap a chapter to jump to that part of the transcript.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-083",
+    "title": "Home dashboard \u2014 today summary card",
+    "desc": "Top of Meetings tab shows: X meetings recorded today, Y action items created, Z todos pending. Quick stats at a glance.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-084",
+    "title": "Home dashboard \u2014 next meeting countdown",
+    "desc": "If calendar is connected, show countdown to next meeting with pre-brief button. \"Meijer BTEQ call in 45 min \u2014 View pre-brief\"",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-085",
+    "title": "Notification \u2014 meeting processed notification",
+    "desc": "When background pipeline completes, send local notification: \"Meeting brief ready: [title]. Tap to view.\" Deep links to meeting detail.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-086",
+    "title": "Settings \u2014 Groq API usage dashboard",
+    "desc": "Show Groq free tier usage: X seconds of audio transcribed today (limit 7200s), Y chat completions (limit 14400/day). Progress bars with color indicators.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-087",
+    "title": "Dark mode \u2014 full theme support",
+    "desc": "Complete dark mode with automatic system detection. All screens, cards, badges, overlays properly themed. Recording view already dark.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-088",
+    "title": "Onboarding \u2014 interactive demo with sample meeting",
+    "desc": "After onboarding, show a demo meeting brief (pre-loaded) so user immediately sees the value. \"Here is what MeetMind produces\" with a real example.",
+    "category": "design",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-089",
+    "title": "Meeting brief \u2014 email-ready formatting",
+    "desc": "\"Email Brief\" button generates a clean HTML email body with proper formatting, not just plain text. Ready to paste into Gmail/Outlook compose.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-090",
+    "title": "Meeting \u2014 audio playback of recording",
+    "desc": "In meeting detail, add a mini audio player to replay the original recording. Seek to timestamp when tapping transcript sections.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-091",
+    "title": "Granola: Meeting Recipes \u2014 saved reusable AI prompts",
+    "desc": "Create a Recipes system: saved prompt templates users can apply to any meeting. Built-in recipes: 'Coach me' (feedback analysis), 'Prep me' (pre-meeting context), 'Write a brief' (document from brainstorm), 'Summarize objections' (sales). User can create custom recipes. Access via / command in chat.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-092",
+    "title": "Granola: People view \u2014 lightweight CRM per person",
+    "desc": "Track every person you've met with. Auto-detect participant names from transcripts. People view shows: name, company, total meetings, last meeting date, all meeting notes with that person. Tap person \u2192 see full meeting history. Search by person name.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-093",
+    "title": "Granola: Company view \u2014 organize meetings by company",
+    "desc": "Auto-detect company names from meetings. Company view shows: company name, total meetings, all participants from that company, all meeting notes. Different from client folders \u2014 companies are auto-detected from context, not just meeting topics.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-094",
+    "title": "Granola: AI Chat with meeting context",
+    "desc": "Chat interface where you can ask questions about your meetings: 'What did they say about pricing?', 'List all action items from last week', 'What objections came up in sales calls?'. AI searches across all meeting transcripts and briefs to answer.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-095",
+    "title": "Granola: One-click follow-up email generation",
+    "desc": "After a meeting, tap 'Write follow-up' \u2192 AI generates a professional follow-up email based on the meeting brief. Includes: thank you, key decisions recap, action items with owners, next steps. Ready to paste into email.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-096",
+    "title": "Granola: Meeting templates for different meeting types",
+    "desc": "Pre-configured templates that change how AI structures the brief: 1:1 template (personal goals, feedback), Sales call (objections, budget, timeline), Interview (candidate assessment), Standup (blockers, progress), Discovery call (pain points, requirements). User selects before or after recording.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-097",
+    "title": "Granola: Pre-meeting prep \u2014 context from past meetings",
+    "desc": "Before a meeting, show context from previous meetings with same participants/company: last meeting summary, open action items, key decisions, unresolved questions. Notification 5 min before: 'Here is context from your last meeting with [person/company]'.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-098",
+    "title": "Granola: One-click share to Slack/Email/Notion",
+    "desc": "After meeting brief is generated, show quick-share buttons: 'Share to Slack' (select channel), 'Email to all participants', 'Copy public link', 'Export to Notion'. Each formats the brief appropriately for the platform.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-099",
+    "title": "Granola: Custom vocabulary / internal jargon",
+    "desc": "User can add company-specific terms, acronyms, and names to improve transcription accuracy. Example: 'BTEQ', 'Databricks', 'Meijer', 'Celebal'. Whisper uses these as prompt hints for better recognition. Accessible from Settings.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-100",
+    "title": "Granola: Calendar integration \u2014 auto-detect meetings",
+    "desc": "Connect Google Calendar. Show upcoming meetings on Home tab. Auto-start recording when meeting time arrives (optional). Link meeting notes to calendar events. Show 'Meeting in 5 min' notification with pre-brief.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-101",
+    "title": "Granola: Notepad mode \u2014 type notes during meeting, AI enhances",
+    "desc": "Instead of just a text field, provide a full Notion-style notepad during recording. User types bullet points, headers, key words. After meeting, AI enhances these sparse notes with transcript context. User's words are preserved and highlighted, AI fills gaps.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-102",
+    "title": "Granola: Multi-language transcription support",
+    "desc": "Support transcription in 10+ languages with automatic language detection. Whisper large-v3 supports this natively. Add language selector in Settings (auto-detect / English / Hindi / Spanish / etc). Important for India market.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-103",
+    "title": "Granola: Meeting search across all history",
+    "desc": "Global search across ALL meetings: search by keywords, person name, company, date range, action items. Results show matching snippets with context. 'When did we discuss pricing with Acme?' \u2192 finds exact meeting and paragraph.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-104",
+    "title": "Granola: Action item tracking across meetings",
+    "desc": "Dedicated Action Items view showing ALL action items from ALL meetings. Filter by: mine vs others, completed vs pending, by person, by company. Track completion status across meetings. 'You have 3 overdue action items from last week'.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-105",
+    "title": "Granola: Meeting folders \u2014 organize notes in collections",
+    "desc": "Let users create custom folders/collections to organize meetings beyond just client/company. Examples: 'Q3 Planning', 'Hiring', 'Product Roadmap'. Drag meetings into folders. A meeting can be in multiple folders.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-106",
+    "title": "Granola: Phone call recording on iOS",
+    "desc": "Record in-person conversations and phone calls through the device microphone (not just computer meetings). Separate 'Record call' mode optimized for phone-quality audio. Useful for client calls, interviews, hallway conversations.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-107",
+    "title": "Granola: Ask AI anything about your meetings",
+    "desc": "'Ask Granola' style feature: type any question and AI searches your entire meeting history to answer. 'What budget did Acme mention?', 'How many times have we discussed the migration?', 'What were the key decisions this month?'. Powered by embedding search + LLM.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "done",
+    "created": "2026-03-18"
+  },
+  {
+    "id": "MM-108",
+    "title": "Granola: Automatic participant detection from audio",
+    "desc": "Detect and label different speakers in the transcript (speaker diarization). Show 'Speaker 1:', 'Speaker 2:' labels. After first meeting, learn voice profiles and assign names. Critical for professional meeting notes.",
+    "category": "feature",
+    "priority": "high",
+    "status": "done",
+    "created": "2026-03-18"
+  }
+]

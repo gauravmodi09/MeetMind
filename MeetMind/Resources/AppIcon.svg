@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7C6BF0"/>
+      <stop offset="50%" style="stop-color:#6C5CE7"/>
+      <stop offset="100%" style="stop-color:#4B3ABE"/>
+    </linearGradient>
+    <linearGradient id="glow" cx="50%" cy="40%" r="50%" fx="50%" fy="40%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.12)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+    </linearGradient>
+    <radialGradient id="radialGlow" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" style="stop-color:rgba(255,255,255,0.15)"/>
+      <stop offset="100%" style="stop-color:rgba(255,255,255,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- Subtle radial glow -->
+  <rect width="1024" height="1024" rx="224" fill="url(#radialGlow)"/>
+
+  <!-- Waveform bars (behind) -->
+  <g opacity="0.2" transform="translate(512, 420)">
+    <rect x="-120" y="-25" width="10" height="50" rx="5" fill="white"/>
+    <rect x="-80" y="-45" width="10" height="90" rx="5" fill="white"/>
+    <rect x="-40" y="-65" width="10" height="130" rx="5" fill="white"/>
+    <rect x="0" y="-80" width="10" height="160" rx="5" fill="white"/>
+    <rect x="40" y="-65" width="10" height="130" rx="5" fill="white"/>
+    <rect x="80" y="-45" width="10" height="90" rx="5" fill="white"/>
+    <rect x="120" y="-25" width="10" height="50" rx="5" fill="white"/>
+  </g>
+
+  <!-- Brain icon (simplified) -->
+  <g transform="translate(512, 380)" fill="white">
+    <!-- Left hemisphere -->
+    <path d="M-20,-120 C-80,-120 -130,-80 -130,-20 C-130,20 -110,50 -80,65 C-100,80 -110,110 -90,140 C-70,170 -30,170 -10,150 C-10,150 -20,120 -20,120"
+          fill="white" opacity="0.95" stroke="white" stroke-width="8" fill-opacity="0.9"/>
+    <!-- Right hemisphere -->
+    <path d="M20,-120 C80,-120 130,-80 130,-20 C130,20 110,50 80,65 C100,80 110,110 90,140 C70,170 30,170 10,150 C10,150 20,120 20,120"
+          fill="white" opacity="0.85" stroke="white" stroke-width="8" fill-opacity="0.8"/>
+    <!-- Center connection -->
+    <line x1="0" y1="-100" x2="0" y2="140" stroke="white" stroke-width="6" opacity="0.5"/>
+    <!-- Neural dots -->
+    <circle cx="-50" cy="-40" r="8" fill="white" opacity="0.7"/>
+    <circle cx="50" cy="-40" r="8" fill="white" opacity="0.7"/>
+    <circle cx="-30" cy="40" r="6" fill="white" opacity="0.5"/>
+    <circle cx="30" cy="40" r="6" fill="white" opacity="0.5"/>
+    <circle cx="0" cy="-70" r="7" fill="white" opacity="0.6"/>
+  </g>
+
+  <!-- Microphone icon (bottom center) -->
+  <g transform="translate(512, 680)" fill="white" opacity="0.9">
+    <rect x="-22" y="-50" width="44" height="70" rx="22" fill="white"/>
+    <path d="M-40,-10 C-40,30 -25,55 0,55 C25,55 40,30 40,-10" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+    <line x1="0" y1="55" x2="0" y2="80" stroke="white" stroke-width="8" stroke-linecap="round"/>
+    <line x1="-20" y1="80" x2="20" y2="80" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- AI sparkle (top right) -->
+  <g transform="translate(720, 240)" fill="#FFD700" opacity="0.8">
+    <polygon points="0,-30 8,-8 30,0 8,8 0,30 -8,8 -30,0 -8,-8" fill="#FFD700"/>
+    <polygon points="25,-45 29,-37 37,-33 29,-29 25,-21 21,-29 13,-33 21,-37" fill="#FFD700" opacity="0.6"/>
+  </g>
+</svg>

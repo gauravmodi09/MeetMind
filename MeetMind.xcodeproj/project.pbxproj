@@ -1,0 +1,1354 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04E1B07FD7BCCC0178F442E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C9F44F1AD84C570EE2007E /* ServiceTests.swift */; };
+		08FB4C26A7C60AA55F339B96 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D4D2FBCBC66091AD63D68 /* TodayView.swift */; };
+		095A4D4BB031F153E873CFB0 /* QuickAddMedicineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F2459AB1E44540A9359122 /* QuickAddMedicineView.swift */; };
+		09FD4D519AB2D7FC2517B520 /* RecipeResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74AA49188E07541D26984649 /* RecipeResultView.swift */; };
+		0BF84A3F9ECB3D3868906ABF /* PromptEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D474C87BD6ACF21A9E27D00 /* PromptEditorView.swift */; };
+		1D004CC0B95989DC9F164CC5 /* WidgetDataShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA541F3A3B55BB9CB2B33A5 /* WidgetDataShared.swift */; };
+		2BD44B3F9E286CC4DB927E49 /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94314E6E9407D130F884388B /* TodoService.swift */; };
+		2D2C4710B3F3A20C24AB7807 /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD14AFFA05B11C23B5B1C4B /* WatchConnectivityService.swift */; };
+		2EFB4DF69A072263710A0389 /* MeetingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444E42A39D3200DF6593EAC3 /* MeetingCard.swift */; };
+		324C4128B864387A3AA3E626 /* TextTodoEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B0D4E9CB03C016C76BB4D97 /* TextTodoEntryView.swift */; };
+		33CA4B1B800A00C8145A81F8 /* VoiceTodoCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA6141DD9FF5EC855DB80F2C /* VoiceTodoCaptureView.swift */; };
+		35C9407D987A7FFCCA6D4E14 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A20419387A0C9877630769E /* LibraryView.swift */; };
+		36C24309B1C4784DAC82F3D5 /* MeetMindWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C924DA29DA9CF1BE60D822C /* MeetMindWidgets.swift */; };
+		395048628958761677EDFDF1 /* MeetingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E84F0ABBB19FB2894DD476 /* MeetingDetailView.swift */; };
+		3BDA4C54856ECBF52EE724B6 /* CompanyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21E545D48B39B6290602E699 /* CompanyView.swift */; };
+		3C5647ED8308F4E148AFB172 /* TodoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68C747FFA3CB90279D4E6484 /* TodoDetailView.swift */; };
+		3D404121A5DC4C32EF9AA993 /* MeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A74A2CBEE06AAC6CA5E44C /* MeetingsView.swift */; };
+		3DCD4D1DBCB3D7D5D5F683FB /* MeetingPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */; };
+		436E4481AF902384CB873C4B /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8940F38A8D9B40AFADC598 /* AnalyticsService.swift */; };
+		44F04384AB53C1213F6F6EF0 /* MCAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B747D8AFE535F51B12C9C6 /* MCAnimations.swift */; };
+		49094E89A3CFE88264478693 /* StreakBadgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97E2419391B3B95C3217E9B0 /* StreakBadgeView.swift */; };
+		49DA4180A61A265036FBED70 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D3414EA0E04B110742A6E8 /* OnboardingView.swift */; };
+		53AD4BC79920889FE1FF13DA /* MeetingChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE147B29C9B3A5D47859227 /* MeetingChatView.swift */; };
+		55244BBD8D1621149E40E5C0 /* OfflineQueueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604A4E379A82019333E1DA53 /* OfflineQueueService.swift */; };
+		5833EB0BAAD399C81137702E /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997F201D1F278640A7006269 /* ModelTests.swift */; };
+		5EB44A5E8D5820722417A84E /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D024B7E938EC67EEA5A378D /* PersistenceController.swift */; };
+		5ED547129878D906B017ED20 /* MeetMindAppIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 826644BCB76D7E2D3C69BA0B /* MeetMindAppIntents.swift */; };
+		60854AB4AA456519BE7AEF3E /* MMShimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0A84CF7935E0C20F06BEF7E /* MMShimmer.swift */; };
+		62B94927B41D2E09F89EBA5A /* ClientDictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 111E4237B0110D217F1E4C5A /* ClientDictionaryView.swift */; };
+		65814B64ABC1BC4EC227D1D1 /* DoseCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03B4B7281CA6C9B53069456 /* DoseCalendarView.swift */; };
+		68B4438FBB6993432863A732 /* ClientMeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52A4469F94B8A51913B3D336 /* ClientMeetingsView.swift */; };
+		6AE045C49DE0A15B9D8C8CA8 /* BackgroundTaskService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */; };
+		6BA044CCB587AB192617A0D7 /* AppIconDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89C943A4A84DB59CCAC02384 /* AppIconDesign.swift */; };
+		6C274D94AF47BC8D91C45056 /* RecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08DF44ADBEF3EE4BF4E57F8E /* RecipesView.swift */; };
+		71A1CBD1D3C8439C4BA5EFC4 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9172FED27F5FB8AA88CB887B /* Secrets.plist */; };
+		764A422CB5D45331285479A5 /* MeetingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C44E978FFF9A25119BBA7E /* MeetingService.swift */; };
+		7DCD45D59B099AD0CA8D0185 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F54ADDBA64040E1966C5C8 /* ConfettiView.swift */; };
+		845546EAB09EDA85D3598EFD /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF2464699D1E2A79179E056 /* GlobalSearchView.swift */; };
+		89D9425FA7988C5C757253CF /* GroqService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9278463BAF4B45E41B1D87E4 /* GroqService.swift */; };
+		95E7474D8FCFB4A1EDBF39B1 /* MeetMindModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */; };
+		981241E8A9D38A10531AB82F /* MMColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0814810B7F70157CCF2236E /* MMColors.swift */; };
+		9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22C43F2AF83E1632F507ACC /* DataExportService.swift */; };
+		A1E34EB3B1474C05AD2B302C /* DemoMeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70946479A42F23B31FBA395 /* DemoMeetingView.swift */; };
+		AB0B4B5AADEA9A934CDD8DEB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E434460CA6C56AF72E80EC67 /* SettingsView.swift */; };
+		AE1E4E35B57803E9787F2B5B /* FollowUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */; };
+		AEF54DEA88F47E35FAFC2E11 /* WatchTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63A4383980C8F56D79117C3 /* WatchTodoView.swift */; };
+		B1ED41CF8B66E7A16FC8C59A /* MMTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0946C6947F1833325126E2 /* MMTypography.swift */; };
+		B23B432C9D4BD8C2196DA69A /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70C4D388D6806D813303B39 /* ActionItemsView.swift */; };
+		B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5F4873AC1AC524814F7CB7 /* MainTabView.swift */; };
+		B591414EADB34FC1F0DDF959 /* MMComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923D4C75B450CB23642B34AA /* MMComponents.swift */; };
+		B70C40BFA8C6FB1E2711D76A /* MeetingTemplateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */; };
+		B9EC4F0587876A572E410BD4 /* MeetMindWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C34D0895B6244F1BF6F91D /* MeetMindWidgetBundle.swift */; };
+		BDE04D85934177E48CC4090B /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACE4F8B9922BE0FC415B5E8 /* AudioPlayerView.swift */; };
+		C0924905982AEEE69C90DB73 /* AudioRecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */; };
+		C502A7F62F6BA5970041A292 /* MeetMindWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CC45FDB10D711132EF449A /* KeychainService.swift */; };
+		D1D341AEBA5C50442CC6CB8F /* StorageManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */; };
+		D34A4B3FAF56774B09CF4B8B /* MeetMindApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 896E4E4A8F73A32B7138B2A2 /* MeetMindApp.swift */; };
+		D35240CD8441D3134CCB2570 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460E4BAA932792C94C89CE7B /* PeopleView.swift */; };
+		D5C547A19584CD2668883FA0 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E344DCB414C5989D062EA3 /* RecordingView.swift */; };
+		D8164BA5B13C8CB2A2EBD50F /* WatchRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2547F8842C6A176C0D4927 /* WatchRecordingView.swift */; };
+		DDDD463F8256C8F380560E92 /* TodoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217745C0971D530CC07B00A0 /* TodoRow.swift */; };
+		E92A4E4F9CD7D21F1648A5DD /* ProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE14400BBEB85FD874D6D4E /* ProcessingView.swift */; };
+		EBDC43B6A6C05A0389151DB7 /* TodosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB84F91BD2502DF4CC90C82 /* TodosView.swift */; };
+		FA444889BDA035348201D27D /* BriefLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66324588AA339F43E86D5740 /* BriefLoadingView.swift */; };
+		FA5641D1808C9851BFDBFDA1 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A714E9C8D8451E378CC6266 /* ShareSheet.swift */; };
+		FB424459B1E4C339D705BB6B /* MeetingChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B455BBBCEA35170A3BCD1 /* MeetingChatSheet.swift */; };
+		FB9E4F7F99E2490CAE41926C /* WatchWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */; };
+		FA8FB840B8964936B548D9BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B3F8819FB594A59BFA8A67D /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8ECB97120BEE911902235864 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C6C2D7953305CEE1BC03F0D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 146C724ADAD4D7B0040AE367;
+			remoteInfo = MeetMind;
+		};
+		C502A7F72F6BA5970041A292 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C6C2D7953305CEE1BC03F0D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9C1A74D135C95F7225C9EB6;
+			remoteInfo = MeetMindWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		27335DDDAAF571A68484B7B7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C502A7F62F6BA5970041A292 /* MeetMindWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		03062A9D3A3A338EFB504CA4 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		0379F3DD718078F4ACACFF99 /* PhoneLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLoginView.swift; sourceTree = "<group>"; };
+		065DE45299423273167DDCFF /* EpisodeFilesTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeFilesTabView.swift; sourceTree = "<group>"; };
+		08DF44ADBEF3EE4BF4E57F8E /* RecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecipesView.swift; path = MeetMind/Features/Recipes/RecipesView.swift; sourceTree = SOURCE_ROOT; };
+		0B0D4E9CB03C016C76BB4D97 /* TextTodoEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextTodoEntryView.swift; path = MeetMind/Features/Todos/TextTodoEntryView.swift; sourceTree = SOURCE_ROOT; };
+		0C57BE048F0A112EB6DBF2ED /* DoseReminderLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseReminderLiveActivity.swift; sourceTree = "<group>"; };
+		0C76CC51ADE9415693A894E4 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		0D7E5C7CF90F619CFEF0E720 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
+		0E8940F38A8D9B40AFADC598 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AnalyticsService.swift; path = MeetMind/Services/AnalyticsService.swift; sourceTree = SOURCE_ROOT; };
+		0F9D217B6086C05614935191 /* NudgeBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NudgeBannerView.swift; sourceTree = "<group>"; };
+		10A74A2CBEE06AAC6CA5E44C /* MeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingsView.swift; path = MeetMind/Features/Meetings/MeetingsView.swift; sourceTree = SOURCE_ROOT; };
+		111E4237B0110D217F1E4C5A /* ClientDictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClientDictionaryView.swift; path = MeetMind/Features/Library/ClientDictionaryView.swift; sourceTree = SOURCE_ROOT; };
+		163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MeetMindWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		17314FFEAFB9823429F3D32C /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionView.swift; path = MeetMind/Features/Settings/SubscriptionView.swift; sourceTree = SOURCE_ROOT; };
+		1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackgroundTaskService.swift; path = MeetMind/Services/BackgroundTaskService.swift; sourceTree = SOURCE_ROOT; };
+		2105B5488586FB05EE78836A /* AddDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDocumentView.swift; sourceTree = "<group>"; };
+		217745C0971D530CC07B00A0 /* TodoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoRow.swift; path = MeetMind/Features/Todos/Components/TodoRow.swift; sourceTree = SOURCE_ROOT; };
+		21E545D48B39B6290602E699 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanyView.swift; path = MeetMind/Features/People/CompanyView.swift; sourceTree = SOURCE_ROOT; };
+		2201F29614A10E7DC1B16403 /* EpisodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeDetailView.swift; sourceTree = "<group>"; };
+		24188DD9C1575658D75D710E /* MCTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCTextField.swift; sourceTree = "<group>"; };
+		2536DC08D5CF4FB8A071446C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		25C65F1BC213B42F1529A1BB /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2A2F4067B7C9FAA3825F1F30 /* SubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionService.swift; path = MeetMind/Services/SubscriptionService.swift; sourceTree = SOURCE_ROOT; };
+		2B26F8797DF6B90CD0C8BCDC /* AIChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatView.swift; sourceTree = "<group>"; };
+		2B5FB0A2DDF46C68E31AF399 /* ConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationView.swift; sourceTree = "<group>"; };
+		2E93F8220F2CE84FE9F98E81 /* PharmaDataNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmaDataNetwork.swift; sourceTree = "<group>"; };
+		3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
+		32C9F44F1AD84C570EE2007E /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
+		33B93A5950B339B58BA65880 /* ProfileFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFilesView.swift; sourceTree = "<group>"; };
+		35476A8040C8ADA50698F85F /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
+		3A714E9C8D8451E378CC6266 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShareSheet.swift; path = MeetMind/Features/Meetings/Components/ShareSheet.swift; sourceTree = SOURCE_ROOT; };
+		3B219245D0700EF3B7879330 /* MeetMindWidgetExtensionBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMindWidgetExtensionBundle.swift; sourceTree = "<group>"; };
+		3B698A28C46329BC1C47C012 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		3C81A826372397B5FA1EC28A /* DocumentThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentThumbnailCard.swift; sourceTree = "<group>"; };
+		3E4F62CF8A1F26336018727C /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		3F4DEDBEBAD4454E0CF7A83A /* MeetMindWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MeetMindWidgetExtension.entitlements; sourceTree = "<group>"; };
+		411572CD64A8B9EB2DC4A554 /* MCEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCEmptyState.swift; sourceTree = "<group>"; };
+		42D3414EA0E04B110742A6E8 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingView.swift; path = MeetMind/Features/Onboarding/OnboardingView.swift; sourceTree = SOURCE_ROOT; };
+		42FCFBEE1DC2039D02A2F074 /* AIExtractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIExtractionService.swift; sourceTree = "<group>"; };
+		444E42A39D3200DF6593EAC3 /* MeetingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingCard.swift; path = MeetMind/Features/Meetings/Components/MeetingCard.swift; sourceTree = SOURCE_ROOT; };
+		44714D64814D7A30D1E9F527 /* ChatSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatSession.swift; path = MeetMind/Models/ChatSession.swift; sourceTree = SOURCE_ROOT; };
+		460E4BAA932792C94C89CE7B /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeopleView.swift; path = MeetMind/Features/People/PeopleView.swift; sourceTree = SOURCE_ROOT; };
+		47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingTemplateSelector.swift; path = MeetMind/Features/Meetings/MeetingTemplateSelector.swift; sourceTree = SOURCE_ROOT; };
+		4A96CB51A32C79ED676F5A46 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
+		4C924DA29DA9CF1BE60D822C /* MeetMindWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindWidgets.swift; path = MeetMindWidgetExtension/MeetMindWidgets.swift; sourceTree = SOURCE_ROOT; };
+		4D2418FBB225C8E13359A71F /* Medicine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Medicine.swift; sourceTree = "<group>"; };
+		4E7C4843BAC7AA9477D58802 /* MeetMindHomeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindHomeWidget.swift; path = MeetMindWidgetExtension/MeetMindHomeWidget.swift; sourceTree = SOURCE_ROOT; };
+		52401AE89BD8B0B9531877C5 /* MCColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCColors.swift; sourceTree = "<group>"; };
+		524D4D2FBCBC66091AD63D68 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodayView.swift; path = MeetMind/Features/Todos/TodayView.swift; sourceTree = SOURCE_ROOT; };
+		52A4469F94B8A51913B3D336 /* ClientMeetingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ClientMeetingsView.swift; path = MeetMind/Features/Library/ClientMeetingsView.swift; sourceTree = SOURCE_ROOT; };
+		55D6E8DA5684D36611202A1C /* MeetMindApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMindApp.swift; sourceTree = "<group>"; };
+		576FC7BD1D7B78B480BF1281 /* MCSpacing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCSpacing.swift; sourceTree = "<group>"; };
+		57DEAAF72E45AA035E131BC3 /* OTPVerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OTPVerificationView.swift; sourceTree = "<group>"; };
+		5D30839DD4F1F2AABA827930 /* SmartNudgeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartNudgeService.swift; sourceTree = "<group>"; };
+		5D474C87BD6ACF21A9E27D00 /* PromptEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PromptEditorView.swift; path = MeetMind/Features/Settings/PromptEditorView.swift; sourceTree = SOURCE_ROOT; };
+		5FD14AFFA05B11C23B5B1C4B /* WatchConnectivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchConnectivityService.swift; path = MeetMind/WatchApp/WatchConnectivityService.swift; sourceTree = SOURCE_ROOT; };
+		60018BEAD55013A6A192AE15 /* OfflineSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineSyncService.swift; sourceTree = "<group>"; };
+		604A4E379A82019333E1DA53 /* OfflineQueueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OfflineQueueService.swift; path = MeetMind/Services/OfflineQueueService.swift; sourceTree = SOURCE_ROOT; };
+		633C2709516F10BE915A3B1A /* MedicineExpiryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicineExpiryService.swift; sourceTree = "<group>"; };
+		66324588AA339F43E86D5740 /* BriefLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BriefLoadingView.swift; path = MeetMind/Features/Meetings/BriefLoadingView.swift; sourceTree = SOURCE_ROOT; };
+		67074B22837812421D4CC75E /* RefillReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RefillReminderService.swift; path = MeetMind/Services/RefillReminderService.swift; sourceTree = SOURCE_ROOT; };
+		68C747FFA3CB90279D4E6484 /* TodoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoDetailView.swift; path = MeetMind/Features/Todos/TodoDetailView.swift; sourceTree = SOURCE_ROOT; };
+		6906073674058FE0D69DF27A /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		6A0E4A191EAA8E91F635F5C3 /* EpisodeImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeImage.swift; sourceTree = "<group>"; };
+		6ACE4F8B9922BE0FC415B5E8 /* AudioPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioPlayerView.swift; path = MeetMind/Features/Meetings/AudioPlayerView.swift; sourceTree = SOURCE_ROOT; };
+		6AE7F931AD9D922B26A33144 /* DoseLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseLog.swift; sourceTree = "<group>"; };
+		6DC96B0424A07F91BF5BF7ED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		70D482084E01B5DE6454D027 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
+		71F54ADDBA64040E1966C5C8 /* ConfettiView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ConfettiView.swift; path = MeetMind/Core/Components/ConfettiView.swift; sourceTree = SOURCE_ROOT; };
+		73A644B6861EA2410D71B06E /* SpeechService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpeechService.swift; path = MeetMind/Services/SpeechService.swift; sourceTree = SOURCE_ROOT; };
+		7470DFEC1F38EDB84E9DFF15 /* LLMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMService.swift; sourceTree = "<group>"; };
+		74AA49188E07541D26984649 /* RecipeResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecipeResultView.swift; path = MeetMind/Features/Recipes/RecipeResultView.swift; sourceTree = SOURCE_ROOT; };
+		74F2459AB1E44540A9359122 /* QuickAddMedicineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = QuickAddMedicineView.swift; path = MeetMind/Features/Episode/Views/QuickAddMedicineView.swift; sourceTree = SOURCE_ROOT; };
+		78C3338F7481E534A0E9E630 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		79556B905F65E2B695E8851D /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		7AE147B29C9B3A5D47859227 /* MeetingChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingChatView.swift; path = MeetMind/Features/Chat/MeetingChatView.swift; sourceTree = SOURCE_ROOT; };
+		7BE14400BBEB85FD874D6D4E /* ProcessingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProcessingView.swift; path = MeetMind/Features/Meetings/ProcessingView.swift; sourceTree = SOURCE_ROOT; };
+		7D79279702C1D31D3A41ECD7 /* RegionalLanguageAI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionalLanguageAI.swift; sourceTree = "<group>"; };
+		7EE761BB7517B16A0C7E7D8B /* LLMConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMConfig.swift; sourceTree = "<group>"; };
+		7FA48051E48FB906F1C7D942 /* LLMProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LLMProvider.swift; sourceTree = "<group>"; };
+		826644BCB76D7E2D3C69BA0B /* MeetMindAppIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindAppIntents.swift; path = MeetMind/Widgets/MeetMindAppIntents.swift; sourceTree = SOURCE_ROOT; };
+		84A95801BD8DE01FDE044462 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		860F8B6B6DBD9A25E6086A5B /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		86568600EF51B56B9BC7A498 /* UploadPrescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadPrescriptionView.swift; sourceTree = "<group>"; };
+		896E4E4A8F73A32B7138B2A2 /* MeetMindApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindApp.swift; path = MeetMind/App/MeetMindApp.swift; sourceTree = SOURCE_ROOT; };
+		897B77F35B54F2EB1A1ED45C /* ChatBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatBubbleView.swift; sourceTree = "<group>"; };
+		89C943A4A84DB59CCAC02384 /* AppIconDesign.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppIconDesign.swift; path = MeetMind/Resources/AppIconDesign.swift; sourceTree = SOURCE_ROOT; };
+		8A20419387A0C9877630769E /* LibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = LibraryView.swift; path = MeetMind/Features/Library/LibraryView.swift; sourceTree = SOURCE_ROOT; };
+		8E526C92CE63E2D6ECD57EDE /* DateExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateExtensions.swift; sourceTree = "<group>"; };
+		90AFC1B614595991A4A0A37E /* SmartSchedulingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartSchedulingService.swift; sourceTree = "<group>"; };
+		9172FED27F5FB8AA88CB887B /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
+		9180C9A3ECDB451AB24CB12E /* DoseConfirmationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseConfirmationOverlay.swift; sourceTree = "<group>"; };
+		923D4C75B450CB23642B34AA /* MMComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMComponents.swift; path = MeetMind/DesignSystem/MMComponents.swift; sourceTree = SOURCE_ROOT; };
+		9278463BAF4B45E41B1D87E4 /* GroqService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqService.swift; path = MeetMind/Services/GroqService.swift; sourceTree = SOURCE_ROOT; };
+		938D83A193BD3E835B3A2C7A /* MCBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCBadge.swift; sourceTree = "<group>"; };
+		94314E6E9407D130F884388B /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoService.swift; path = MeetMind/Services/TodoService.swift; sourceTree = SOURCE_ROOT; };
+		94B747D8AFE535F51B12C9C6 /* MCAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MCAnimations.swift; path = MeetMind/Core/Components/MCAnimations.swift; sourceTree = SOURCE_ROOT; };
+		96A13E97377FB815714F7615 /* TimelineMilestoneCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineMilestoneCard.swift; sourceTree = "<group>"; };
+		97E2419391B3B95C3217E9B0 /* StreakBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreakBadgeView.swift; path = MeetMind/Core/Components/StreakBadgeView.swift; sourceTree = SOURCE_ROOT; };
+		995DF3C0A4C7EDB81C8259D6 /* InsightsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsCard.swift; sourceTree = "<group>"; };
+		997F201D1F278640A7006269 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		9D024B7E938EC67EEA5A378D /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PersistenceController.swift; path = MeetMind/Data/PersistenceController.swift; sourceTree = SOURCE_ROOT; };
+		9FCBC5B5E214063962B8664F /* EmergencyAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyAlertView.swift; sourceTree = "<group>"; };
+		A0A84CF7935E0C20F06BEF7E /* MMShimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMShimmer.swift; path = MeetMind/DesignSystem/MMShimmer.swift; sourceTree = SOURCE_ROOT; };
+		A359D3EB292521F12D17B4EA /* GroqProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroqProvider.swift; sourceTree = "<group>"; };
+		A92A48CD959560A5ADF8771B /* ChatHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatHistoryView.swift; path = MeetMind/Features/AIChat/Views/ChatHistoryView.swift; sourceTree = SOURCE_ROOT; };
+		A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpEmailView.swift; path = MeetMind/Features/Meetings/FollowUpEmailView.swift; sourceTree = SOURCE_ROOT; };
+		A9E063B71DD33DDA14099AFA /* ProfileManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManagementView.swift; sourceTree = "<group>"; };
+		AA836C2DFF66A9A72C043D86 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchWidgetData.swift; path = MeetMind/WatchApp/WatchWidgetData.swift; sourceTree = SOURCE_ROOT; };
+		B353E5360CE9EF2259BC5455 /* DoseReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseReminderAttributes.swift; sourceTree = "<group>"; };
+		B51D8F97D9C7342B90B4719D /* MCTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCTypography.swift; sourceTree = "<group>"; };
+		B5E84F0ABBB19FB2894DD476 /* MeetingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingDetailView.swift; path = MeetMind/Features/Meetings/MeetingDetailView.swift; sourceTree = SOURCE_ROOT; };
+		B70946479A42F23B31FBA395 /* DemoMeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DemoMeetingView.swift; path = MeetMind/Features/Onboarding/DemoMeetingView.swift; sourceTree = SOURCE_ROOT; };
+		B70C4D388D6806D813303B39 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionItemsView.swift; path = MeetMind/Features/ActionItems/ActionItemsView.swift; sourceTree = SOURCE_ROOT; };
+		BB4173F5BD62B9418CD1C077 /* WidgetDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataService.swift; sourceTree = "<group>"; };
+		BBB84F91BD2502DF4CC90C82 /* TodosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodosView.swift; path = MeetMind/Features/Todos/TodosView.swift; sourceTree = SOURCE_ROOT; };
+		C03CEA0FE3E6EB18BF663D63 /* DrugInteractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrugInteractionService.swift; sourceTree = "<group>"; };
+		C22C43F2AF83E1632F507ACC /* DataExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DataExportService.swift; path = MeetMind/Services/DataExportService.swift; sourceTree = SOURCE_ROOT; };
+		C295CB0060698E0AEA624EDA /* MCCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCard.swift; sourceTree = "<group>"; };
+		C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingPipeline.swift; path = MeetMind/Services/MeetingPipeline.swift; sourceTree = SOURCE_ROOT; };
+		C420655CA9F0488A7FBDA2E0 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		C55D1B1BB2C911A134BA63F8 /* MeetMindTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MeetMindTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7E344DCB414C5989D062EA3 /* RecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecordingView.swift; path = MeetMind/Features/Meetings/RecordingView.swift; sourceTree = SOURCE_ROOT; };
+		C95C59E85454ED596CE80FCA /* MeetMind.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MeetMind.entitlements; sourceTree = "<group>"; };
+		C9C44E978FFF9A25119BBA7E /* MeetingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingService.swift; path = MeetMind/Services/MeetingService.swift; sourceTree = SOURCE_ROOT; };
+		CAA541F3A3B55BB9CB2B33A5 /* WidgetDataShared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WidgetDataShared.swift; path = MeetMind/Widgets/WidgetDataShared.swift; sourceTree = SOURCE_ROOT; };
+		CAF2464699D1E2A79179E056 /* GlobalSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GlobalSearchView.swift; path = MeetMind/Features/Search/GlobalSearchView.swift; sourceTree = SOURCE_ROOT; };
+		CD7CD36F7B235949FF5EBA21 /* SymptomLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymptomLogView.swift; sourceTree = "<group>"; };
+		D2C76F007E4B9C5B037D97C0 /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
+		D63A4383980C8F56D79117C3 /* WatchTodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchTodoView.swift; path = MeetMind/WatchApp/WatchTodoView.swift; sourceTree = SOURCE_ROOT; };
+		D64022A94F4B5B1AB078F973 /* MCButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCButton.swift; sourceTree = "<group>"; };
+		D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioRecordingService.swift; path = MeetMind/Services/AudioRecordingService.swift; sourceTree = SOURCE_ROOT; };
+		D7C34D0895B6244F1BF6F91D /* MeetMindWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindWidgetBundle.swift; path = MeetMindWidgetExtension/MeetMindWidgetBundle.swift; sourceTree = SOURCE_ROOT; };
+		DB40B55F8C65FAC91BE91335 /* TreatmentTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreatmentTimelineView.swift; sourceTree = "<group>"; };
+		DEE02F86B61A1F8C8B17F7E1 /* CareTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CareTask.swift; sourceTree = "<group>"; };
+		DF0B455BBBCEA35170A3BCD1 /* MeetingChatSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingChatSheet.swift; path = MeetMind/Features/Meetings/MeetingChatSheet.swift; sourceTree = SOURCE_ROOT; };
+		E0814810B7F70157CCF2236E /* MMColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMColors.swift; path = MeetMind/DesignSystem/MMColors.swift; sourceTree = SOURCE_ROOT; };
+		E434460CA6C56AF72E80EC67 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = MeetMind/Features/Settings/SettingsView.swift; sourceTree = SOURCE_ROOT; };
+		E71B1D931596710E77FA6FC1 /* SymptomLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymptomLog.swift; sourceTree = "<group>"; };
+		E8CC45FDB10D711132EF449A /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = MeetMind/Services/KeychainService.swift; sourceTree = SOURCE_ROOT; };
+		ED2547F8842C6A176C0D4927 /* WatchRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchRecordingView.swift; path = MeetMind/WatchApp/WatchRecordingView.swift; sourceTree = SOURCE_ROOT; };
+		ED446B8156A2397EC61607C1 /* MeetMind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetMind.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEC06F56E11C5093059156A8 /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
+		F03B4B7281CA6C9B53069456 /* DoseCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DoseCalendarView.swift; path = MeetMind/Features/History/Views/DoseCalendarView.swift; sourceTree = SOURCE_ROOT; };
+		F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindModels.swift; path = MeetMind/Data/MeetMindModels.swift; sourceTree = SOURCE_ROOT; };
+		F520431DDEA8AF8185D13977 /* Nudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nudge.swift; sourceTree = "<group>"; };
+		F64E9ECF7FC0DEAA7532C56B /* AIChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatService.swift; sourceTree = "<group>"; };
+		F69407B9A796944B7E3224CD /* PositioningAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningAgent.swift; sourceTree = "<group>"; };
+		F92DFC21E3490828822DB66E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		FA5F4873AC1AC524814F7CB7 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainTabView.swift; path = MeetMind/App/MainTabView.swift; sourceTree = SOURCE_ROOT; };
+		FA6141DD9FF5EC855DB80F2C /* VoiceTodoCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VoiceTodoCaptureView.swift; path = MeetMind/Features/Todos/VoiceTodoCaptureView.swift; sourceTree = SOURCE_ROOT; };
+		FD0946C6947F1833325126E2 /* MMTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMTypography.swift; path = MeetMind/DesignSystem/MMTypography.swift; sourceTree = SOURCE_ROOT; };
+		FD6E1C1C90AB02B05D4B7CBF /* PositioningDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningDashboard.swift; sourceTree = "<group>"; };
+		FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StorageManagementService.swift; path = MeetMind/Services/StorageManagementService.swift; sourceTree = SOURCE_ROOT; };
+		4B3F8819FB594A59BFA8A67D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		05FC4AC02509E270276A2189 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				03062A9D3A3A338EFB504CA4 /* HistoryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		0B2588AC6546436670871757 /* Reminders */ = {
+			isa = PBXGroup;
+			children = (
+				47783014CFD789F89C1816C0 /* ViewModels */,
+				C7A01328FF6654E41F7A8A4A /* Views */,
+			);
+			path = Reminders;
+			sourceTree = "<group>";
+		};
+		0BA9CFF8ADB5E6497E3F454D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED446B8156A2397EC61607C1 /* MeetMind.app */,
+				C55D1B1BB2C911A134BA63F8 /* MeetMindTests.xctest */,
+				163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0BAC5FD9955ECA536967D147 = {
+			isa = PBXGroup;
+			children = (
+				9439F9A098668D96DB953ED8 /* MeetMind */,
+				54D676FCB4D9D7ED83EA0810 /* MeetMindTests */,
+				2512553ACAE54E9668BB546D /* MeetMindWidgetExtension */,
+				D756DB7DC51D8EEC9C8619DE /* Shared */,
+				0BA9CFF8ADB5E6497E3F454D /* Products */,
+				73A644B6861EA2410D71B06E /* SpeechService.swift */,
+				44714D64814D7A30D1E9F527 /* ChatSession.swift */,
+				A92A48CD959560A5ADF8771B /* ChatHistoryView.swift */,
+				2A2F4067B7C9FAA3825F1F30 /* SubscriptionService.swift */,
+				17314FFEAFB9823429F3D32C /* SubscriptionView.swift */,
+				4E7C4843BAC7AA9477D58802 /* MeetMindHomeWidget.swift */,
+				67074B22837812421D4CC75E /* RefillReminderService.swift */,
+				74F2459AB1E44540A9359122 /* QuickAddMedicineView.swift */,
+				F03B4B7281CA6C9B53069456 /* DoseCalendarView.swift */,
+				97E2419391B3B95C3217E9B0 /* StreakBadgeView.swift */,
+				71F54ADDBA64040E1966C5C8 /* ConfettiView.swift */,
+				94B747D8AFE535F51B12C9C6 /* MCAnimations.swift */,
+				FA5F4873AC1AC524814F7CB7 /* MainTabView.swift */,
+				896E4E4A8F73A32B7138B2A2 /* MeetMindApp.swift */,
+				F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */,
+				9D024B7E938EC67EEA5A378D /* PersistenceController.swift */,
+				E0814810B7F70157CCF2236E /* MMColors.swift */,
+				923D4C75B450CB23642B34AA /* MMComponents.swift */,
+				A0A84CF7935E0C20F06BEF7E /* MMShimmer.swift */,
+				FD0946C6947F1833325126E2 /* MMTypography.swift */,
+				B70C4D388D6806D813303B39 /* ActionItemsView.swift */,
+				7AE147B29C9B3A5D47859227 /* MeetingChatView.swift */,
+				111E4237B0110D217F1E4C5A /* ClientDictionaryView.swift */,
+				52A4469F94B8A51913B3D336 /* ClientMeetingsView.swift */,
+				8A20419387A0C9877630769E /* LibraryView.swift */,
+				6ACE4F8B9922BE0FC415B5E8 /* AudioPlayerView.swift */,
+				66324588AA339F43E86D5740 /* BriefLoadingView.swift */,
+				444E42A39D3200DF6593EAC3 /* MeetingCard.swift */,
+				3A714E9C8D8451E378CC6266 /* ShareSheet.swift */,
+				A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */,
+				B5E84F0ABBB19FB2894DD476 /* MeetingDetailView.swift */,
+				47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */,
+				10A74A2CBEE06AAC6CA5E44C /* MeetingsView.swift */,
+				7BE14400BBEB85FD874D6D4E /* ProcessingView.swift */,
+				C7E344DCB414C5989D062EA3 /* RecordingView.swift */,
+				B70946479A42F23B31FBA395 /* DemoMeetingView.swift */,
+				42D3414EA0E04B110742A6E8 /* OnboardingView.swift */,
+				21E545D48B39B6290602E699 /* CompanyView.swift */,
+				460E4BAA932792C94C89CE7B /* PeopleView.swift */,
+				74AA49188E07541D26984649 /* RecipeResultView.swift */,
+				08DF44ADBEF3EE4BF4E57F8E /* RecipesView.swift */,
+				CAF2464699D1E2A79179E056 /* GlobalSearchView.swift */,
+				5D474C87BD6ACF21A9E27D00 /* PromptEditorView.swift */,
+				E434460CA6C56AF72E80EC67 /* SettingsView.swift */,
+				217745C0971D530CC07B00A0 /* TodoRow.swift */,
+				0B0D4E9CB03C016C76BB4D97 /* TextTodoEntryView.swift */,
+				524D4D2FBCBC66091AD63D68 /* TodayView.swift */,
+				BBB84F91BD2502DF4CC90C82 /* TodosView.swift */,
+				FA6141DD9FF5EC855DB80F2C /* VoiceTodoCaptureView.swift */,
+				0E8940F38A8D9B40AFADC598 /* AnalyticsService.swift */,
+				D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */,
+				1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */,
+				C22C43F2AF83E1632F507ACC /* DataExportService.swift */,
+				9278463BAF4B45E41B1D87E4 /* GroqService.swift */,
+				E8CC45FDB10D711132EF449A /* KeychainService.swift */,
+				C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */,
+				C9C44E978FFF9A25119BBA7E /* MeetingService.swift */,
+				604A4E379A82019333E1DA53 /* OfflineQueueService.swift */,
+				FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */,
+				94314E6E9407D130F884388B /* TodoService.swift */,
+				5FD14AFFA05B11C23B5B1C4B /* WatchConnectivityService.swift */,
+				ED2547F8842C6A176C0D4927 /* WatchRecordingView.swift */,
+				D63A4383980C8F56D79117C3 /* WatchTodoView.swift */,
+				826644BCB76D7E2D3C69BA0B /* MeetMindAppIntents.swift */,
+				CAA541F3A3B55BB9CB2B33A5 /* WidgetDataShared.swift */,
+				68C747FFA3CB90279D4E6484 /* TodoDetailView.swift */,
+				DF0B455BBBCEA35170A3BCD1 /* MeetingChatSheet.swift */,
+				B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */,
+				D7C34D0895B6244F1BF6F91D /* MeetMindWidgetBundle.swift */,
+				4C924DA29DA9CF1BE60D822C /* MeetMindWidgets.swift */,
+				C502A7F52F6BA5970041A292 /* Frameworks */,
+				89C943A4A84DB59CCAC02384 /* AppIconDesign.swift */,
+			);
+			sourceTree = "<group>";
+		};
+		12E85AE3864CFB06E9D2E2D1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				57DEAAF72E45AA035E131BC3 /* OTPVerificationView.swift */,
+				0379F3DD718078F4ACACFF99 /* PhoneLoginView.swift */,
+				3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */,
+				860F8B6B6DBD9A25E6086A5B /* SplashScreen.swift */,
+				2536DC08D5CF4FB8A071446C /* OnboardingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		148B7C9A40F063F8CC96597A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2201F29614A10E7DC1B16403 /* EpisodeDetailView.swift */,
+				96A13E97377FB815714F7615 /* TimelineMilestoneCard.swift */,
+				DB40B55F8C65FAC91BE91335 /* TreatmentTimelineView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		156086EC86BB8F8976527C11 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				E8A9BF21F2E2E34D07A596C5 /* ViewModels */,
+				67D6846F10AF15A733BF2F8B /* Views */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		1E1D37BD9EAAC98304CAC93B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		24192932FE00D034DCD7CC24 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				938D83A193BD3E835B3A2C7A /* MCBadge.swift */,
+				D64022A94F4B5B1AB078F973 /* MCButton.swift */,
+				C295CB0060698E0AEA624EDA /* MCCard.swift */,
+				9180C9A3ECDB451AB24CB12E /* DoseConfirmationOverlay.swift */,
+				411572CD64A8B9EB2DC4A554 /* MCEmptyState.swift */,
+				24188DD9C1575658D75D710E /* MCTextField.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		24B982F38165328DAE9727D4 /* LLM */ = {
+			isa = PBXGroup;
+			children = (
+				A359D3EB292521F12D17B4EA /* GroqProvider.swift */,
+				7EE761BB7517B16A0C7E7D8B /* LLMConfig.swift */,
+				7FA48051E48FB906F1C7D942 /* LLMProvider.swift */,
+				7470DFEC1F38EDB84E9DFF15 /* LLMService.swift */,
+			);
+			path = LLM;
+			sourceTree = "<group>";
+		};
+		2512553ACAE54E9668BB546D /* MeetMindWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				0C57BE048F0A112EB6DBF2ED /* DoseReminderLiveActivity.swift */,
+				6DC96B0424A07F91BF5BF7ED /* Info.plist */,
+				3F4DEDBEBAD4454E0CF7A83A /* MeetMindWidgetExtension.entitlements */,
+				3B219245D0700EF3B7879330 /* MeetMindWidgetExtensionBundle.swift */,
+				4B3F8819FB594A59BFA8A67D /* Assets.xcassets */,);
+			path = MeetMindWidgetExtension;
+			sourceTree = "<group>";
+		};
+		2AB15FE2D5FB5530175AA392 /* Confirmation */ = {
+			isa = PBXGroup;
+			children = (
+				3BEDC0F381E4F6E91793CFFA /* ViewModels */,
+				9108FD45755E8F8C0211773F /* Views */,
+			);
+			path = Confirmation;
+			sourceTree = "<group>";
+		};
+		3BEDC0F381E4F6E91793CFFA /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		3BF0F0FD20F63F28480D8874 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		47783014CFD789F89C1816C0 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		4F5D6B2E53428931BD33AADB /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DEE02F86B61A1F8C8B17F7E1 /* CareTask.swift */,
+				3B698A28C46329BC1C47C012 /* ChatMessage.swift */,
+				6AE7F931AD9D922B26A33144 /* DoseLog.swift */,
+				D2C76F007E4B9C5B037D97C0 /* Episode.swift */,
+				6A0E4A191EAA8E91F635F5C3 /* EpisodeImage.swift */,
+				4D2418FBB225C8E13359A71F /* Medicine.swift */,
+				F520431DDEA8AF8185D13977 /* Nudge.swift */,
+				E71B1D931596710E77FA6FC1 /* SymptomLog.swift */,
+				25C65F1BC213B42F1529A1BB /* User.swift */,
+				79556B905F65E2B695E8851D /* UserProfile.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		54D676FCB4D9D7ED83EA0810 /* MeetMindTests */ = {
+			isa = PBXGroup;
+			children = (
+				997F201D1F278640A7006269 /* ModelTests.swift */,
+				32C9F44F1AD84C570EE2007E /* ServiceTests.swift */,
+			);
+			path = MeetMindTests;
+			sourceTree = "<group>";
+		};
+		5C7C10D41A385C47EDDE0954 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				24192932FE00D034DCD7CC24 /* Components */,
+				85D01C81834F09A529AAF311 /* DesignSystem */,
+				906EEDBCB770334EF52B97E4 /* Extensions */,
+				8586F19A47B83B342583552E /* Navigation */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		5D0C237D2EE86A624D948AA2 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		67D6846F10AF15A733BF2F8B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A9E063B71DD33DDA14099AFA /* ProfileManagementView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7562635CA075A929897ED66E /* Episode */ = {
+			isa = PBXGroup;
+			children = (
+				5D0C237D2EE86A624D948AA2 /* ViewModels */,
+				148B7C9A40F063F8CC96597A /* Views */,
+			);
+			path = Episode;
+			sourceTree = "<group>";
+		};
+		8586F19A47B83B342583552E /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				6906073674058FE0D69DF27A /* AppRouter.swift */,
+			);
+			path = Navigation;
+			sourceTree = "<group>";
+		};
+		85D01C81834F09A529AAF311 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				52401AE89BD8B0B9531877C5 /* MCColors.swift */,
+				576FC7BD1D7B78B480BF1281 /* MCSpacing.swift */,
+				B51D8F97D9C7342B90B4719D /* MCTypography.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		8719803171D20480AE49F5F2 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				BBCD2DE4DFC50E31B34BD071 /* AIChat */,
+				CBFF045E223B38644300558D /* Auth */,
+				2AB15FE2D5FB5530175AA392 /* Confirmation */,
+				7562635CA075A929897ED66E /* Episode */,
+				A8C1BC300BCC588FC790DB1B /* Files */,
+				ADC00408F5AC153F49A540BA /* History */,
+				B8C70988B57A7F6E228089A6 /* Home */,
+				156086EC86BB8F8976527C11 /* Profile */,
+				0B2588AC6546436670871757 /* Reminders */,
+				D4AB276A2640BD10ADC4D314 /* Symptoms */,
+				BDBA3473A77F7A680E2CFE16 /* Upload */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		906EEDBCB770334EF52B97E4 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				8E526C92CE63E2D6ECD57EDE /* DateExtensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		9108FD45755E8F8C0211773F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2B5FB0A2DDF46C68E31AF399 /* ConfirmationView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9439F9A098668D96DB953ED8 /* MeetMind */ = {
+			isa = PBXGroup;
+			children = (
+				DC21E22424CEC12EDA15322A /* App */,
+				5C7C10D41A385C47EDDE0954 /* Core */,
+				8719803171D20480AE49F5F2 /* Features */,
+				4F5D6B2E53428931BD33AADB /* Models */,
+				AD294DE0D1D30AE1081E92ED /* Resources */,
+				97553CF4336E2F753705B317 /* Services */,
+			);
+			path = MeetMind;
+			sourceTree = "<group>";
+		};
+		97553CF4336E2F753705B317 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				F64E9ECF7FC0DEAA7532C56B /* AIChatService.swift */,
+				42FCFBEE1DC2039D02A2F074 /* AIExtractionService.swift */,
+				0D7E5C7CF90F619CFEF0E720 /* AnalyticsService.swift */,
+				4A96CB51A32C79ED676F5A46 /* APIService.swift */,
+				84A95801BD8DE01FDE044462 /* AuthService.swift */,
+				3E4F62CF8A1F26336018727C /* DataService.swift */,
+				C03CEA0FE3E6EB18BF663D63 /* DrugInteractionService.swift */,
+				70D482084E01B5DE6454D027 /* LiveActivityService.swift */,
+				633C2709516F10BE915A3B1A /* MedicineExpiryService.swift */,
+				AA836C2DFF66A9A72C043D86 /* NotificationService.swift */,
+				60018BEAD55013A6A192AE15 /* OfflineSyncService.swift */,
+				2E93F8220F2CE84FE9F98E81 /* PharmaDataNetwork.swift */,
+				F69407B9A796944B7E3224CD /* PositioningAgent.swift */,
+				7D79279702C1D31D3A41ECD7 /* RegionalLanguageAI.swift */,
+				5D30839DD4F1F2AABA827930 /* SmartNudgeService.swift */,
+				90AFC1B614595991A4A0A37E /* SmartSchedulingService.swift */,
+				BB4173F5BD62B9418CD1C077 /* WidgetDataService.swift */,
+				24B982F38165328DAE9727D4 /* LLM */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		A8C1BC300BCC588FC790DB1B /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				CA999C2BED34EB51C2D6142B /* Views */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
+		AD294DE0D1D30AE1081E92ED /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C95C59E85454ED596CE80FCA /* MeetMind.entitlements */,
+				9172FED27F5FB8AA88CB887B /* Secrets.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		ADC00408F5AC153F49A540BA /* History */ = {
+			isa = PBXGroup;
+			children = (
+				1E1D37BD9EAAC98304CAC93B /* ViewModels */,
+				05FC4AC02509E270276A2189 /* Views */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		AFD5B35F9994A637EC6FC6F8 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		B8C70988B57A7F6E228089A6 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				AFD5B35F9994A637EC6FC6F8 /* ViewModels */,
+				DD937E1BA27B196069217079 /* Views */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		BBCD2DE4DFC50E31B34BD071 /* AIChat */ = {
+			isa = PBXGroup;
+			children = (
+				D5B070DF929C4D7C304CC497 /* Views */,
+			);
+			path = AIChat;
+			sourceTree = "<group>";
+		};
+		BDBA3473A77F7A680E2CFE16 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				CD90697225790B8E718FEC00 /* ViewModels */,
+				E9643C86F6108C3B412B2EC7 /* Views */,
+			);
+			path = Upload;
+			sourceTree = "<group>";
+		};
+		C48BC6687155CC7A157F56BB /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		C502A7F52F6BA5970041A292 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C7A01328FF6654E41F7A8A4A /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				35476A8040C8ADA50698F85F /* RemindersView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CA999C2BED34EB51C2D6142B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2105B5488586FB05EE78836A /* AddDocumentView.swift */,
+				EEC06F56E11C5093059156A8 /* DocumentDetailView.swift */,
+				3C81A826372397B5FA1EC28A /* DocumentThumbnailCard.swift */,
+				065DE45299423273167DDCFF /* EpisodeFilesTabView.swift */,
+				33B93A5950B339B58BA65880 /* ProfileFilesView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CBFF045E223B38644300558D /* Auth */ = {
+			isa = PBXGroup;
+			children = (
+				3BF0F0FD20F63F28480D8874 /* ViewModels */,
+				12E85AE3864CFB06E9D2E2D1 /* Views */,
+			);
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		CD90697225790B8E718FEC00 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		D4AB276A2640BD10ADC4D314 /* Symptoms */ = {
+			isa = PBXGroup;
+			children = (
+				C48BC6687155CC7A157F56BB /* ViewModels */,
+				E844014343EEE71F33C4ED12 /* Views */,
+			);
+			path = Symptoms;
+			sourceTree = "<group>";
+		};
+		D5B070DF929C4D7C304CC497 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2B26F8797DF6B90CD0C8BCDC /* AIChatView.swift */,
+				897B77F35B54F2EB1A1ED45C /* ChatBubbleView.swift */,
+				9FCBC5B5E214063962B8664F /* EmergencyAlertView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D756DB7DC51D8EEC9C8619DE /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				B353E5360CE9EF2259BC5455 /* DoseReminderAttributes.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		DC21E22424CEC12EDA15322A /* App */ = {
+			isa = PBXGroup;
+			children = (
+				55D6E8DA5684D36611202A1C /* MeetMindApp.swift */,
+				78C3338F7481E534A0E9E630 /* RootView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DD937E1BA27B196069217079 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				F92DFC21E3490828822DB66E /* HomeView.swift */,
+				0C76CC51ADE9415693A894E4 /* TodayView.swift */,
+				995DF3C0A4C7EDB81C8259D6 /* InsightsCard.swift */,
+				C420655CA9F0488A7FBDA2E0 /* MainTabView.swift */,
+				0F9D217B6086C05614935191 /* NudgeBannerView.swift */,
+				FD6E1C1C90AB02B05D4B7CBF /* PositioningDashboard.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E844014343EEE71F33C4ED12 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CD7CD36F7B235949FF5EBA21 /* SymptomLogView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E8A9BF21F2E2E34D07A596C5 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E9643C86F6108C3B412B2EC7 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				86568600EF51B56B9BC7A498 /* UploadPrescriptionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		146C724ADAD4D7B0040AE367 /* MeetMind */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97B68DE0BE01191443A6C352 /* Build configuration list for PBXNativeTarget "MeetMind" */;
+			buildPhases = (
+				DD22844A38EDC8C512A679DF /* Sources */,
+				975A1D6ABF6C13936BCCC31F /* Resources */,
+				27335DDDAAF571A68484B7B7 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C502A7F82F6BA5970041A292 /* PBXTargetDependency */,
+			);
+			name = MeetMind;
+			packageProductDependencies = (
+			);
+			productName = MeetMind;
+			productReference = ED446B8156A2397EC61607C1 /* MeetMind.app */;
+			productType = "com.apple.product-type.application";
+		};
+		76E785FF16E17F769BFD2ABC /* MeetMindTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 596D34F62C8C255DB3CEBACC /* Build configuration list for PBXNativeTarget "MeetMindTests" */;
+			buildPhases = (
+				6D5E5C1C44774AC817927C86 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				60318BB488CC6BDFA17E97DC /* PBXTargetDependency */,
+			);
+			name = MeetMindTests;
+			packageProductDependencies = (
+			);
+			productName = MeetMindTests;
+			productReference = C55D1B1BB2C911A134BA63F8 /* MeetMindTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		A9C1A74D135C95F7225C9EB6 /* MeetMindWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1A9520F40FD2291B062CFF7B /* Build configuration list for PBXNativeTarget "MeetMindWidgetExtension" */;
+			buildPhases = (
+				5A5120E8A7C3B8E8F1CD47C8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MeetMindWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = MeetMindWidgetExtension;
+			productReference = 163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C6C2D7953305CEE1BC03F0D5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					146C724ADAD4D7B0040AE367 = {
+						ProvisioningStyle = Automatic;
+					};
+					76E785FF16E17F769BFD2ABC = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					A9C1A74D135C95F7225C9EB6 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 1C128B84AFBEA4350FB87DB3 /* Build configuration list for PBXProject "MeetMind" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 0BAC5FD9955ECA536967D147;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0BA9CFF8ADB5E6497E3F454D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				146C724ADAD4D7B0040AE367 /* MeetMind */,
+				76E785FF16E17F769BFD2ABC /* MeetMindTests */,
+				A9C1A74D135C95F7225C9EB6 /* MeetMindWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		975A1D6ABF6C13936BCCC31F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71A1CBD1D3C8439C4BA5EFC4 /* Secrets.plist in Resources */,
+				FA8FB840B8964936B548D9BD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5A5120E8A7C3B8E8F1CD47C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9EC4F0587876A572E410BD4 /* MeetMindWidgetBundle.swift in Sources */,
+				36C24309B1C4784DAC82F3D5 /* MeetMindWidgets.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6D5E5C1C44774AC817927C86 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5833EB0BAAD399C81137702E /* ModelTests.swift in Sources */,
+				04E1B07FD7BCCC0178F442E4 /* ServiceTests.swift in Sources */,
+				095A4D4BB031F153E873CFB0 /* QuickAddMedicineView.swift in Sources */,
+				65814B64ABC1BC4EC227D1D1 /* DoseCalendarView.swift in Sources */,
+				49094E89A3CFE88264478693 /* StreakBadgeView.swift in Sources */,
+				7DCD45D59B099AD0CA8D0185 /* ConfettiView.swift in Sources */,
+				44F04384AB53C1213F6F6EF0 /* MCAnimations.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DD22844A38EDC8C512A679DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */,
+				D34A4B3FAF56774B09CF4B8B /* MeetMindApp.swift in Sources */,
+				95E7474D8FCFB4A1EDBF39B1 /* MeetMindModels.swift in Sources */,
+				5EB44A5E8D5820722417A84E /* PersistenceController.swift in Sources */,
+				981241E8A9D38A10531AB82F /* MMColors.swift in Sources */,
+				B591414EADB34FC1F0DDF959 /* MMComponents.swift in Sources */,
+				60854AB4AA456519BE7AEF3E /* MMShimmer.swift in Sources */,
+				B1ED41CF8B66E7A16FC8C59A /* MMTypography.swift in Sources */,
+				B23B432C9D4BD8C2196DA69A /* ActionItemsView.swift in Sources */,
+				53AD4BC79920889FE1FF13DA /* MeetingChatView.swift in Sources */,
+				62B94927B41D2E09F89EBA5A /* ClientDictionaryView.swift in Sources */,
+				68B4438FBB6993432863A732 /* ClientMeetingsView.swift in Sources */,
+				35C9407D987A7FFCCA6D4E14 /* LibraryView.swift in Sources */,
+				BDE04D85934177E48CC4090B /* AudioPlayerView.swift in Sources */,
+				FA444889BDA035348201D27D /* BriefLoadingView.swift in Sources */,
+				2EFB4DF69A072263710A0389 /* MeetingCard.swift in Sources */,
+				FA5641D1808C9851BFDBFDA1 /* ShareSheet.swift in Sources */,
+				AE1E4E35B57803E9787F2B5B /* FollowUpEmailView.swift in Sources */,
+				395048628958761677EDFDF1 /* MeetingDetailView.swift in Sources */,
+				B70C40BFA8C6FB1E2711D76A /* MeetingTemplateSelector.swift in Sources */,
+				3D404121A5DC4C32EF9AA993 /* MeetingsView.swift in Sources */,
+				E92A4E4F9CD7D21F1648A5DD /* ProcessingView.swift in Sources */,
+				D5C547A19584CD2668883FA0 /* RecordingView.swift in Sources */,
+				A1E34EB3B1474C05AD2B302C /* DemoMeetingView.swift in Sources */,
+				49DA4180A61A265036FBED70 /* OnboardingView.swift in Sources */,
+				3BDA4C54856ECBF52EE724B6 /* CompanyView.swift in Sources */,
+				D35240CD8441D3134CCB2570 /* PeopleView.swift in Sources */,
+				09FD4D519AB2D7FC2517B520 /* RecipeResultView.swift in Sources */,
+				6C274D94AF47BC8D91C45056 /* RecipesView.swift in Sources */,
+				845546EAB09EDA85D3598EFD /* GlobalSearchView.swift in Sources */,
+				0BF84A3F9ECB3D3868906ABF /* PromptEditorView.swift in Sources */,
+				AB0B4B5AADEA9A934CDD8DEB /* SettingsView.swift in Sources */,
+				DDDD463F8256C8F380560E92 /* TodoRow.swift in Sources */,
+				324C4128B864387A3AA3E626 /* TextTodoEntryView.swift in Sources */,
+				08FB4C26A7C60AA55F339B96 /* TodayView.swift in Sources */,
+				EBDC43B6A6C05A0389151DB7 /* TodosView.swift in Sources */,
+				33CA4B1B800A00C8145A81F8 /* VoiceTodoCaptureView.swift in Sources */,
+				436E4481AF902384CB873C4B /* AnalyticsService.swift in Sources */,
+				C0924905982AEEE69C90DB73 /* AudioRecordingService.swift in Sources */,
+				6AE045C49DE0A15B9D8C8CA8 /* BackgroundTaskService.swift in Sources */,
+				9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */,
+				89D9425FA7988C5C757253CF /* GroqService.swift in Sources */,
+				CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */,
+				3DCD4D1DBCB3D7D5D5F683FB /* MeetingPipeline.swift in Sources */,
+				764A422CB5D45331285479A5 /* MeetingService.swift in Sources */,
+				55244BBD8D1621149E40E5C0 /* OfflineQueueService.swift in Sources */,
+				D1D341AEBA5C50442CC6CB8F /* StorageManagementService.swift in Sources */,
+				2BD44B3F9E286CC4DB927E49 /* TodoService.swift in Sources */,
+				2D2C4710B3F3A20C24AB7807 /* WatchConnectivityService.swift in Sources */,
+				D8164BA5B13C8CB2A2EBD50F /* WatchRecordingView.swift in Sources */,
+				AEF54DEA88F47E35FAFC2E11 /* WatchTodoView.swift in Sources */,
+				5ED547129878D906B017ED20 /* MeetMindAppIntents.swift in Sources */,
+				1D004CC0B95989DC9F164CC5 /* WidgetDataShared.swift in Sources */,
+				3C5647ED8308F4E148AFB172 /* TodoDetailView.swift in Sources */,
+				FB424459B1E4C339D705BB6B /* MeetingChatSheet.swift in Sources */,
+				FB9E4F7F99E2490CAE41926C /* WatchWidgetData.swift in Sources */,
+				6BA044CCB587AB192617A0D7 /* AppIconDesign.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		60318BB488CC6BDFA17E97DC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 146C724ADAD4D7B0040AE367 /* MeetMind */;
+			targetProxy = 8ECB97120BEE911902235864 /* PBXContainerItemProxy */;
+		};
+		C502A7F82F6BA5970041A292 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A9C1A74D135C95F7225C9EB6 /* MeetMindWidgetExtension */;
+			targetProxy = C502A7F72F6BA5970041A292 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1AE83CB96E9E756F0419E1D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MeetMindWidgetExtension/MeetMindWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5BM98X64RR;
+				INFOPLIST_FILE = MeetMindWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.widgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5AC9F3A85AFA3EBF1E041C79 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = MeetMind/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5;
+			};
+			name = Debug;
+		};
+		60A03ABB933C647511866A4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetMind.app/MeetMind";
+			};
+			name = Release;
+		};
+		7F69B378F0ADAD574A7AF990 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MeetMind.app/MeetMind";
+			};
+			name = Debug;
+		};
+		81F949AA18637F2759B69213 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = MeetMindWidgetExtension/MeetMindWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5BM98X64RR;
+				INFOPLIST_FILE = MeetMindWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.widgets;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		ADCF6DD7E24124545731731C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = MeetMind/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5;
+			};
+			name = Release;
+		};
+		D020737A94F21CC129C0FA27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MeetMind/Resources/MeetMind.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5BM98X64RR;
+				INFOPLIST_FILE = MeetMind/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F998D56D5B8E81BF4E994B6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MeetMind/Resources/MeetMind.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = 5BM98X64RR;
+				INFOPLIST_FILE = MeetMind/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/MeetMind/Features/Episode/Views",
+					"$(SRCROOT)/MeetMind/Features/History/Views",
+					"$(SRCROOT)/MeetMind/Core/Components",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1A9520F40FD2291B062CFF7B /* Build configuration list for PBXNativeTarget "MeetMindWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1AE83CB96E9E756F0419E1D8 /* Debug */,
+				81F949AA18637F2759B69213 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		1C128B84AFBEA4350FB87DB3 /* Build configuration list for PBXProject "MeetMind" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5AC9F3A85AFA3EBF1E041C79 /* Debug */,
+				ADCF6DD7E24124545731731C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		596D34F62C8C255DB3CEBACC /* Build configuration list for PBXNativeTarget "MeetMindTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F69B378F0ADAD574A7AF990 /* Debug */,
+				60A03ABB933C647511866A4B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		97B68DE0BE01191443A6C352 /* Build configuration list for PBXNativeTarget "MeetMind" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F998D56D5B8E81BF4E994B6E /* Debug */,
+				D020737A94F21CC129C0FA27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C6C2D7953305CEE1BC03F0D5 /* Project object */;
+}
