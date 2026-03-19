@@ -45,6 +45,11 @@ class MeetingService: ObservableObject {
         }
 
         loadMeetings()
+
+        // Seed sample data for demo/walkthrough
+        if meetings.isEmpty {
+            seedSampleMeetings()
+        }
     }
 
     // MARK: - Sample Data

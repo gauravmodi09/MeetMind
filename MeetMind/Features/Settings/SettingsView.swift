@@ -67,6 +67,107 @@ struct SettingsView: View {
                         }
                     }
 
+                    // MARK: - Calendar Integration
+                    settingsSection(header: "CALENDAR INTEGRATION") {
+                        VStack(spacing: 0) {
+                            // Google Calendar
+                            Button {
+                                // Open iPhone Settings to add Google account
+                                if let url = URL(string: "App-Prefs:ACCOUNTS_AND_PASSWORDS") {
+                                    UIApplication.shared.open(url)
+                                } else if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.blue.opacity(0.12))
+                                            .frame(width: 36, height: 36)
+                                        Image(systemName: "g.circle.fill")
+                                            .font(.system(size: 20))
+                                            .foregroundColor(.blue)
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Google Calendar")
+                                            .font(MMTypography.bodyMedium)
+                                            .foregroundColor(MMColors.textPrimary)
+                                        Text("Add Google account in iPhone Settings to sync")
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "arrow.up.right")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                            }
+
+                            sectionDivider
+
+                            // Outlook Calendar
+                            Button {
+                                if let url = URL(string: "App-Prefs:ACCOUNTS_AND_PASSWORDS") {
+                                    UIApplication.shared.open(url)
+                                } else if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.orange.opacity(0.12))
+                                            .frame(width: 36, height: 36)
+                                        Image(systemName: "envelope.fill")
+                                            .font(.system(size: 16))
+                                            .foregroundColor(.orange)
+                                    }
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Outlook Calendar")
+                                            .font(MMTypography.bodyMedium)
+                                            .foregroundColor(MMColors.textPrimary)
+                                        Text("Add Microsoft account in iPhone Settings to sync")
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    }
+                                    Spacer()
+                                    Image(systemName: "arrow.up.right")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                            }
+
+                            sectionDivider
+
+                            // Calendar permission status
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(MMColors.success.opacity(0.12))
+                                        .frame(width: 36, height: 36)
+                                    Image(systemName: "calendar.badge.checkmark")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(MMColors.success)
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Calendar Access")
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Text("MeetMind reads your calendar to show upcoming meetings")
+                                        .font(MMTypography.caption1)
+                                        .foregroundColor(MMColors.textSecondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
+                    }
+
                     // MARK: - Recording
                     settingsSection(header: "RECORDING") {
                         HStack {

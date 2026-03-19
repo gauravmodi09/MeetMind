@@ -110,8 +110,40 @@ class TodoService: ObservableObject {
     // MARK: - Load / Seed
 
     func loadTodos() {
-        // Start empty — no sample data
-        todos = []
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
+              let nextWeek = calendar.date(byAdding: .day, value: 5, to: today)
+        else { return }
+
+        todos = [
+            TodoItem(
+                title: "Send Meyer POC presentation to David",
+                dueDate: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: today) ?? today,
+                priority: .high,
+                clientTag: "Meyer",
+                source: .meeting
+            ),
+            TodoItem(
+                title: "Follow up on Databricks table access",
+                dueDate: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: tomorrow) ?? tomorrow,
+                priority: .high,
+                clientTag: "Databricks",
+                source: .meeting
+            ),
+            TodoItem(
+                title: "Register for Databricks Data Engineer certification",
+                dueDate: nextWeek,
+                priority: .medium,
+                source: .voice
+            ),
+            TodoItem(
+                title: "Prepare agenda for next sprint planning",
+                dueDate: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow) ?? tomorrow,
+                priority: .medium,
+                source: .manual
+            ),
+        ]
     }
 
     // MARK: - Filtered Views
