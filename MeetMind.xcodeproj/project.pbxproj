@@ -988,13 +988,11 @@
 				DD22844A38EDC8C512A679DF /* Sources */,
 				975A1D6ABF6C13936BCCC31F /* Resources */,
 				27335DDDAAF571A68484B7B7 /* Embed Foundation Extensions */,
-				B5C720A901744077BFD5268C /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C502A7F82F6BA5970041A292 /* PBXTargetDependency */,
-				1943A299E7FB4617BFE2599E /* PBXTargetDependency */,
 			);
 			name = MeetMind;
 			packageProductDependencies = (

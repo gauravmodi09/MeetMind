@@ -114,7 +114,7 @@ enum PromptPresets {
 
     # [Descriptive Title]
 
-    ## TL;DR
+    ## Summary
     1-2 sentences only.
 
     ## Decisions
@@ -147,7 +147,7 @@ enum PromptPresets {
 
     ---
 
-    ## TL;DR
+    ## Summary
     2-3 sentences maximum. What happened, what was decided, what's next. A reader should know if they need to read further within 5 seconds.
 
     ## Key Decisions
@@ -181,7 +181,7 @@ enum PromptPresets {
     - **[Risk]**: [Likelihood and mitigation]
 
     Rules:
-    - TL;DR is THE most important section — make it perfect
+    - Summary is THE most important section — make it perfect
     - Action items MUST have owner + due date. If none mentioned, mark [OWNER NEEDED] or [DATE TBD]
     - Decisions are first-class — separate from discussions, not buried in paragraphs
     - Use bullet points everywhere, never long paragraphs

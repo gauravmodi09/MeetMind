@@ -57,272 +57,302 @@ class MeetingService: ObservableObject {
     private func seedSampleMeetings() {
         let samples: [Meeting] = [
             Meeting(
-                title: "Strategic Planning — Meyer Account",
+                title: "Q3 Product Roadmap Review",
                 date: Date().addingTimeInterval(-3600 * 2),
                 duration: 2700,
-                clientName: "Meyer",
+                clientName: "Acme Corp",
                 status: .complete,
-                template: .salesCall,
+                template: .general,
                 briefSummary: """
-                # Strategic Planning for Meyer Account: POC Readout and Transformation Roadmap
+                # Q3 Product Roadmap Review
 
-                **Attendees:** **Mitchell** (Databricks), **Gaurav** (Celebal)
-                **Type:** Sales Call
+                **Attendees:** **Sarah** (Product), **James** (Engineering), **Lisa** (Design)
+                **Type:** Planning
 
                 ---
 
-                ## TL;DR
-                **Maju** wants to expand the Celebal team with 6 more engineers. The Metrics View POC is progressing well but blocked on table access. Team agreed on a hybrid approach — keep UI filters in Power BI while migrating core transformations to Databricks. Final POC readout targeted for week of **March 26th**.
+                ## Summary
+                The team reviewed the Q3 product roadmap and agreed to prioritize mobile-first features. The API redesign will be pushed to Q4 due to resource constraints. Budget approval is pending from finance for the new design system.
 
                 ## Key Decisions
-                - **Adopt hybrid POC approach** — decided by **Mitchell** and **Gaurav**. Keep presentation-layer logic in Power BI, core metrics in Databricks.
-                - **Use self-service workspace for testing** — decided by **Gaurav**. Bypass production deployment bottleneck.
-                - **Target POC readout for March 26th** — pending resolution of table access blocker.
+                - **Prioritize mobile features for Q3** — decided by **Sarah**. 68% of users are now on mobile.
+                - **Push API redesign to Q4** — decided by **James**. Current team bandwidth won't support both.
+                - **Allocate 20% of budget to design system** — pending finance approval.
 
                 ## Action Items
                 | Task | Owner | Due | Priority |
                 |------|-------|-----|----------|
-                | Create summary presentation for David | **Gaurav** | Tomorrow | High |
-                | Talk to Pankaj about self-service workspace | **Gaurav** | This week | High |
-                | Send self-service workspace role name | **Mitchell** | This week | Medium |
-                | Follow up on remaining table access | **Gaurav** | ASAP | High |
-                | Schedule whiteboarding session | **Mitchell** | Next week | Medium |
+                | Send updated proposal with revised timeline | **Sarah** | This week | High |
+                | Review contract terms with legal | **James** | Next Friday | Medium |
+                | Prepare demo for stakeholder review | **Lisa** | Next week | High |
 
                 ## Discussion Notes
 
-                ### POC Progress and Client Feedback
-                - **Maju** gave overwhelmingly positive feedback and wants to expand Celebal team with **6 additional engineers**
-                - Successfully converted many measures into Metric Views
-                - Stuck waiting for access to **4-5 more tables** — stalled for over a week
-                - Testing uses sample data which often results in zero records after filters
+                ### Mobile Strategy
+                - **Sarah** presented data showing **68% of users** are now on mobile
+                - Team agreed mobile-first approach is critical for Q3
+                - **Lisa** proposed a new navigation pattern for small screens
 
-                ### Technical Debt in AAS Models
-                - **Gaurav** was transparent with **Maju** about poor design in existing AAS models
-                - Multi-level dependencies creating complexity
-                - **Maju** acknowledged and agreed with the assessment
-
-                ### Presentation Planning
-                - **Gaurav** to create summary presentation using GenSpark
-                - Key messages: POC successful, AAS issues uncovered, hybrid model recommended
+                ### Resource Planning
+                - **James** flagged that the engineering team is at capacity
+                - Two new hires starting next month will help with Q4 workload
+                - Discussed possibility of contractor support for the design system
 
                 ## Open Questions
-                - What is the full scope of Teradata migration without profile analyzer data?
-                - How will COBOL mainframe applications be handled in the migration?
-                - When will the remaining 4-5 tables be accessible?
-
-                ## Blockers & Risks
-                - **Table Access**: Primary blocker — 4-5 remaining tables needed to complete development
-                - **Production Push Process**: Formal CRQ process creates multi-day deployment delays
-                - **Legacy Tech Debt**: COBOL applications on mainframe pumping data directly into Teradata
+                - When will finance approve the design system budget?
+                - Should we hire a contractor for the mobile redesign?
                 """,
                 briefDecisions: [
-                    "Adopt hybrid POC approach — keep UI filters in Power BI, core metrics in Databricks",
-                    "Use self-service workspace for testing to bypass production deployment bottleneck",
-                    "Target final POC readout for week of March 26th",
-                    "Gaurav to own summary presentation development"
+                    "Prioritize mobile features for Q3 — 68% of users are on mobile",
+                    "Push API redesign to Q4 due to resource constraints",
+                    "Allocate 20% of budget to design system"
                 ],
                 briefActionItems: [
-                    ActionItem(text: "Create summary presentation for David by tomorrow", owner: "Gaurav", isMine: true),
-                    ActionItem(text: "Talk to Pankaj about self-service workspace access", owner: "Gaurav", isMine: true),
-                    ActionItem(text: "Send self-service workspace role name", owner: "Mitchell"),
-                    ActionItem(text: "Follow up on remaining table access", owner: "Gaurav", dueDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()), isMine: true),
-                    ActionItem(text: "Schedule in-person whiteboarding session", owner: "Mitchell")
+                    ActionItem(text: "Send updated proposal with revised timeline", owner: "Sarah", isMine: true),
+                    ActionItem(text: "Review contract terms with legal", owner: "James"),
+                    ActionItem(text: "Prepare demo for stakeholder review", owner: "Lisa", dueDate: Calendar.current.date(byAdding: .day, value: 5, to: Date()), isMine: true)
                 ],
-                briefKeyTopics: ["Meyer Account", "Metrics View POC", "Databricks Migration", "Azure Analysis Services", "Teradata Profiling"],
+                briefKeyTopics: ["Product Roadmap", "Mobile Strategy", "Q3 Planning", "Design System"],
                 briefKeyQuotes: [
-                    "Mitchell: That's the biggest compliment I think you can get — they want Celebal engineers embedded in every team.",
-                    "Gaurav: I was transparent with Maju — your AAS models are not up to the mark. He agreed.",
-                    "Mitchell: I don't want to sign up for things we can't actually deliver."
+                    "Sarah: 68% of our users are on mobile — we can't ignore that any longer.",
+                    "James: We need to be realistic about what we can deliver this quarter."
                 ],
-                rawTranscript: "Mitchell: Hey Gaurav. You and I are becoming good friends. Gaurav: Yeah, we're connecting on a daily basis...",
+                rawTranscript: "Sarah: Let's start with the Q3 priorities. I've been looking at the data and 68% of our users are now on mobile...",
                 createdAt: Date().addingTimeInterval(-3600 * 2)
             ),
 
             Meeting(
-                title: "Databricks Cost Optimization — ART Sync",
+                title: "Engineering Sprint Retrospective",
                 date: Date().addingTimeInterval(-86400),
-                duration: 2400,
-                clientName: "Databricks",
+                duration: 1800,
+                clientName: nil,
                 status: .complete,
-                template: .general,
+                template: .standup,
                 briefSummary: """
-                MEETING TITLE
-                ART Weekly Sync — Databricks Cost Optimization Results
+                # Engineering Sprint Retrospective
 
-                EXECUTIVE SUMMARY
-                The ART team reviewed the results of a major cost optimization effort for the Databricks platform. The team identified $370,000 in annualized list price savings by eliminating sloppy compute behaviors and right-sizing clusters. While this temporarily impacts consumption numbers, it strengthens the partnership and credibility with the client.
+                **Attendees:** **James** (Lead), **Priya** (Backend), **Tom** (Frontend)
+                **Type:** Standup
 
-                KEY DISCUSSION POINTS
+                ---
 
-                Optimization Results
-                The team found approximately $370,000 of list price annualized Databricks savings. Realistically, this translates to a couple hundred dollars per day in reduced spend in the near term. The savings came from identifying and eliminating inefficient compute patterns.
+                ## Summary
+                Sprint 14 completed with 85% of story points delivered. The team identified deployment pipeline slowdowns as the main blocker. Agreed to invest time in CI/CD improvements next sprint.
 
-                Impact on Consumption
-                The optimization has hit consumption numbers slightly, but the team views this positively. It demonstrates willingness to sacrifice short-term revenue for long-term partnership health.
+                ## Key Decisions
+                - **Dedicate 2 days to CI/CD improvements** — decided by **James**
+                - **Move to trunk-based development** — agreed by team
+                - **Add automated regression tests** — owned by **Priya**
 
-                KEY DECISIONS
-                1. Continue monitoring consumption post-optimization to track impact
-                2. Document the optimization methodology for reuse with other clients
-                3. Present savings to client as a trust-building exercise
+                ## Action Items
+                | Task | Owner | Due | Priority |
+                |------|-------|-----|----------|
+                | Set up automated deployment pipeline | **Tom** | Next sprint | High |
+                | Write regression test suite for API | **Priya** | This week | High |
+                | Document new branching strategy | **James** | Tomorrow | Medium |
 
-                ACTION ITEMS
-                - Gaurav: Send spot instance config doc by Thursday
-                - Alex: Lead capacity testing for the new cluster configurations
-                - Team: Prepare weekly consumption report with optimization impact overlay
+                ## Discussion Notes
+
+                ### What Went Well
+                - Delivered the new dashboard feature on time
+                - Code review turnaround improved to under 4 hours
+                - Zero production incidents this sprint
+
+                ### What Needs Improvement
+                - Deployment pipeline takes 45 minutes — needs optimization
+                - Test coverage dropped to 72% from 80%
+
+                ## Open Questions
+                - Should we switch to a different CI provider?
+                - Can we get budget for a staging environment?
                 """,
                 briefDecisions: [
-                    "Continue monitoring consumption post-optimization",
-                    "Document optimization methodology for reuse",
-                    "Present savings to client as trust-building exercise"
+                    "Dedicate 2 days to CI/CD improvements",
+                    "Move to trunk-based development",
+                    "Add automated regression tests"
                 ],
                 briefActionItems: [
-                    ActionItem(text: "Send spot instance config doc", owner: "Gaurav", dueDate: Calendar.current.date(byAdding: .day, value: 2, to: Date()), isMine: true),
-                    ActionItem(text: "Lead capacity testing for new cluster configurations", owner: "Alex"),
-                    ActionItem(text: "Prepare weekly consumption report", owner: "Team", isMine: true)
+                    ActionItem(text: "Set up automated deployment pipeline", owner: "Tom", dueDate: Calendar.current.date(byAdding: .day, value: 7, to: Date())),
+                    ActionItem(text: "Write regression test suite for API", owner: "Priya", isMine: true),
+                    ActionItem(text: "Document new branching strategy", owner: "James", dueDate: Calendar.current.date(byAdding: .day, value: 1, to: Date()), isMine: true)
                 ],
-                briefKeyTopics: ["Cost Optimization", "Spot Instances", "Cluster Configuration", "Consumption Metrics"],
-                briefKeyQuotes: [
-                    "Mitchell: We found $370K of annualized Databricks savings — that's credibility you can't buy."
-                ],
+                briefKeyTopics: ["Sprint Retro", "CI/CD", "Deployment", "Testing"],
                 createdAt: Date().addingTimeInterval(-86400)
             ),
 
             Meeting(
-                title: "Meijer BTEQ Migration — Technical Deep Dive",
+                title: "Client Discovery Call — Northwind",
                 date: Date().addingTimeInterval(-86400 * 2),
-                duration: 3600,
-                clientName: "Meijer",
+                duration: 3200,
+                clientName: "Northwind",
                 status: .complete,
                 template: .discovery,
                 briefSummary: """
-                MEETING TITLE
-                Meijer BTEQ Migration — Technical Architecture Review
+                # Client Discovery Call — Northwind Industries
 
-                EXECUTIVE SUMMARY
-                The team conducted a deep dive into Meijer's BTEQ to Databricks migration. DML operations dominate the current workload. The team discussed the profiling approach and identified key challenges around legacy mainframe COBOL applications that pump data directly into Teradata.
+                **Attendees:** **Mark** (Sales), **You** (Solutions), **Rachel** (Northwind CTO)
+                **Type:** Discovery Call
 
-                KEY DISCUSSION POINTS
+                ---
 
-                Current State Analysis
-                Meijer's Teradata environment is heavily dependent on BTEQ scripts with complex DML operations. The inventory analysis shows significant technical debt accumulated over 20 years of incremental changes.
+                ## Summary
+                Northwind Industries is looking to modernize their data infrastructure. They currently run on legacy systems and need a migration plan. **Rachel** expressed urgency — their current vendor contract expires in 6 months. Budget is approved for up to $500K.
 
-                Migration Challenges
-                Adam Fenton from Meijer highlighted that critical business logic sits in COBOL applications on the mainframe, pumping data directly into Teradata. This adds complexity beyond what was initially scoped.
+                ## Key Decisions
+                - **Proceed with a 2-week assessment** — agreed by **Rachel**
+                - **Start with data audit** before proposing architecture
+                - **Schedule follow-up for next Tuesday** with their VP of Engineering
 
-                KEY DECISIONS
-                1. Prioritize DML-heavy operations for first migration wave
-                2. COBOL dependency analysis required before committing to timeline
-                3. Profile analyzer deployment must happen before detailed planning
+                ## Action Items
+                | Task | Owner | Due | Priority |
+                |------|-------|-----|----------|
+                | Send assessment proposal and SOW | **Mark** | Tomorrow | High |
+                | Prepare technical questionnaire | **You** | This week | High |
+                | Share case studies from similar migrations | **You** | Friday | Medium |
 
-                ACTION ITEMS
-                - Gaurav: Complete inventory analysis of remaining BTEQ scripts
-                - Pankaj: Set up profile analyzer in Meijer's environment
-                - Team: Document COBOL-to-Teradata data flows for impact assessment
+                ## Discussion Notes
+
+                ### Current Pain Points
+                - Legacy system crashes 2-3 times per month
+                - Data reports take 4+ hours to generate
+                - No real-time analytics capability
+                - **Rachel** mentioned they lost a major deal because they couldn't provide data fast enough
+
+                ### Requirements
+                - Real-time dashboards for executive team
+                - Sub-second query performance
+                - Integration with their existing Salesforce instance
+
+                ## Open Questions
+                - What's their data volume? Need exact numbers.
+                - Who are the key stakeholders for sign-off?
+                - Are there compliance requirements we need to address?
                 """,
                 briefDecisions: [
-                    "Prioritize DML-heavy operations for first migration wave",
-                    "COBOL dependency analysis required before timeline commitment",
-                    "Profile analyzer deployment must precede detailed planning"
+                    "Proceed with 2-week technical assessment",
+                    "Start with data audit before architecture proposal",
+                    "Follow-up meeting next Tuesday with VP Engineering"
                 ],
                 briefActionItems: [
-                    ActionItem(text: "Complete inventory analysis of remaining BTEQ scripts", owner: "Gaurav", isMine: true),
-                    ActionItem(text: "Set up profile analyzer in Meijer environment", owner: "Pankaj"),
-                    ActionItem(text: "Document COBOL-to-Teradata data flows", owner: "Team", isMine: true)
+                    ActionItem(text: "Send assessment proposal and SOW", owner: "Mark", dueDate: Calendar.current.date(byAdding: .day, value: 1, to: Date())),
+                    ActionItem(text: "Prepare technical questionnaire for Northwind", owner: "You", isMine: true),
+                    ActionItem(text: "Share case studies from similar migrations", owner: "You", dueDate: Calendar.current.date(byAdding: .day, value: 3, to: Date()), isMine: true)
                 ],
-                briefKeyTopics: ["BTEQ Migration", "Teradata", "COBOL", "Profile Analyzer", "DML Operations"],
+                briefKeyTopics: ["Discovery", "Data Migration", "Client Requirements", "Legacy Modernization"],
+                briefKeyQuotes: [
+                    "Rachel: We lost a major deal because we couldn't pull the data fast enough. That can't happen again."
+                ],
+                rawTranscript: "Mark: Thanks for joining, Rachel. We're excited to learn more about what Northwind needs...",
                 createdAt: Date().addingTimeInterval(-86400 * 2)
             ),
 
             Meeting(
-                title: "Weekly 1:1 — Career Growth Discussion",
+                title: "Weekly 1:1 — Career Development",
                 date: Date().addingTimeInterval(-86400 * 3),
                 duration: 1800,
                 status: .complete,
                 template: .oneOnOne,
                 briefSummary: """
-                MEETING TITLE
-                Weekly 1:1 with David — Career Growth and Project Updates
+                # Weekly 1:1 — Career Development
 
-                EXECUTIVE SUMMARY
-                A productive 1:1 covering project updates and career development. David shared positive feedback from client meetings and discussed plans for team expansion. The conversation also covered professional development goals for the next quarter.
+                **Attendees:** **You**, **David** (Manager)
+                **Type:** 1:1
 
-                KEY DISCUSSION POINTS
+                ---
 
-                Project Updates
-                All current projects are on track. The Meyer POC is progressing well despite table access delays. The Databricks optimization work received positive client feedback.
+                ## Summary
+                Productive 1:1 covering project updates and career goals. **David** shared positive feedback from the leadership team. Discussed plans for taking on more client-facing responsibilities and pursuing a certification.
 
-                Career Development
-                Discussed goals for the next quarter including taking on more client-facing leadership roles and potentially mentoring new team members. David encouraged pursuing the Databricks certification.
+                ## Key Decisions
+                - **Take lead on next client presentation** — you volunteered
+                - **Start certification preparation** this month
+                - **Mentor a new team member** joining next week
 
-                KEY DECISIONS
-                1. Take lead on the next client presentation
-                2. Start Databricks certification preparation
-                3. Mentor Sakshi during her onboarding
-
-                ACTION ITEMS
-                - Gaurav: Register for Databricks Data Engineer certification
-                - Gaurav: Prepare outline for Meyer client presentation
-                - David: Share the Gantt chart draft for review
+                ## Action Items
+                | Task | Owner | Due | Priority |
+                |------|-------|-----|----------|
+                | Register for Data Engineering certification | **You** | This week | Medium |
+                | Prepare outline for client presentation | **You** | Next Monday | High |
+                | Share the project Gantt chart draft | **David** | Friday | Medium |
                 """,
                 briefDecisions: [
                     "Take lead on next client presentation",
-                    "Start Databricks certification preparation",
-                    "Mentor Sakshi during onboarding"
+                    "Start certification preparation this month",
+                    "Mentor new team member"
                 ],
                 briefActionItems: [
-                    ActionItem(text: "Register for Databricks Data Engineer certification", owner: "Gaurav", dueDate: Calendar.current.date(byAdding: .day, value: 7, to: Date()), isMine: true),
-                    ActionItem(text: "Prepare outline for Meyer client presentation", owner: "Gaurav", isMine: true),
-                    ActionItem(text: "Share Gantt chart draft for review", owner: "David")
+                    ActionItem(text: "Register for Data Engineering certification", owner: "You", dueDate: Calendar.current.date(byAdding: .day, value: 5, to: Date()), isMine: true),
+                    ActionItem(text: "Prepare outline for client presentation", owner: "You", isMine: true),
+                    ActionItem(text: "Share project Gantt chart draft", owner: "David")
                 ],
-                briefKeyTopics: ["Career Growth", "Databricks Certification", "Team Expansion", "Client Leadership"],
+                briefKeyTopics: ["Career Growth", "Certification", "Team Leadership", "Client Presentations"],
                 createdAt: Date().addingTimeInterval(-86400 * 3)
             ),
 
             Meeting(
-                title: "Data Science Hackathon Planning",
+                title: "Team Brainstorm — New Feature Ideas",
                 date: Date().addingTimeInterval(-86400 * 5),
-                duration: 2100,
-                clientName: "Databricks",
+                duration: 2400,
                 status: .complete,
                 template: .brainstorm,
                 briefSummary: """
-                MEETING TITLE
-                Data Science Hackathon Planning — Office Hours and Submission Requirements
+                # Team Brainstorm — New Feature Ideas for Q4
 
-                EXECUTIVE SUMMARY
-                Mitchell is hosting 10 hours of office hours for an upcoming data science hackathon at the client site. A key requirement for hackathon submission is meeting with Mitchell first, which demonstrates the strength of the Databricks partnership. The team discussed logistics, judging criteria, and how to maximize the hackathon's impact.
+                **Attendees:** **You**, **Priya**, **Tom**, **Lisa**
+                **Type:** Brainstorm
 
-                KEY DISCUSSION POINTS
+                ---
 
-                Hackathon Structure
-                The hackathon is next week with 10 hours of office hours on Mitchell's calendar. The requirement to meet with Mitchell before submitting is unusual and shows deep client trust.
+                ## Summary
+                The team brainstormed ideas for Q4 features. Top ideas included AI-powered search, a mobile notifications revamp, and a customer health dashboard. The team voted and agreed to prioritize AI search and the notification system.
 
-                Judging Criteria
-                Projects will be evaluated on innovation, technical implementation, business impact, and presentation quality. Teams must use Databricks platform features.
+                ## Key Decisions
+                - **AI-powered search is the #1 priority** — unanimous vote
+                - **Notification revamp as #2** — critical for user retention
+                - **Customer health dashboard moved to Q1** — nice-to-have but not urgent
 
-                KEY DECISIONS
-                1. Mitchell to host all 10 hours of office hours
-                2. Focus office hours on helping teams leverage advanced Databricks features
-                3. Document successful patterns for future hackathons
+                ## Action Items
+                | Task | Owner | Due | Priority |
+                |------|-------|-----|----------|
+                | Write PRD for AI search feature | **You** | Next week | High |
+                | Research notification frameworks | **Tom** | This week | Medium |
+                | Create mockups for search UI | **Lisa** | Next Friday | Medium |
+                | Set up demo environment for prototyping | **Priya** | This week | Medium |
 
-                ACTION ITEMS
-                - Mitchell: Prepare office hours agenda and example notebooks
-                - Gaurav: Create a quick-start guide for common Databricks patterns
-                - Team: Set up demo environment for hackathon participants
+                ## Discussion Notes
+
+                ### Ideas Generated
+                - AI-powered semantic search across all content
+                - Push notification overhaul with smart grouping
+                - Customer health score dashboard
+                - Automated weekly digest emails
+                - Voice command integration
+
+                ### Voting Results
+                - AI Search: 4 votes (unanimous)
+                - Notifications: 3 votes
+                - Health Dashboard: 2 votes
+                - Digest Emails: 1 vote
+
+                ## Open Questions
+                - Which AI model should we use for search?
+                - Do we need a dedicated ML engineer?
                 """,
                 briefDecisions: [
-                    "Mitchell to host all 10 hours of office hours",
-                    "Focus on helping teams leverage advanced Databricks features",
-                    "Document successful patterns for future hackathons"
+                    "AI-powered search is #1 priority for Q4",
+                    "Notification revamp as #2 priority",
+                    "Customer health dashboard moved to Q1"
                 ],
                 briefActionItems: [
-                    ActionItem(text: "Create quick-start guide for common Databricks patterns", owner: "Gaurav", isMine: true),
-                    ActionItem(text: "Set up demo environment for hackathon participants", owner: "Team", isMine: true),
-                    ActionItem(text: "Prepare office hours agenda and example notebooks", owner: "Mitchell")
+                    ActionItem(text: "Write PRD for AI search feature", owner: "You", isMine: true),
+                    ActionItem(text: "Research notification frameworks", owner: "Tom"),
+                    ActionItem(text: "Create mockups for search UI", owner: "Lisa"),
+                    ActionItem(text: "Set up demo environment for prototyping", owner: "Priya")
                 ],
-                briefKeyTopics: ["Hackathon", "Data Science", "Office Hours", "Databricks Platform"],
+                briefKeyTopics: ["Brainstorm", "AI Search", "Q4 Planning", "Feature Prioritization"],
                 briefKeyQuotes: [
-                    "Mitchell: How often does a company say go talk to the vendor before you participate? That's super cool."
+                    "Lisa: If we nail the search experience, everything else becomes easier to find.",
+                    "Tom: Notifications are broken — users are muting us. We need to fix this."
                 ],
                 createdAt: Date().addingTimeInterval(-86400 * 5)
             )

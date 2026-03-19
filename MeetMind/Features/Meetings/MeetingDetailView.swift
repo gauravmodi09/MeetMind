@@ -57,7 +57,7 @@ struct MeetingDetailView: View {
                         .offset(y: sectionsAppeared ? 0 : 16)
                         .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.0), value: sectionsAppeared)
 
-                    // TL;DR Card
+                    // Summary Card
                     if let summary = meeting.briefSummary, let tldr = extractTLDR(from: summary) {
                         tldrCard(tldr)
                             .opacity(sectionsAppeared ? 1 : 0)
@@ -333,7 +333,7 @@ struct MeetingDetailView: View {
         .padding(.horizontal, 16)
     }
 
-    // MARK: - TL;DR Card
+    // MARK: - Summary Card
 
     private func tldrCard(_ tldr: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -342,7 +342,7 @@ struct MeetingDetailView: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(MMColors.warning)
 
-                Text("TL;DR")
+                Text("Summary")
                     .font(MMTypography.headline)
                     .foregroundColor(MMColors.warning)
             }
@@ -396,7 +396,7 @@ struct MeetingDetailView: View {
         .padding(.horizontal, 16)
     }
 
-    // MARK: - Extract TL;DR
+    // MARK: - Extract Summary
 
     private func extractTLDR(from summary: String) -> String? {
         let lines = summary.components(separatedBy: "\n")
@@ -404,7 +404,7 @@ struct MeetingDetailView: View {
         var tldr = ""
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("## TL;DR") || trimmed.hasPrefix("## TLDR") {
+            if trimmed.hasPrefix("## Summary") || trimmed.hasPrefix("## Summary") {
                 capturing = true
                 continue
             }
@@ -963,7 +963,7 @@ struct MeetingDetailView: View {
 
         if let summary = meeting.briefSummary {
             if let tldr = extractTLDR(from: summary) {
-                text += "TL;DR: \(tldr)\n\n"
+                text += "Summary: \(tldr)\n\n"
             }
         }
 
