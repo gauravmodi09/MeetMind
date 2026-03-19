@@ -6,6 +6,7 @@ struct MeetingDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showTranscript = false
     @State private var copiedBrief = false
+    @State private var copiedNotion = false
     @State private var completedItems: Set<UUID> = []
     @State private var showShareSheet = false
     @State private var showFollowUpEmail = false
@@ -146,6 +147,14 @@ struct MeetingDetailView: View {
 
                             MMButton("Communication Coach", icon: "figure.mind.and.body", style: .secondary) {
                                 showCoaching = true
+                            }
+
+                            MMButton("Email Notes", icon: "envelope.fill", style: .secondary) {
+                                emailMeetingNotes()
+                            }
+
+                            MMButton(copiedNotion ? "Copied for Notion!" : "Copy for Notion", icon: "doc.on.clipboard", style: .ghost) {
+                                copyForNotion()
                             }
                         }
                         .padding(.horizontal, 16)
@@ -906,10 +915,77 @@ struct MeetingDetailView: View {
         showShareSheet = true
     }
 
+    private func emailMeetingNotes() {
+        let subject = meeting.title
+        var body = MeetingBriefFormatter.format(meeting: meeting)
+        body = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        if let url = URL(string: "mailto:?subject=\(encodedSubject)&body=\(body)") {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    private func copyForNotion() {
+        var text = "# \(meeting.title)\n\n"
+        text += "**Date:** \(formattedDate) | **Duration:** \(formattedDuration)\n"
+        if let client = meeting.clientName { text += "**Client:** \(client)\n" }
+        text += "\n---\n\n"
+
+        if let summary = meeting.briefSummary {
+            text += summary + "\n\n"
+        }
+
+        if !meeting.briefDecisions.isEmpty {
+            text += "## Decisions\n\n"
+            for d in meeting.briefDecisions { text += "- \(d)\n" }
+            text += "\n"
+        }
+
+        if !meeting.briefActionItems.isEmpty {
+            text += "## Action Items\n\n"
+            for item in meeting.briefActionItems {
+                let checkbox = item.isMine ? "- [ ] **\(item.text)** → \(item.owner) 🔴" : "- [ ] \(item.text) → \(item.owner)"
+                text += "\(checkbox)\n"
+            }
+            text += "\n"
+        }
+
+        UIPasteboard.general.string = text
+        copiedNotion = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            copiedNotion = false
+        }
+    }
+
     private var shareItems: [Any] {
-        let brief = MeetingBriefFormatter.format(meeting: meeting)
+        var text = "\u{1F4CB} \(meeting.title)\n"
+        text += "\u{1F4C5} \(formattedDate) \u{00B7} \(formattedDuration)\n\n"
+
+        if let summary = meeting.briefSummary {
+            if let tldr = extractTLDR(from: summary) {
+                text += "TL;DR: \(tldr)\n\n"
+            }
+        }
+
+        if !meeting.briefDecisions.isEmpty {
+            text += "Key Decisions:\n"
+            for d in meeting.briefDecisions { text += "\u{2022} \(d)\n" }
+            text += "\n"
+        }
+
+        if !meeting.briefActionItems.isEmpty {
+            text += "Action Items:\n"
+            for item in meeting.briefActionItems {
+                let mine = item.isMine ? " [YOU]" : ""
+                text += "\u{2022} \(item.text) \u{2192} \(item.owner)\(mine)\n"
+            }
+            text += "\n"
+        }
+
+        text += "\u{2014} Shared from MeetMind"
+
         let textFileItem = MeetingBriefTextFileItem(
-            briefText: brief,
+            briefText: text,
             meetingTitle: meeting.title
         )
         return [textFileItem]
