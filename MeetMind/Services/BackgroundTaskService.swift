@@ -104,7 +104,7 @@ class BackgroundTaskService {
             guard FileManager.default.fileExists(atPath: item.audioURL.path) else {
                 print("[BackgroundTask] Audio file missing, removing from queue: \(item.audioURL.lastPathComponent)")
                 await MainActor.run {
-                    OfflineQueueService.shared.removeItem(id: item.id)
+                    OfflineQueueService.shared.removeItem(meetingId: item.meetingId)
                 }
                 continue
             }
@@ -112,11 +112,11 @@ class BackgroundTaskService {
             do {
                 // Process through the full pipeline (compress -> transcribe -> structure)
                 let p = await MainActor.run { MeetingPipeline() }
-                let brief = try await p.process(audioURL: item.audioURL, userNotes: item.userNotes)
+                let brief = try await p.process(audioURL: item.audioURL, userNotes: nil)
 
                 // Remove successfully processed item from queue
                 await MainActor.run {
-                    OfflineQueueService.shared.removeItem(id: item.id)
+                    OfflineQueueService.shared.removeItem(meetingId: item.meetingId)
                 }
 
                 print("[BackgroundTask] Processed: \(item.audioURL.lastPathComponent) -> \(brief.title)")

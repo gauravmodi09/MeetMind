@@ -45,11 +45,6 @@ class MeetingService: ObservableObject {
         }
 
         loadMeetings()
-
-        // Seed sample meetings if empty
-        if meetings.isEmpty {
-            seedSampleMeetings()
-        }
     }
 
     // MARK: - Sample Data
@@ -64,49 +59,56 @@ class MeetingService: ObservableObject {
                 status: .complete,
                 template: .salesCall,
                 briefSummary: """
-                MEETING TITLE
-                Strategic Planning for Meyer Account: POC Readout, Transformation Roadmap, and Technical Challenges
+                # Strategic Planning for Meyer Account: POC Readout and Transformation Roadmap
 
-                EXECUTIVE SUMMARY
-                Mitchell (Databricks) and Gaurav (Celebal) discussed the Meyer account's progress and future direction. The meeting covered overwhelmingly positive client feedback from Maju, who intends to expand the Celebal team with 6 additional engineers. Key topics included the status of the ongoing Metrics View Proof of Concept, challenges with Meyer's existing Azure Analysis Services models, and the need for a long-term transformation roadmap. The team decided on an immediate plan to create a summary presentation for internal stakeholders and a longer-term strategy to jointly develop a two-year transformation plan.
+                **Attendees:** **Mitchell** (Databricks), **Gaurav** (Celebal)
+                **Type:** Sales Call
 
-                STRATEGIC DIRECTION
-                - Shift from Re-platforming to Redesign: The core strategic theme is moving beyond a simple lift and shift migration. Both participants agreed that to build a proper foundation for the future, Meyer needs a comprehensive redesign of its data architecture.
-                - Two-Year Transformation Roadmap: Maju has requested a two-year transformation roadmap to guide Meyer's migration from Teradata to a modern data stack.
-                - Data-Driven Planning: Mitchell emphasized that significant effort on the transformation roadmap should be deferred until the data from the Teradata profile analyzer is available.
+                ---
 
-                KEY DISCUSSION POINTS
+                ## TL;DR
+                **Maju** wants to expand the Celebal team with 6 more engineers. The Metrics View POC is progressing well but blocked on table access. Team agreed on a hybrid approach — keep UI filters in Power BI while migrating core transformations to Databricks. Final POC readout targeted for week of **March 26th**.
 
-                POC Progress
-                Gaurav provided a detailed update from his call with Maju. Successfully converted many measures into Metric Views. The team is stuck waiting for access to 4-5 more tables, which has stalled progress for over a week. Testing uses sample data which often results in zero records after filters are applied.
+                ## Key Decisions
+                - **Adopt hybrid POC approach** — decided by **Mitchell** and **Gaurav**. Keep presentation-layer logic in Power BI, core metrics in Databricks.
+                - **Use self-service workspace for testing** — decided by **Gaurav**. Bypass production deployment bottleneck.
+                - **Target POC readout for March 26th** — pending resolution of table access blocker.
 
-                Technical Debt in AAS
-                Gaurav was transparent with Maju about the poor design and multi-level dependencies in Meyer's existing AAS models. Maju acknowledged and agreed with this assessment. Mitchell expressed enthusiasm about being able to blame AAS for the issues.
+                ## Action Items
+                | Task | Owner | Due | Priority |
+                |------|-------|-----|----------|
+                | Create summary presentation for David | **Gaurav** | Tomorrow | High |
+                | Talk to Pankaj about self-service workspace | **Gaurav** | This week | High |
+                | Send self-service workspace role name | **Mitchell** | This week | Medium |
+                | Follow up on remaining table access | **Gaurav** | ASAP | High |
+                | Schedule whiteboarding session | **Mitchell** | Next week | Medium |
 
-                Presentation Planning
-                The team agreed on key messages for the final POC readout. Gaurav has already started creating a presentation with GenSpark and will own the development of the final slide deck.
+                ## Discussion Notes
 
-                BLOCKERS
-                - Table Access: The primary blocker is lack of access to 4-5 remaining tables, preventing completion of development and testing
-                - Production Push Process: The formal CRQ process creates a multi-day drag for production deployments
+                ### POC Progress and Client Feedback
+                - **Maju** gave overwhelmingly positive feedback and wants to expand Celebal team with **6 additional engineers**
+                - Successfully converted many measures into Metric Views
+                - Stuck waiting for access to **4-5 more tables** — stalled for over a week
+                - Testing uses sample data which often results in zero records after filters
 
-                RISKS
-                - Massive technical debt across Meyer's systems including poorly designed AAS models
-                - Legacy COBOL applications on mainframe pumping data directly into Teradata
-                - Unknown migration scope without profile analyzer data from Teradata
+                ### Technical Debt in AAS Models
+                - **Gaurav** was transparent with **Maju** about poor design in existing AAS models
+                - Multi-level dependencies creating complexity
+                - **Maju** acknowledged and agreed with the assessment
 
-                KEY DECISIONS
-                1. Adopt a hybrid POC approach keeping UI filters in Power BI while migrating core transformations to Databricks
-                2. Use self-service workspace for testing to bypass production deployment bottleneck
-                3. Target final POC readout for week of March 26th
-                4. Gaurav to own the summary presentation development
+                ### Presentation Planning
+                - **Gaurav** to create summary presentation using GenSpark
+                - Key messages: POC successful, AAS issues uncovered, hybrid model recommended
 
-                ACTION ITEMS
-                - Gaurav: Create summary presentation with key talking points for David by tomorrow
-                - Gaurav: Talk to Pankaj about self-service workspace access
-                - Mitchell: Send self-service workspace role name to Gaurav
-                - Gaurav: Follow up proactively on remaining table access
-                - Mitchell: Schedule in-person whiteboarding session for transformation roadmap
+                ## Open Questions
+                - What is the full scope of Teradata migration without profile analyzer data?
+                - How will COBOL mainframe applications be handled in the migration?
+                - When will the remaining 4-5 tables be accessible?
+
+                ## Blockers & Risks
+                - **Table Access**: Primary blocker — 4-5 remaining tables needed to complete development
+                - **Production Push Process**: Formal CRQ process creates multi-day deployment delays
+                - **Legacy Tech Debt**: COBOL applications on mainframe pumping data directly into Teradata
                 """,
                 briefDecisions: [
                     "Adopt hybrid POC approach — keep UI filters in Power BI, core metrics in Databricks",
@@ -400,7 +402,8 @@ class MeetingService: ObservableObject {
 
             // Update meeting with brief results
             meeting.status = .complete
-            meeting.title = brief.title
+            // Prefer the # title from the markdown summary (more descriptive than JSON extraction)
+            meeting.title = extractMarkdownTitle(from: brief.summary) ?? brief.title
             meeting.briefSummary = brief.summary
             meeting.briefDecisions = brief.decisions
             meeting.briefKeyTopics = brief.keyTopics
@@ -421,6 +424,17 @@ class MeetingService: ObservableObject {
 
             // Schedule follow-up reminders for my action items with due dates
             scheduleActionItemReminders(items: actionItems, meetingTitle: meeting.title)
+
+            // Auto-delete audio if setting is enabled
+            if UserDefaults.standard.bool(forKey: "autoDeleteAudioAfterProcessing") {
+                if let path = meeting.audioFilePath {
+                    let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    let fileURL = docsURL.appendingPathComponent(URL(fileURLWithPath: path).lastPathComponent)
+                    try? FileManager.default.removeItem(at: fileURL)
+                    meeting.audioFilePath = nil
+                    print("[MeetingService] Auto-deleted audio: \(fileURL.lastPathComponent)")
+                }
+            }
 
             updateMeetingInCoreData(meeting)
             loadMeetings()
@@ -443,6 +457,80 @@ class MeetingService: ObservableObject {
             try? FileManager.default.removeItem(at: url)
         }
         currentRecording = nil
+    }
+
+    /// Reprocess a failed meeting — retries the entire AI pipeline from the existing audio file.
+    func reprocessMeeting(_ meeting: Meeting) async {
+        guard meeting.status == .failed, let path = meeting.audioFilePath else {
+            print("[MeetingService] Cannot reprocess: status=\(meeting.status.rawValue), audioPath=\(meeting.audioFilePath ?? "nil")")
+            return
+        }
+
+        // Find the audio file
+        let audioURL: URL
+        let fullPathURL = URL(fileURLWithPath: path)
+        if FileManager.default.fileExists(atPath: fullPathURL.path) {
+            audioURL = fullPathURL
+        } else {
+            let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let docsURL = docs.appendingPathComponent(fullPathURL.lastPathComponent)
+            if FileManager.default.fileExists(atPath: docsURL.path) {
+                audioURL = docsURL
+            } else {
+                print("[MeetingService] Audio file not found for reprocessing")
+                return
+            }
+        }
+
+        var updatedMeeting = meeting
+        updatedMeeting.status = .processing
+        updateMeetingInCoreData(updatedMeeting)
+        loadMeetings()
+
+        do {
+            print("[MeetingService] Reprocessing: \(meeting.title)...")
+            let brief = try await pipeline.process(
+                audioURL: audioURL,
+                userNotes: meeting.userNotes,
+                template: meeting.template
+            )
+
+            updatedMeeting.status = .complete
+            updatedMeeting.title = extractMarkdownTitle(from: brief.summary) ?? brief.title
+            updatedMeeting.briefSummary = brief.summary
+            updatedMeeting.briefDecisions = brief.decisions
+            updatedMeeting.briefKeyTopics = brief.keyTopics
+            updatedMeeting.clientName = brief.clientName
+            updatedMeeting.briefKeyQuotes = brief.keyQuotes ?? []
+            updatedMeeting.rawTranscript = pipeline.lastRawTranscript
+
+            let actionItems: [ActionItem] = brief.actionItems.map { item in
+                ActionItem(text: item.text, owner: item.owner, dueDate: parseDateString(item.due), isMine: item.isMine)
+            }
+            updatedMeeting.briefActionItems = actionItems
+
+            // Auto-delete audio if setting is enabled
+            if UserDefaults.standard.bool(forKey: "autoDeleteAudioAfterProcessing") {
+                if let path = updatedMeeting.audioFilePath {
+                    let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    let fileURL = docsURL.appendingPathComponent(URL(fileURLWithPath: path).lastPathComponent)
+                    try? FileManager.default.removeItem(at: fileURL)
+                    updatedMeeting.audioFilePath = nil
+                    print("[MeetingService] Auto-deleted audio: \(fileURL.lastPathComponent)")
+                }
+            }
+
+            updateMeetingInCoreData(updatedMeeting)
+            loadMeetings()
+            sendBriefReadyNotification(meeting: updatedMeeting)
+        } catch {
+            updatedMeeting.status = .failed
+            updateMeetingInCoreData(updatedMeeting)
+            loadMeetings()
+            print("[MeetingService] Reprocessing FAILED: \(error)")
+        }
+
+        pipeline.reset()
     }
 
     // MARK: - CRUD
@@ -794,6 +882,22 @@ class MeetingService: ObservableObject {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: string)
+    }
+
+    /// Extracts the # title from markdown summary (first line starting with "# ")
+    private func extractMarkdownTitle(from summary: String) -> String? {
+        let lines = summary.components(separatedBy: "\n")
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("# ") && !trimmed.hasPrefix("## ") {
+                let title = trimmed.replacingOccurrences(of: "# ", with: "")
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                if !title.isEmpty && title.count > 5 {
+                    return title
+                }
+            }
+        }
+        return nil
     }
 
     private func formattedDate(_ date: Date) -> String {

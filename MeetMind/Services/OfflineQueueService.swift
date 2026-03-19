@@ -2,19 +2,23 @@ import Foundation
 import Network
 import Combine
 
-// MARK: - Queued Recording Item
+// MARK: - Queued Meeting Item
 
-struct QueuedRecording: Codable, Identifiable {
+struct QueuedMeeting: Codable, Identifiable {
     let id: UUID
-    let audioURL: URL
-    let userNotes: String?
+    let meetingId: UUID
+    let audioPath: String
     let enqueuedAt: Date
 
-    init(audioURL: URL, userNotes: String?) {
+    init(meetingId: UUID, audioURL: URL) {
         self.id = UUID()
-        self.audioURL = audioURL
-        self.userNotes = userNotes
+        self.meetingId = meetingId
+        self.audioPath = audioURL.path
         self.enqueuedAt = Date()
+    }
+
+    var audioURL: URL {
+        URL(fileURLWithPath: audioPath)
     }
 }
 
@@ -24,19 +28,23 @@ struct QueuedRecording: Codable, Identifiable {
 class OfflineQueueService: ObservableObject {
     static let shared = OfflineQueueService()
 
+    // MARK: - Published State
+
     @Published var isOnline: Bool = true
     @Published var queuedCount: Int = 0
     @Published var isProcessingQueue: Bool = false
 
+    // MARK: - Private
+
     private let monitor = NWPathMonitor()
     private let monitorQueue = DispatchQueue(label: "com.meetmind.networkmonitor")
     private let queueKey = "meetmind_offline_queue"
-    private let maxQueueSize = 10
-
     private var cancellables = Set<AnyCancellable>()
 
+    // MARK: - Init
+
     private init() {
-        queuedCount = getQueuedItems().count
+        queuedCount = loadQueue().count
         startMonitoring()
     }
 
@@ -53,8 +61,10 @@ class OfflineQueueService: ObservableObject {
                 let wasOffline = !self.isOnline
                 self.isOnline = path.status == .satisfied
 
-                // When connectivity returns, process the queue
-                if wasOffline && self.isOnline {
+                print("[OfflineQueue] Network status: \(self.isOnline ? "online" : "offline")")
+
+                // When connectivity returns, automatically process the queue
+                if wasOffline && self.isOnline && self.queuedCount > 0 {
                     await self.processQueue()
                 }
             }
@@ -62,31 +72,28 @@ class OfflineQueueService: ObservableObject {
         monitor.start(queue: monitorQueue)
     }
 
-    // MARK: - Enqueue Recording
+    // MARK: - Enqueue
 
-    /// Adds a recording to the offline queue for later processing.
-    /// Returns `true` if the item was enqueued, `false` if the queue is full.
-    @discardableResult
-    func enqueueRecording(audioURL: URL, userNotes: String?) -> Bool {
-        var items = getQueuedItems()
-
-        guard items.count < maxQueueSize else {
-            print("[OfflineQueue] Queue is full (\(maxQueueSize) items). Cannot enqueue.")
-            return false
+    /// Adds a meeting to the offline queue for processing when connectivity returns.
+    func enqueue(meetingId: UUID, audioURL: URL) {
+        var items = loadQueue()
+        // Don't double-enqueue the same meeting
+        guard !items.contains(where: { $0.meetingId == meetingId }) else {
+            print("[OfflineQueue] Meeting \(meetingId) already in queue. Skipping.")
+            return
         }
 
-        let item = QueuedRecording(audioURL: audioURL, userNotes: userNotes)
+        let item = QueuedMeeting(meetingId: meetingId, audioURL: audioURL)
         items.append(item)
         saveQueue(items)
         queuedCount = items.count
 
-        print("[OfflineQueue] Enqueued recording: \(audioURL.lastPathComponent). Queue size: \(items.count)")
-        return true
+        print("[OfflineQueue] Enqueued meeting \(meetingId). Queue size: \(items.count)")
     }
 
     // MARK: - Process Queue
 
-    /// Processes queued recordings one by one when connectivity is available.
+    /// Processes all queued meetings sequentially. Called automatically when network returns.
     func processQueue() async {
         guard isOnline else {
             print("[OfflineQueue] Still offline. Skipping queue processing.")
@@ -101,56 +108,66 @@ class OfflineQueueService: ObservableObject {
         isProcessingQueue = true
         defer { isProcessingQueue = false }
 
-        var items = getQueuedItems()
+        var items = loadQueue()
 
         while !items.isEmpty && isOnline {
             let item = items[0]
-            print("[OfflineQueue] Processing: \(item.audioURL.lastPathComponent)")
+            print("[OfflineQueue] Processing queued meeting: \(item.meetingId)")
 
-            do {
-                try await uploadRecording(item)
-                // Remove the successfully processed item
+            // Verify audio file still exists
+            guard FileManager.default.fileExists(atPath: item.audioPath) else {
+                print("[OfflineQueue] Audio file missing: \(item.audioPath). Removing from queue.")
                 items.removeFirst()
                 saveQueue(items)
                 queuedCount = items.count
-                print("[OfflineQueue] Successfully processed. Remaining: \(items.count)")
-            } catch {
-                print("[OfflineQueue] Failed to process \(item.audioURL.lastPathComponent): \(error.localizedDescription)")
-                // Stop processing on failure; will retry when connectivity changes
-                break
+                continue
             }
+
+            // Post notification so MeetingService can run the pipeline
+            NotificationCenter.default.post(
+                name: .offlineQueueItemReady,
+                object: nil,
+                userInfo: [
+                    "meetingId": item.meetingId,
+                    "audioURL": item.audioURL
+                ]
+            )
+
+            // Small delay to let the pipeline pick up the item
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+
+            // Remove the item from queue (pipeline handles success/failure)
+            items.removeFirst()
+            saveQueue(items)
+            queuedCount = items.count
+
+            // Post completion notification
+            NotificationCenter.default.post(
+                name: .offlineQueueItemCompleted,
+                object: nil,
+                userInfo: ["meetingId": item.meetingId]
+            )
+
+            print("[OfflineQueue] Dequeued meeting \(item.meetingId). Remaining: \(items.count)")
         }
 
         if items.isEmpty {
-            print("[OfflineQueue] Queue is empty. All items processed.")
+            print("[OfflineQueue] Queue fully processed.")
         }
     }
 
-    // MARK: - Get Queued Items
+    // MARK: - Queue Management
 
-    func getQueuedItems() -> [QueuedRecording] {
-        guard let data = UserDefaults.standard.data(forKey: queueKey) else {
-            return []
-        }
-
-        do {
-            return try JSONDecoder().decode([QueuedRecording].self, from: data)
-        } catch {
-            print("[OfflineQueue] Failed to decode queue: \(error.localizedDescription)")
-            return []
-        }
+    func getQueuedItems() -> [QueuedMeeting] {
+        loadQueue()
     }
 
-    // MARK: - Remove Item
-
-    func removeItem(id: UUID) {
-        var items = getQueuedItems()
-        items.removeAll { $0.id == id }
+    func removeItem(meetingId: UUID) {
+        var items = loadQueue()
+        items.removeAll { $0.meetingId == meetingId }
         saveQueue(items)
         queuedCount = items.count
     }
-
-    // MARK: - Clear Queue
 
     func clearQueue() {
         saveQueue([])
@@ -158,9 +175,21 @@ class OfflineQueueService: ObservableObject {
         print("[OfflineQueue] Queue cleared.")
     }
 
-    // MARK: - Private Helpers
+    // MARK: - Persistence (UserDefaults JSON)
 
-    private func saveQueue(_ items: [QueuedRecording]) {
+    private func loadQueue() -> [QueuedMeeting] {
+        guard let data = UserDefaults.standard.data(forKey: queueKey) else {
+            return []
+        }
+        do {
+            return try JSONDecoder().decode([QueuedMeeting].self, from: data)
+        } catch {
+            print("[OfflineQueue] Failed to decode queue: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    private func saveQueue(_ items: [QueuedMeeting]) {
         do {
             let data = try JSONEncoder().encode(items)
             UserDefaults.standard.set(data, forKey: queueKey)
@@ -168,35 +197,11 @@ class OfflineQueueService: ObservableObject {
             print("[OfflineQueue] Failed to save queue: \(error.localizedDescription)")
         }
     }
-
-    /// Uploads a single recording to the backend.
-    /// This is a placeholder that integrates with the existing pipeline.
-    private func uploadRecording(_ item: QueuedRecording) async throws {
-        // Verify the audio file still exists on disk
-        guard FileManager.default.fileExists(atPath: item.audioURL.path) else {
-            print("[OfflineQueue] Audio file no longer exists: \(item.audioURL.path). Skipping.")
-            return
-        }
-
-        // TODO: Integrate with MeetingPipeline or GroqService to process the recording
-        // For now, post a notification so the app layer can handle the upload
-        NotificationCenter.default.post(
-            name: .offlineQueueItemReady,
-            object: nil,
-            userInfo: [
-                "audioURL": item.audioURL,
-                "userNotes": item.userNotes as Any,
-                "queuedItemId": item.id
-            ]
-        )
-
-        // Simulate processing delay to avoid overwhelming the server
-        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-    }
 }
 
 // MARK: - Notification Names
 
 extension Notification.Name {
     static let offlineQueueItemReady = Notification.Name("offlineQueueItemReady")
+    static let offlineQueueItemCompleted = Notification.Name("offlineQueueItemCompleted")
 }

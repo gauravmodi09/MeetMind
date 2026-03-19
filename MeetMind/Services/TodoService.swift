@@ -110,65 +110,8 @@ class TodoService: ObservableObject {
     // MARK: - Load / Seed
 
     func loadTodos() {
-        let now = Date()
-        let today = calendar.startOfDay(for: now)
-
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
-              let thursday = calendar.date(byAdding: .day, value: {
-                  // Find next Thursday
-                  let weekday = calendar.component(.weekday, from: today)
-                  let daysUntilThursday = (5 - weekday + 7) % 7
-                  return daysUntilThursday == 0 ? 7 : daysUntilThursday
-              }(), to: today),
-              let nextWeek = calendar.date(byAdding: .day, value: 7, to: today)
-        else { return }
-
-        let meetingId1 = UUID()
-        let meetingId2 = UUID()
-
-        todos = [
-            TodoItem(
-                title: "Send Databricks cost report to Maulik",
-                dueDate: calendar.date(bySettingHour: 14, minute: 0, second: 0, of: today) ?? today,
-                priority: .high,
-                clientTag: "Databricks",
-                source: .meeting,
-                sourceMeetingId: meetingId1
-            ),
-            TodoItem(
-                title: "Review Q3 launch matrix",
-                dueDate: calendar.date(bySettingHour: 17, minute: 0, second: 0, of: today) ?? today,
-                priority: .medium,
-                clientTag: "General",
-                source: .manual
-            ),
-            TodoItem(
-                title: "Schedule 1:1 with Alex",
-                dueDate: calendar.date(bySettingHour: 10, minute: 0, second: 0, of: tomorrow) ?? tomorrow,
-                priority: .medium,
-                source: .voice
-            ),
-            TodoItem(
-                title: "Prepare investor deck slides",
-                dueDate: calendar.date(bySettingHour: 12, minute: 0, second: 0, of: thursday) ?? thursday,
-                priority: .high,
-                source: .manual
-            ),
-            TodoItem(
-                title: "Follow up on Meijer BTEQ migration",
-                dueDate: calendar.date(bySettingHour: 11, minute: 0, second: 0, of: today) ?? today,
-                priority: .high,
-                clientTag: "Meijer",
-                source: .meeting,
-                sourceMeetingId: meetingId2
-            ),
-            TodoItem(
-                title: "Book flight to Chicago",
-                dueDate: calendar.date(bySettingHour: 9, minute: 0, second: 0, of: nextWeek) ?? nextWeek,
-                priority: .low,
-                source: .voice
-            )
-        ]
+        // Start empty — no sample data
+        todos = []
     }
 
     // MARK: - Filtered Views

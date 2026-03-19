@@ -10,17 +10,59 @@ struct MeetingDetailView: View {
     @State private var showShareSheet = false
     @State private var showFollowUpEmail = false
     @State private var showMeetingChat = false
+    @State private var showCoaching = false
     @State private var sectionsAppeared = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    // Failed state — retry banner
+                    if meeting.status == .failed {
+                        VStack(spacing: 12) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .foregroundColor(MMColors.recording)
+                                Text("Processing failed")
+                                    .font(MMTypography.bodyMedium)
+                                    .foregroundColor(MMColors.recording)
+                                Spacer()
+                            }
+
+                            Button {
+                                Task { await MeetingService.shared.reprocessMeeting(meeting) }
+                            } label: {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "arrow.clockwise")
+                                    Text("Retry Processing")
+                                }
+                                .font(MMTypography.footnoteMedium)
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 10)
+                                .background(MMColors.primary)
+                                .cornerRadius(12)
+                            }
+                        }
+                        .padding(16)
+                        .background(MMColors.recording.opacity(0.08))
+                        .cornerRadius(16)
+                        .padding(.horizontal, 16)
+                    }
+
                     // Header meta
                     headerSection
                         .opacity(sectionsAppeared ? 1 : 0)
                         .offset(y: sectionsAppeared ? 0 : 16)
                         .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.0), value: sectionsAppeared)
+
+                    // TL;DR Card
+                    if let summary = meeting.briefSummary, let tldr = extractTLDR(from: summary) {
+                        tldrCard(tldr)
+                            .opacity(sectionsAppeared ? 1 : 0)
+                            .offset(y: sectionsAppeared ? 0 : 16)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.05), value: sectionsAppeared)
+                    }
 
                     // Summary
                     if let summary = meeting.briefSummary, !summary.isEmpty {
@@ -44,6 +86,17 @@ struct MeetingDetailView: View {
                             .opacity(sectionsAppeared ? 1 : 0)
                             .offset(y: sectionsAppeared ? 0 : 16)
                             .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.3), value: sectionsAppeared)
+                    }
+
+                    // Open Questions
+                    if let summary = meeting.briefSummary {
+                        let questions = extractOpenQuestions(from: summary)
+                        if !questions.isEmpty {
+                            openQuestionsSection(questions)
+                                .opacity(sectionsAppeared ? 1 : 0)
+                                .offset(y: sectionsAppeared ? 0 : 16)
+                                .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.35), value: sectionsAppeared)
+                        }
                     }
 
                     // Key Quotes
@@ -70,6 +123,16 @@ struct MeetingDetailView: View {
                             .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.6), value: sectionsAppeared)
                     }
 
+                    // Audio Highlights (Key Moments)
+                    if let transcript = meeting.rawTranscript, !transcript.isEmpty {
+                        let segments = parseTranscriptToSegments(transcript)
+                        let highlights = HighlightExtractionService.extractHighlights(transcript: transcript, segments: segments)
+                        if !highlights.isEmpty {
+                            AudioHighlightsView(highlights: highlights)
+                                .padding(.horizontal, 16)
+                        }
+                    }
+
                     // AI Chat + Follow-up buttons
                     if meeting.status == .complete {
                         VStack(spacing: 10) {
@@ -79,6 +142,10 @@ struct MeetingDetailView: View {
 
                             MMButton("Write Follow-up", icon: "envelope", style: .secondary) {
                                 showFollowUpEmail = true
+                            }
+
+                            MMButton("Communication Coach", icon: "figure.mind.and.body", style: .secondary) {
+                                showCoaching = true
                             }
                         }
                         .padding(.horizontal, 16)
@@ -125,6 +192,15 @@ struct MeetingDetailView: View {
         }
         .sheet(isPresented: $showFollowUpEmail) {
             FollowUpEmailView(meeting: meeting)
+        }
+        .sheet(isPresented: $showCoaching) {
+            NavigationStack {
+                if let transcript = meeting.rawTranscript {
+                    let segments = parseTranscriptToSegments(transcript)
+                    let report = MeetingCoachService.shared.analyze(segments: segments)
+                    CoachingView(report: report)
+                }
+            }
         }
         .onAppear {
             withAnimation {
@@ -248,7 +324,110 @@ struct MeetingDetailView: View {
         .padding(.horizontal, 16)
     }
 
-    /// Renders the summary with ALL CAPS lines as bold section headers
+    // MARK: - TL;DR Card
+
+    private func tldrCard(_ tldr: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(MMColors.warning)
+
+                Text("TL;DR")
+                    .font(MMTypography.headline)
+                    .foregroundColor(MMColors.warning)
+            }
+
+            renderBoldText(tldr)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(MMColors.warning.opacity(0.08))
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(MMColors.warning.opacity(0.3), lineWidth: 1)
+        )
+        .overlay(alignment: .leading) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(MMColors.warning)
+                .frame(width: 3)
+                .padding(.vertical, 8)
+        }
+        .padding(.horizontal, 16)
+    }
+
+    // MARK: - Open Questions Section
+
+    private func openQuestionsSection(_ questions: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            sectionTitle("Open Questions", icon: "questionmark.circle")
+
+            VStack(spacing: 8) {
+                ForEach(Array(questions.enumerated()), id: \.offset) { _, question in
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "questionmark.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(MMColors.info)
+                            .padding(.top, 2)
+
+                        renderBoldText(question)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(16)
+                    .background(MMColors.info.opacity(0.06))
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(MMColors.info.opacity(0.2), lineWidth: 1)
+                    )
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+    }
+
+    // MARK: - Extract TL;DR
+
+    private func extractTLDR(from summary: String) -> String? {
+        let lines = summary.components(separatedBy: "\n")
+        var capturing = false
+        var tldr = ""
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("## TL;DR") || trimmed.hasPrefix("## TLDR") {
+                capturing = true
+                continue
+            }
+            if capturing && trimmed.hasPrefix("##") { break }
+            if capturing && !trimmed.isEmpty {
+                tldr += (tldr.isEmpty ? "" : " ") + trimmed
+            }
+        }
+        return tldr.isEmpty ? nil : tldr
+    }
+
+    // MARK: - Extract Open Questions
+
+    private func extractOpenQuestions(from summary: String) -> [String] {
+        let lines = summary.components(separatedBy: "\n")
+        var capturing = false
+        var questions: [String] = []
+        for line in lines {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed.hasPrefix("## Open Questions") {
+                capturing = true
+                continue
+            }
+            if capturing && trimmed.hasPrefix("##") { break }
+            if capturing && (trimmed.hasPrefix("- ") || trimmed.hasPrefix("* ")) {
+                questions.append(String(trimmed.dropFirst(2)))
+            }
+        }
+        return questions
+    }
+
+    /// Renders the summary with markdown-style formatting (##, ###, **bold**, bullets, numbered lists)
     private func richSummaryText(_ summary: String) -> some View {
         let lines = summary.components(separatedBy: "\n")
 
@@ -258,24 +437,39 @@ struct MeetingDetailView: View {
 
                 if trimmed.isEmpty {
                     Spacer().frame(height: 8)
-                } else if isHeading(trimmed) {
-                    // Section heading — bold, purple accent, larger
-                    Text(trimmed)
+                } else if trimmed.hasPrefix("# ") && !trimmed.hasPrefix("## ") {
+                    // # Title — skip it, already shown as meeting.title
+                    EmptyView()
+                } else if trimmed.hasPrefix("### ") {
+                    // ### Sub-heading
+                    Text(trimmed.replacingOccurrences(of: "### ", with: ""))
                         .font(.system(size: 15, weight: .bold))
-                        .foregroundColor(MMColors.primary)
-                        .padding(.top, 10)
+                        .foregroundColor(MMColors.textPrimary)
+                        .padding(.top, 8)
                         .padding(.bottom, 2)
-                } else if trimmed.hasPrefix("- ") {
+                } else if trimmed.hasPrefix("## ") {
+                    // ## Section heading — purple accent
+                    Text(trimmed.replacingOccurrences(of: "## ", with: ""))
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(MMColors.primary)
+                        .padding(.top, 14)
+                        .padding(.bottom, 4)
+                } else if isHeading(trimmed) {
+                    // ALL CAPS fallback for older/custom prompts
+                    Text(trimmed)
+                        .font(.system(size: 16, weight: .bold))
+                        .foregroundColor(MMColors.primary)
+                        .padding(.top, 14)
+                        .padding(.bottom, 4)
+                } else if trimmed.hasPrefix("• ") || trimmed.hasPrefix("- ") {
                     // Bullet point
+                    let bulletText = trimmed.hasPrefix("• ") ? String(trimmed.dropFirst(2)) : String(trimmed.dropFirst(2))
                     HStack(alignment: .top, spacing: 8) {
                         Circle()
                             .fill(MMColors.primary.opacity(0.5))
                             .frame(width: 5, height: 5)
                             .padding(.top, 7)
-                        Text(String(trimmed.dropFirst(2)))
-                            .font(MMTypography.body)
-                            .foregroundColor(MMColors.textPrimary)
-                            .lineSpacing(4)
+                        renderBoldText(bulletText)
                     }
                 } else if trimmed.first?.isNumber == true && trimmed.contains(". ") {
                     // Numbered list item
@@ -285,27 +479,78 @@ struct MeetingDetailView: View {
                             .font(.system(size: 15, weight: .semibold))
                             .foregroundColor(MMColors.primary)
                             .frame(width: 22, alignment: .trailing)
-                        Text(parts.count > 1 ? String(parts[1]).trimmingCharacters(in: .whitespaces) : "")
-                            .font(MMTypography.body)
-                            .foregroundColor(MMColors.textPrimary)
-                            .lineSpacing(4)
+                        if parts.count > 1 {
+                            renderBoldText(String(parts[1]).trimmingCharacters(in: .whitespaces))
+                        }
+                    }
+                } else if trimmed.hasPrefix("|") && trimmed.hasSuffix("|") && !trimmed.contains("---") {
+                    // Markdown table row
+                    let cells = trimmed.split(separator: "|").map { String($0).trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+                    if !cells.isEmpty {
+                        HStack(spacing: 12) {
+                            ForEach(Array(cells.enumerated()), id: \.offset) { idx, cell in
+                                renderBoldText(cell)
+                                    .frame(maxWidth: .infinity, alignment: idx == 0 ? .leading : .center)
+                            }
+                        }
+                        .padding(.vertical, 4)
                     }
                 } else {
-                    // Normal paragraph text
-                    Text(trimmed)
-                        .font(MMTypography.body)
-                        .foregroundColor(MMColors.textPrimary)
-                        .lineSpacing(4)
+                    // Normal paragraph text with **bold** support
+                    renderBoldText(trimmed)
                 }
             }
         }
     }
 
-    /// Check if a line is an ALL CAPS heading (like EXECUTIVE SUMMARY, KEY DECISIONS, etc.)
+    /// Renders text with **bold** markdown segments
+    private func renderBoldText(_ text: String) -> some View {
+        let attributed = parseBoldSegments(text)
+        return Text(attributed)
+            .font(MMTypography.body)
+            .foregroundColor(MMColors.textPrimary)
+            .lineSpacing(4)
+    }
+
+    /// Parses **bold** markers into an AttributedString
+    private func parseBoldSegments(_ text: String) -> AttributedString {
+        var result = AttributedString()
+        var remaining = text
+
+        while let startRange = remaining.range(of: "**") {
+            // Add text before the bold marker
+            let before = String(remaining[remaining.startIndex..<startRange.lowerBound])
+            if !before.isEmpty {
+                result.append(AttributedString(before))
+            }
+
+            // Find closing **
+            let afterStart = remaining[startRange.upperBound...]
+            if let endRange = afterStart.range(of: "**") {
+                let boldContent = String(afterStart[afterStart.startIndex..<endRange.lowerBound])
+                var boldAttr = AttributedString(boldContent)
+                boldAttr.font = .system(size: 15, weight: .bold)
+                result.append(boldAttr)
+                remaining = String(afterStart[endRange.upperBound...])
+            } else {
+                // No closing **, just add the rest as-is
+                result.append(AttributedString(String(remaining[startRange.lowerBound...])))
+                remaining = ""
+            }
+        }
+
+        // Add any remaining text
+        if !remaining.isEmpty {
+            result.append(AttributedString(remaining))
+        }
+
+        return result
+    }
+
+    /// Check if a line is an ALL CAPS heading (fallback for plain-text prompts)
     private func isHeading(_ line: String) -> Bool {
         let stripped = line.trimmingCharacters(in: .whitespaces)
         guard stripped.count >= 3, stripped.count <= 60 else { return false }
-        // ALL CAPS with allowed chars (letters, spaces, &, /)
         let allowed = CharacterSet.uppercaseLetters.union(.whitespaces).union(CharacterSet(charactersIn: "&/-"))
         return stripped.unicodeScalars.allSatisfy { allowed.contains($0) }
     }
@@ -464,41 +709,44 @@ struct MeetingDetailView: View {
     private func keyQuoteCard(_ quote: String) -> some View {
         let parts = parseQuote(quote)
 
-        return HStack(alignment: .top, spacing: 10) {
-            // Quote icon
+        return HStack(alignment: .top, spacing: 12) {
+            // Quote icon — uses a warm amber to stand out
             Image(systemName: "quote.opening")
-                .font(.system(size: 18, weight: .bold))
-                .foregroundColor(MMColors.primary)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(MMColors.warning)
                 .padding(.top, 2)
 
             VStack(alignment: .leading, spacing: 6) {
-                // Speaker name — bold, dark
+                // Speaker name — bold, high contrast
                 if let speaker = parts.speaker {
                     Text(speaker)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(MMColors.textPrimary)
                 }
 
-                // Quote text — italic, readable dark color
-                Text(parts.text)
-                    .font(.system(size: 15, weight: .regular))
+                // Quote text — italic, dark and readable (not light blue)
+                Text("\u{201C}\(parts.text)\u{201D}")
+                    .font(.system(size: 15, weight: .medium))
                     .italic()
-                    .foregroundColor(MMColors.textSecondary)
-                    .lineSpacing(4)
+                    .foregroundColor(MMColors.textPrimary.opacity(0.85))
+                    .lineSpacing(5)
             }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(MMColors.cardBg)
+        .background(
+            // Warm, visible background instead of plain card
+            MMColors.warning.opacity(0.06)
+        )
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(MMColors.primary.opacity(0.2), lineWidth: 1)
+                .stroke(MMColors.warning.opacity(0.25), lineWidth: 1)
         )
         .overlay(alignment: .leading) {
-            // Purple accent bar on left
+            // Amber accent bar on left for visibility
             RoundedRectangle(cornerRadius: 2)
-                .fill(MMColors.primary)
+                .fill(MMColors.warning)
                 .frame(width: 3)
                 .padding(.vertical, 8)
         }
@@ -631,6 +879,18 @@ struct MeetingDetailView: View {
         let colors = ["6C5CE7", "FF4757", "00CE9E", "FFA502", "2D98FF", "E84393", "00B894", "FDCB6E"]
         let index = abs(name.hashValue) % colors.count
         return colors[index]
+    }
+
+    private func parseTranscriptToSegments(_ text: String) -> [TranscriptSegment] {
+        let sentences = text.components(separatedBy: ". ")
+        var segments: [TranscriptSegment] = []
+        var time: Double = 0
+        for sentence in sentences {
+            let duration = Double(sentence.count) / 20.0 // rough estimate
+            segments.append(TranscriptSegment(start: time, end: time + duration, text: sentence))
+            time += duration + 0.5
+        }
+        return segments
     }
 
     private func copyBrief() {

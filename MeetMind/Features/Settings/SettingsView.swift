@@ -6,6 +6,7 @@ struct SettingsView: View {
     @AppStorage("recordingQuality") private var recordingQuality = RecordingQuality.standard.rawValue
     @AppStorage("aiPromptStyle") private var aiPromptStyle = AIPromptStyle.concise.rawValue
     @AppStorage("audioRetention") private var audioRetention = AudioRetention.fourteenDays.rawValue
+    @AppStorage("autoDeleteAudioAfterProcessing") private var autoDeleteAudio = true
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
 
     @StateObject private var storageService = StorageManagementService.shared
@@ -190,6 +191,24 @@ struct SettingsView: View {
 
                             sectionDivider
 
+                            Toggle(isOn: $autoDeleteAudio) {
+                                Text("Auto-delete audio after processing")
+                                    .font(MMTypography.body)
+                                    .foregroundColor(MMColors.textPrimary)
+                            }
+                            .tint(MMColors.primary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            Text("Audio is deleted after notes are generated. Only the transcript and notes are kept.")
+                                .font(MMTypography.caption1)
+                                .foregroundColor(MMColors.textTertiary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+
+                            sectionDivider
+
                             Button {
                                 showCleanupConfirmation = true
                             } label: {
@@ -343,17 +362,78 @@ struct SettingsView: View {
                         }
                     }
 
-                    // MARK: - About
-                    settingsSection(header: "ABOUT") {
-                        VStack(spacing: 0) {
+                    // MARK: - Your Stats
+                    settingsSection(header: "YOUR STATS") {
+                        NavigationLink {
+                            StatsView()
+                        } label: {
                             HStack {
-                                Text("Version")
+                                Image(systemName: "flame.fill")
+                                    .foregroundColor(MMColors.warning)
+                                Text("Productivity Stats & Streaks")
                                     .font(MMTypography.body)
                                     .foregroundColor(MMColors.textPrimary)
                                 Spacer()
-                                Text(appVersion)
-                                    .font(MMTypography.body)
-                                    .foregroundColor(MMColors.textSecondary)
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(MMColors.textTertiary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+                        }
+                    }
+
+                    // MARK: - Features
+                    settingsSection(header: "FEATURES") {
+                        VStack(spacing: 0) {
+                            featureRow(icon: "mic.fill", color: MMColors.primary, title: "Meeting Recording", description: "One-tap recording with echo cancellation and background support")
+                            sectionDivider
+                            featureRow(icon: "brain", color: MMColors.success, title: "AI Meeting Notes", description: "TL;DR, decisions, action items table, open questions — Golden Template format")
+                            sectionDivider
+                            featureRow(icon: "bubble.left.and.bubble.right.fill", color: MMColors.info, title: "Smart Chat", description: "Ask about your meetings — instant stats, action items, and AI-powered search")
+                            sectionDivider
+                            featureRow(icon: "checklist", color: MMColors.warning, title: "Voice Todos", description: "Speak your tasks — AI extracts date, priority, and assignee automatically")
+                            sectionDivider
+                            featureRow(icon: "figure.mind.and.body", color: Color(red: 232/255, green: 67/255, blue: 147/255), title: "Communication Coach", description: "Filler words, speaking pace, talk ratio, and improvement tips")
+                            sectionDivider
+                            featureRow(icon: "waveform", color: MMColors.primary, title: "Live Transcription", description: "See real-time words on screen while recording")
+                            sectionDivider
+                            featureRow(icon: "bolt.fill", color: MMColors.warning, title: "Key Moments", description: "Auto-detected decisions, action items, and questions with timestamps")
+                            sectionDivider
+                            featureRow(icon: "face.smiling", color: MMColors.success, title: "Sentiment Analysis", description: "Positive, neutral, or negative tone detection for each meeting")
+                            sectionDivider
+                            featureRow(icon: "calendar", color: MMColors.info, title: "Calendar Integration", description: "See today's meetings and start recording with one tap")
+                            sectionDivider
+                            featureRow(icon: "flame.fill", color: MMColors.recording, title: "Streaks & Stats", description: "Track your meeting consistency and productivity scores")
+                            sectionDivider
+                            featureRow(icon: "wifi.slash", color: MMColors.textSecondary, title: "Offline Support", description: "Queue meetings for processing when you're back online")
+                            sectionDivider
+                            featureRow(icon: "applewatch", color: MMColors.primary, title: "Apple Watch", description: "Record meetings and view tasks from your wrist")
+                        }
+                    }
+
+                    // MARK: - About
+                    settingsSection(header: "ABOUT") {
+                        VStack(spacing: 0) {
+                            // Created by
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    Circle()
+                                        .fill(MMColors.primary.opacity(0.12))
+                                        .frame(width: 40, height: 40)
+                                    Text("GM")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundColor(MMColors.primary)
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Created by Gaurav Modi")
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Text("Built with SwiftUI + Groq AI")
+                                        .font(MMTypography.caption1)
+                                        .foregroundColor(MMColors.textSecondary)
+                                }
+                                Spacer()
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
@@ -361,11 +441,11 @@ struct SettingsView: View {
                             sectionDivider
 
                             HStack {
-                                Text("Build")
+                                Text("Version")
                                     .font(MMTypography.body)
                                     .foregroundColor(MMColors.textPrimary)
                                 Spacer()
-                                Text(buildNumber)
+                                Text("\(appVersion) (\(buildNumber))")
                                     .font(MMTypography.body)
                                     .foregroundColor(MMColors.textSecondary)
                             }
@@ -413,7 +493,7 @@ struct SettingsView: View {
                     }
 
                     // Version footer
-                    Text("MeetMind v\(appVersion) (\(buildNumber))")
+                    Text("Made with \u{2764}\u{FE0F} by Gaurav Modi")
                         .font(MMTypography.caption2)
                         .foregroundColor(MMColors.textTertiary)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -429,7 +509,7 @@ struct SettingsView: View {
             }
             .alert("Delete All Data", isPresented: $showDeleteConfirmation) {
                 Button("Delete", role: .destructive) {
-                    // TODO: Implement data deletion
+                    deleteAllData()
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -603,6 +683,47 @@ struct SettingsView: View {
     }
 
     // MARK: - App Info
+
+    private func deleteAllData() {
+        // Delete all meetings
+        for meeting in MeetingService.shared.meetings {
+            MeetingService.shared.deleteMeeting(meeting)
+        }
+        // Delete all todos
+        for todo in TodoService.shared.todos {
+            TodoService.shared.deleteTodo(todo)
+        }
+        // Delete all audio files
+        StorageManagementService.shared.deleteAllProcessedAudio()
+        // Clear cached data
+        UserDefaults.standard.removeObject(forKey: "widgetData")
+        UserDefaults.standard.removeObject(forKey: "peopleCache")
+    }
+
+    private func featureRow(icon: String, color: Color, title: String, description: String) -> some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(color.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(color)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(MMTypography.bodyMedium)
+                    .foregroundColor(MMColors.textPrimary)
+                Text(description)
+                    .font(MMTypography.caption1)
+                    .foregroundColor(MMColors.textSecondary)
+                    .lineLimit(2)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+    }
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"

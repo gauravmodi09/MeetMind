@@ -12,12 +12,14 @@ struct MeetingChatSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     private let suggestions = [
-        "What action items are on me?",
-        "What did the customer ask me to work on?",
+        "What action items are on me from this call?",
+        "What did the customer ask for?",
         "Summarize the key decisions",
-        "What were the main concerns raised?",
-        "What are the next steps?",
-        "List all commitments made"
+        "What are the open questions?",
+        "What risks were discussed?",
+        "Draft a follow-up message",
+        "What were the blockers mentioned?",
+        "Who committed to what?"
     ]
 
     var body: some View {
@@ -176,17 +178,22 @@ struct MeetingChatSheet: View {
                 var context = "Meeting: \(meeting.title)\n"
                 context += "Date: \(meeting.date.formatted())\n"
                 if let client = meeting.clientName { context += "Client: \(client)\n" }
-                if let summary = meeting.briefSummary { context += "\nSummary:\n\(summary)\n" }
+                if let summary = meeting.briefSummary {
+                    context += "\nFull Meeting Notes:\n\(summary)\n"
+                }
                 if !meeting.briefDecisions.isEmpty {
                     context += "\nDecisions:\n" + meeting.briefDecisions.map { "- \($0)" }.joined(separator: "\n") + "\n"
                 }
                 if !meeting.briefActionItems.isEmpty {
                     context += "\nAction Items:\n" + meeting.briefActionItems.map {
-                        "- \($0.text) (owner: \($0.owner), mine: \($0.isMine), due: \($0.dueDate?.formatted() ?? "not set"))"
+                        "- \($0.text) (owner: \($0.owner), mine: \($0.isMine), due: \($0.dueDate?.formatted(date: .abbreviated, time: .omitted) ?? "not set"), completed: \($0.isCompleted))"
                     }.joined(separator: "\n") + "\n"
                 }
+                if !meeting.briefKeyQuotes.isEmpty {
+                    context += "\nKey Quotes:\n" + meeting.briefKeyQuotes.map { "- \($0)" }.joined(separator: "\n") + "\n"
+                }
                 if let transcript = meeting.rawTranscript {
-                    context += "\nTranscript:\n\(transcript.prefix(3000))\n"
+                    context += "\nTranscript:\n\(String(transcript.prefix(6000)))\n"
                 }
 
                 let answer = try await GroqService.shared.chatAboutMeetings(

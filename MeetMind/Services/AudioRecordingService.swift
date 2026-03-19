@@ -1,5 +1,8 @@
 import AVFoundation
 import Combine
+#if canImport(UIKit)
+import UIKit
+#endif
 
 @MainActor
 class AudioRecordingService: ObservableObject {
@@ -47,8 +50,24 @@ class AudioRecordingService: ObservableObject {
         try checkDiskSpace()
 
         let session = AVAudioSession.sharedInstance()
-        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetooth])
-        try session.setActive(true)
+        // .voiceChat mode enables iOS built-in echo cancellation (AEC) and
+        // automatic gain control (AGC) — critical for recording near a laptop speaker.
+        // .allowBluetooth lets AirPods/headsets work; we avoid .defaultToSpeaker
+        // so the phone doesn't create a feedback loop with its own speaker.
+        // .mixWithOthers is required for background audio recording to continue when app is minimized.
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .mixWithOthers])
+        try session.setActive(true, options: [])
+
+        // Start a background task so iOS doesn't suspend us while recording
+        beginBackgroundRecordingTask()
+
+        // Prefer the bottom microphone for desk-placement recording
+        if let inputs = session.availableInputs,
+           let builtIn = inputs.first(where: { $0.portType == .builtInMic }),
+           let bottomMic = builtIn.dataSources?.first(where: { $0.orientation == .bottom }) {
+            try? builtIn.setPreferredDataSource(bottomMic)
+            try? session.setPreferredInput(builtIn)
+        }
 
         let fileURL = makeRecordingURL()
         currentFileURL = fileURL
@@ -57,7 +76,8 @@ class AudioRecordingService: ObservableObject {
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 44_100.0,
             AVNumberOfChannelsKey: 1,
-            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            AVEncoderAudioQualityKey: AVAudioQuality.max.rawValue,
+            AVEncoderBitRateKey: 128_000  // 128 kbps for cleaner speech capture
         ]
 
         let recorder = try AVAudioRecorder(url: fileURL, settings: settings)
@@ -121,13 +141,16 @@ class AudioRecordingService: ObservableObject {
         audioRecorder = nil
         currentFileURL = nil
 
+        // End background task now that recording is done
+        endBackgroundRecordingTask()
+
         // Deactivate audio session
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
 
         return url
     }
 
-    // MARK: - Compression
+    // MARK: - Compression & Chunking
 
     /// Compresses audio if the file exceeds the Groq upload limit (24 MB).
     /// Returns the original URL if no compression is needed.
@@ -162,6 +185,67 @@ class AudioRecordingService: ObservableObject {
             throw RecordingError.compressionCancelled
         default:
             throw RecordingError.compressionFailed
+        }
+    }
+
+    /// Splits a long audio file into chunks that each fit under the Groq size limit.
+    /// Returns an array of chunk URLs. If the file is small enough, returns [originalURL].
+    func splitAudioIfNeeded(url: URL) async throws -> [URL] {
+        let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+        let fileSize = (attributes[.size] as? Int) ?? 0
+
+        // If file fits in one upload, no splitting needed
+        guard fileSize > groqFileSizeLimit else { return [url] }
+
+        let asset = AVURLAsset(url: url)
+        let totalDuration = CMTimeGetSeconds(asset.duration)
+
+        // Estimate chunk duration based on file size ratio
+        // Target 20 MB per chunk to leave headroom
+        let targetChunkBytes = 20 * 1024 * 1024
+        let bytesPerSecond = Double(fileSize) / totalDuration
+        let chunkDuration = Double(targetChunkBytes) / bytesPerSecond
+        let chunkCount = Int(ceil(totalDuration / chunkDuration))
+
+        print("[AudioRecording] Splitting \(fileSize / (1024*1024))MB file into ~\(chunkCount) chunks of ~\(Int(chunkDuration))s each")
+
+        var chunkURLs: [URL] = []
+        let baseDir = url.deletingLastPathComponent()
+
+        for i in 0..<chunkCount {
+            let startTime = CMTime(seconds: Double(i) * chunkDuration, preferredTimescale: 600)
+            let endSeconds = min(Double(i + 1) * chunkDuration, totalDuration)
+            let duration = CMTime(seconds: endSeconds - CMTimeGetSeconds(startTime), preferredTimescale: 600)
+            let timeRange = CMTimeRange(start: startTime, duration: duration)
+
+            guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A) else {
+                throw RecordingError.compressionFailed
+            }
+
+            let chunkURL = baseDir.appendingPathComponent("chunk_\(i)_\(url.lastPathComponent)")
+            try? FileManager.default.removeItem(at: chunkURL)
+
+            exportSession.outputURL = chunkURL
+            exportSession.outputFileType = .m4a
+            exportSession.timeRange = timeRange
+
+            await exportSession.export()
+
+            guard exportSession.status == .completed else {
+                throw exportSession.error ?? RecordingError.compressionFailed
+            }
+
+            chunkURLs.append(chunkURL)
+            print("[AudioRecording] Chunk \(i + 1)/\(chunkCount) exported: \(chunkURL.lastPathComponent)")
+        }
+
+        return chunkURLs
+    }
+
+    /// Clean up temporary chunk files after transcription
+    func cleanupChunks(_ urls: [URL], originalURL: URL) {
+        for url in urls where url != originalURL {
+            try? FileManager.default.removeItem(at: url)
         }
     }
 
@@ -257,6 +341,40 @@ class AudioRecordingService: ObservableObject {
             break
         }
     }
+
+    // MARK: - Background Recording
+
+    #if canImport(UIKit)
+    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
+
+    /// Tells iOS to keep the app alive while recording in the background.
+    /// Combined with UIBackgroundModes: audio in Info.plist, this ensures
+    /// the recording continues when the user minimizes the app.
+    private func beginBackgroundRecordingTask() {
+        // End any existing task first
+        endBackgroundRecordingTask()
+
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask(withName: "MeetMindRecording") { [weak self] in
+            // Expiration handler — iOS is about to kill us, but with audio background mode
+            // this should never fire during active recording
+            print("[AudioRecordingService] Background task expiring")
+            Task { @MainActor [weak self] in
+                self?.endBackgroundRecordingTask()
+            }
+        }
+        print("[AudioRecordingService] Background task started: \(backgroundTaskID.rawValue)")
+    }
+
+    private func endBackgroundRecordingTask() {
+        guard backgroundTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(backgroundTaskID)
+        print("[AudioRecordingService] Background task ended: \(backgroundTaskID.rawValue)")
+        backgroundTaskID = .invalid
+    }
+    #else
+    private func beginBackgroundRecordingTask() {}
+    private func endBackgroundRecordingTask() {}
+    #endif
 
     // MARK: - Disk Space
 

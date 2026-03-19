@@ -23,13 +23,20 @@ struct MeetMindApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
-                .environment(\.managedObjectContext, persistence.container.viewContext)
-                .environmentObject(MeetingService.shared)
-                .environmentObject(TodoService.shared)
-                .onOpenURL { url in
-                    handleDeepLink(url)
-                }
+            if hasOnboarded {
+                MainTabView()
+                    .environment(\.managedObjectContext, persistence.container.viewContext)
+                    .environmentObject(MeetingService.shared)
+                    .environmentObject(TodoService.shared)
+                    .onOpenURL { url in
+                        handleDeepLink(url)
+                    }
+            } else {
+                OnboardingView()
+                    .environment(\.managedObjectContext, persistence.container.viewContext)
+                    .environmentObject(MeetingService.shared)
+                    .environmentObject(TodoService.shared)
+            }
         }
     }
 

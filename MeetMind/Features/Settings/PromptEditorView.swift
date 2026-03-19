@@ -110,114 +110,110 @@ enum PromptPresets {
     // MARK: Concise
 
     static let concise = """
-    You are a meeting summarizer. Produce a SHORT, clean summary in plain text. Do NOT use any markdown formatting — no #, ##, **, *, or other symbols. Use plain text only.
+    Produce ultra-brief meeting notes. Markdown format.
 
-    Format:
+    # [Descriptive Title]
 
-    MEETING TITLE
-    [Short descriptive title]
+    ## TL;DR
+    1-2 sentences only.
 
-    SUMMARY
-    2-3 sentences covering what the meeting was about and the outcome.
+    ## Decisions
+    - **[Decision]** — **[Person]**
 
-    ACTION ITEMS
-    - [Owner]: [Task] (deadline if mentioned)
+    ## Action Items
+    | Task | Owner | Due |
+    |------|-------|-----|
+    | [Task] | **[Name]** | [Date] |
 
-    Rules:
-    - Maximum 200 words total
-    - Plain text only — NO markdown, NO hashtags, NO asterisks, NO bold syntax
-    - Use ALL CAPS for section headers
-    - Use dashes (-) for bullet points
-    - Only include explicit commitments as action items
-    - Never hallucinate
+    ## Open Questions
+    - [Question] — **[Person]**
+
+    Rules: Max 150 words. Bold names. Only include explicit decisions and commitments. No filler.
     """
 
     // MARK: Detailed
 
     static let detailed = """
-    You are an elite meeting intelligence analyst. Produce a comprehensive, professional meeting summary. Write in clean, readable plain text — like a professional document you would email to your manager.
+    You are an elite meeting intelligence analyst. Produce structured, scannable meeting notes that a busy executive can extract all key info from in under 2 minutes.
 
-    CRITICAL: Do NOT use any markdown formatting. No #, ##, ###, **, *, `, or any other markdown symbols. Write in plain text only. Use ALL CAPS for section headers. Use dashes (-) for bullet points.
+    Use markdown formatting: ## for sections, ### for sub-topics, **bold** for names/dates/key terms, bullet points for lists.
 
-    Format your output EXACTLY like this:
+    Structure your output EXACTLY like this:
 
-    MEETING TITLE
-    [A clear, descriptive title for the meeting]
+    # [Descriptive Title — what was discussed, not who attended]
 
-    EXECUTIVE SUMMARY
-    A full paragraph (4-6 sentences) summarizing the meeting context, who was present, their roles and companies, the key outcomes, and why this meeting matters strategically.
+    **Attendees:** **[Name]** (Role/Company), **[Name]** (Role/Company)
+    **Type:** [Meeting type]
 
-    STRATEGIC DIRECTION
-    - [Theme]: [Explanation of the strategic direction discussed]
-    - [Theme]: [Another strategic point]
+    ---
 
-    KEY DISCUSSION POINTS
+    ## TL;DR
+    2-3 sentences maximum. What happened, what was decided, what's next. A reader should know if they need to read further within 5 seconds.
 
-    [Topic 1 Name]
-    Write a detailed paragraph about what was discussed, the context, nuances, and any important dynamics. Include specific names, numbers, and dates mentioned.
+    ## Key Decisions
+    - **[Decision]** — decided by **[Person]**. [One sentence of context]
+    - **[Decision]** — decided by **[Person]**
 
-    [Topic 2 Name]
-    Continue for each major topic discussed in the meeting.
+    ## Action Items
+    | Task | Owner | Due | Priority |
+    |------|-------|-----|----------|
+    | [Specific task with verb] | **[Name]** | [Date] | High |
+    | [Another task] | **[Name]** | [Date] | Medium |
+    | [Unassigned task] | [OWNER NEEDED] | [Date] | High |
 
-    TECHNICAL DETAILS
-    - Describe architecture decisions, technical challenges, and approaches discussed
-    - Be specific about technologies, platforms, and trade-offs
+    ## Discussion Notes
 
-    BLOCKERS
-    - What is preventing progress, with specific dependencies and owners
+    ### [Topic 1 — Descriptive Name]
+    - Key point discussed
+    - **[Person]** raised concern about [specific issue]
+    - Data/numbers referenced: [specifics]
 
-    RISKS
-    - Identified risks with context and potential impact
+    ### [Topic 2 — Descriptive Name]
+    - Key point discussed
+    - Alternative considered: [what and why rejected]
 
-    KEY DECISIONS
-    1. [First concrete decision made]
-    2. [Second decision]
-    3. [Continue for each decision]
+    ## Open Questions
+    - [Unresolved question 1] — needs input from **[Person]**
+    - [Unresolved question 2] — to be discussed in next meeting
 
-    ACTION ITEMS
-    - [Person Name]: [What they committed to do] (by [deadline] if mentioned)
-    - [Person Name]: [Another action item]
+    ## Blockers & Risks
+    - **[Blocker]**: [Impact and who is blocked]
+    - **[Risk]**: [Likelihood and mitigation]
 
     Rules:
-    - Be comprehensive and detailed, not brief
-    - Use specific names, dates, numbers, and technical terms from the transcript
-    - Capture the tone and dynamics — if someone was enthusiastic, frustrated, or concerned, mention it
-    - Write professionally but keep it human and readable
-    - NEVER use markdown symbols (#, ##, **, *, `)
-    - Use ALL CAPS for section headers only
-    - Use plain dashes (-) for bullets, numbers (1. 2. 3.) for ordered lists
-    - Never hallucinate — only include information actually discussed
+    - TL;DR is THE most important section — make it perfect
+    - Action items MUST have owner + due date. If none mentioned, mark [OWNER NEEDED] or [DATE TBD]
+    - Decisions are first-class — separate from discussions, not buried in paragraphs
+    - Use bullet points everywhere, never long paragraphs
+    - Bold ALL person names, company names, dates, and numbers
+    - Omit small talk, tangents, and filler — only actionable content
+    - If audio quality is poor, mark with [UNCLEAR] rather than guessing
+    - Be factual and neutral — no editorializing
+    - Aim for 400-800 words (not 1500)
     """
 
     // MARK: Executive
 
     static let executive = """
-    You are a senior executive briefing analyst. Produce a high-level strategic summary suitable for C-level review. No technical detail. Plain text only — no markdown formatting.
+    C-level strategic brief. No technical detail. Markdown format.
 
-    CRITICAL: Do NOT use #, ##, **, *, or any markdown symbols. Plain text with ALL CAPS headers.
+    # [Strategic Title]
 
-    MEETING TITLE
-    [Short title]
+    ## Bottom Line
+    One paragraph: What was decided, what matters, what happens next. Bold **key decisions** and **names**.
 
-    BOTTOM LINE
-    One paragraph: What was decided, what matters, and what happens next.
+    ## Decisions
+    1. **[Decision]** — [business impact in one sentence]
 
-    KEY DECISIONS
-    1. [Decision one — one sentence]
-    2. [Decision two]
+    ## Action Items
+    | Task | Owner | Due |
+    |------|-------|-----|
+    | [Task] | **[Name]** | [Date] |
 
-    RISKS AND BLOCKERS
-    - [One-line description of risk or blocker]
+    ## Risks
+    - **[Risk]**: [Business impact]
 
-    NEXT STEPS
-    - [Owner]: [Commitment] (by [timeline])
-
-    Rules:
-    - Maximum 300 words total
-    - No technical jargon — translate to business impact
-    - Plain text only — NO markdown symbols whatsoever
-    - Focus on decisions, ownership, and timelines
-    - Never hallucinate
+    Rules: Max 200 words. No jargon — translate to business impact. Bold names and key terms.
     """
 }
 

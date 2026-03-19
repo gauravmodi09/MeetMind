@@ -9,8 +9,12 @@ struct MeetingsView: View {
     @State private var processingMeeting: Meeting?
     @State private var selectedMeeting: Meeting?
     @State private var copiedMeetingId: UUID?
+    @State private var meetingToDelete: Meeting?
+    @State private var showDeleteConfirm = false
     @State private var pulseGlow = false
     @State private var cardsAppeared = false
+    @State private var showCalendar = false
+    @State private var showMeetingPrep = false
 
     var body: some View {
         NavigationStack {
@@ -68,6 +72,20 @@ struct MeetingsView: View {
                 )
                 .environmentObject(meetingService)
             }
+            .sheet(isPresented: $showMeetingPrep) {
+                MeetingPrepView(
+                    clientName: nil,
+                    onStartRecording: {
+                        showMeetingPrep = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            showRecording = true
+                        }
+                    },
+                    onDismiss: {
+                        showMeetingPrep = false
+                    }
+                )
+            }
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }
@@ -75,6 +93,19 @@ struct MeetingsView: View {
                 if !showRecording {
                     showRecording = true
                 }
+            }
+            .alert("Delete Meeting?", isPresented: $showDeleteConfirm) {
+                Button("Cancel", role: .cancel) { meetingToDelete = nil }
+                Button("Delete", role: .destructive) {
+                    if let meeting = meetingToDelete {
+                        let generator = UINotificationFeedbackGenerator()
+                        generator.notificationOccurred(.warning)
+                        meetingService.deleteMeeting(meeting)
+                        meetingToDelete = nil
+                    }
+                }
+            } message: {
+                Text("This will permanently delete \"\(meetingToDelete?.title ?? "this meeting")\" and its notes.")
             }
         }
     }
@@ -84,6 +115,10 @@ struct MeetingsView: View {
     private var mainContent: some View {
         ScrollView {
             VStack(spacing: 24) {
+                // Offline Queue Banner
+                OfflineQueueBanner()
+                    .padding(.horizontal, 16)
+
                 // Today Summary Card
                 todaySummaryCard
                     .padding(.horizontal, 16)
@@ -100,6 +135,23 @@ struct MeetingsView: View {
                     }
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
+
+                // Calendar events
+                DisclosureGroup(isExpanded: $showCalendar) {
+                    UpcomingMeetingsView(onRecordTapped: { _ in
+                        showMeetingPrep = true
+                    })
+                    .frame(maxHeight: 200)
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "calendar")
+                            .foregroundColor(MMColors.info)
+                        Text("Today's Calendar")
+                            .font(MMTypography.headline)
+                            .foregroundColor(MMColors.textPrimary)
+                    }
+                }
+                .padding(.horizontal, 16)
 
                 // Recent Meetings
                 if !meetingService.meetings.isEmpty {
@@ -118,6 +170,13 @@ struct MeetingsView: View {
                                         meeting: meeting,
                                         onCopy: {
                                             copyBrief(for: meeting)
+                                        },
+                                        onRetry: meeting.status == .failed ? {
+                                            Task { await meetingService.reprocessMeeting(meeting) }
+                                        } : nil,
+                                        onDelete: {
+                                            meetingToDelete = meeting
+                                            showDeleteConfirm = true
                                         },
                                         onChangeClient: { newClient in
                                             meetingService.updateMeetingClient(meeting, newClient: newClient)
@@ -140,6 +199,9 @@ struct MeetingsView: View {
                 }
             }
             .padding(.bottom, 32)
+        }
+        .refreshable {
+            meetingService.loadMeetings()
         }
         .onAppear {
             withAnimation {
@@ -250,7 +312,7 @@ struct MeetingsView: View {
     private var recordButton: some View {
         VStack(spacing: 8) {
             Button {
-                showRecording = true
+                showMeetingPrep = true
             } label: {
                 ZStack {
                     // Pulsing glow ring
@@ -293,8 +355,8 @@ struct MeetingsView: View {
                 }
             }
 
-            Text("Tap to Record")
-                .font(MMTypography.footnote)
+            Text("Record Meeting")
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(MMColors.textSecondary)
                 .accessibilityHidden(true)
         }
@@ -341,6 +403,10 @@ struct MeetingsView: View {
         let brief = MeetingBriefFormatter.format(meeting: meeting)
         UIPasteboard.general.string = brief
         copiedMeetingId = meeting.id
+
+        // Haptic feedback
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if copiedMeetingId == meeting.id {

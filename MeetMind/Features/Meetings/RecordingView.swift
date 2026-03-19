@@ -1,7 +1,9 @@
 import SwiftUI
+import AVFoundation
 
 struct RecordingView: View {
     @StateObject private var audioService = AudioRecordingService.shared
+    @StateObject private var liveTranscription = LiveTranscriptionService.shared
     @EnvironmentObject var meetingService: MeetingService
 
     @State private var notes: String = ""
@@ -91,6 +93,15 @@ struct RecordingView: View {
                 // Controls
                 controlButtons
                     .padding(.bottom, 40)
+            }
+
+            // Live transcription overlay
+            if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                VStack {
+                    Spacer()
+                    LiveTranscriptOverlay(transcriptionService: liveTranscription)
+                        .padding(.bottom, 100) // above control buttons
+                }
             }
         }
         .onAppear {
@@ -428,8 +439,37 @@ struct RecordingView: View {
     // MARK: - Actions
 
     private func startRecording() {
+        // Check microphone permission first
+        switch AVAudioSession.sharedInstance().recordPermission {
+        case .granted:
+            doStartRecording()
+        case .undetermined:
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                DispatchQueue.main.async {
+                    if granted {
+                        doStartRecording()
+                    } else {
+                        onCancel()
+                    }
+                }
+            }
+        case .denied:
+            // Show alert directing user to Settings
+            onCancel()
+        @unknown default:
+            onCancel()
+        }
+    }
+
+    private func doStartRecording() {
         do {
             _ = try audioService.startRecording()
+            Task {
+                let authorized = await liveTranscription.requestAuthorization()
+                if authorized {
+                    liveTranscription.startLiveTranscription()
+                }
+            }
         } catch {
             print("[RecordingView] Failed to start recording: \(error)")
             onCancel()
@@ -437,15 +477,20 @@ struct RecordingView: View {
     }
 
     private func stopAndFinish() {
+        liveTranscription.stopLiveTranscription()
+
+        // Capture duration BEFORE stopping (stopRecording resets it)
+        let recordedDuration = audioService.duration
+
         guard let audioURL = audioService.stopRecording() else {
             onStop(nil)
             return
         }
 
         var meeting = Meeting(
-            title: "Meeting \(formattedDateForTitle)",
+            title: "Processing Meeting...",
             date: Date(),
-            duration: audioService.duration,
+            duration: recordedDuration,
             audioFilePath: audioURL.path,
             clientName: detectedClient,
             status: .processing,
@@ -458,6 +503,7 @@ struct RecordingView: View {
     }
 
     private func discardRecording() {
+        liveTranscription.stopLiveTranscription()
         _ = audioService.stopRecording()
         onCancel()
     }

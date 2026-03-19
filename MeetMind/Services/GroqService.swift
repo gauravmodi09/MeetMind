@@ -21,6 +21,7 @@ struct MeetingBrief: Codable {
     let keyTopics: [String]
     let clientName: String?
     let keyQuotes: [String]?
+    let openQuestions: [String]?
 }
 
 struct BriefActionItem: Codable {
@@ -108,6 +109,7 @@ class GroqService: ObservableObject {
 
     // MARK: - Whisper Transcription
 
+    /// Transcribes a single audio file via Groq Whisper with retry logic.
     func transcribeAudio(fileURL: URL) async throws -> TranscriptionResult {
         let key = try apiKey()
 
@@ -131,14 +133,114 @@ class GroqService: ObservableObject {
         body.appendMultipartField(boundary: boundary, name: "model", value: whisperModel)
         // response_format field
         body.appendMultipartField(boundary: boundary, name: "response_format", value: "verbose_json")
+        // language hint — skips auto-detection, improves accuracy and speed
+        body.appendMultipartField(boundary: boundary, name: "language", value: "en")
+        // prompt hint — helps Whisper with domain vocabulary and reduces hallucination
+        body.appendMultipartField(boundary: boundary, name: "prompt", value: "This is a professional business meeting recording. Speakers discuss projects, action items, deadlines, technical topics, and client requirements. Names and technical terms should be transcribed accurately.")
+        // temperature — 0 for deterministic, most accurate transcription
+        body.appendMultipartField(boundary: boundary, name: "temperature", value: "0")
 
         body.append("--\(boundary)--\r\n".data(using: .utf8)!)
         request.httpBody = body
 
+        // Use performRequest which already has retry logic for 429/5xx/timeout
         let (data, response) = try await performRequest(request)
         try validateHTTPResponse(response)
 
         return try parseTranscriptionResponse(data)
+    }
+
+    /// Transcribes multiple audio chunks and merges the results into one transcript.
+    func transcribeChunks(fileURLs: [URL]) async throws -> TranscriptionResult {
+        guard !fileURLs.isEmpty else { throw GroqError.invalidAudioFile }
+        if fileURLs.count == 1 { return try await transcribeAudio(fileURL: fileURLs[0]) }
+
+        var allText = ""
+        var allSegments: [TranscriptSegment] = []
+        var timeOffset: Double = 0
+
+        for (index, url) in fileURLs.enumerated() {
+            print("[GroqService] Transcribing chunk \(index + 1)/\(fileURLs.count)...")
+            let result = try await transcribeAudio(fileURL: url)
+
+            if !allText.isEmpty { allText += " " }
+            allText += result.text
+
+            // Offset segment timestamps to be continuous
+            let offsetSegments = result.segments.map { seg in
+                TranscriptSegment(start: seg.start + timeOffset, end: seg.end + timeOffset, text: seg.text)
+            }
+            allSegments.append(contentsOf: offsetSegments)
+
+            // Next chunk's offset = this chunk's last segment end
+            if let lastSeg = result.segments.last {
+                timeOffset += lastSeg.end
+            }
+        }
+
+        return TranscriptionResult(text: allText, segments: allSegments)
+    }
+
+    // MARK: - Transcript Cleaning
+
+    /// Cleans raw transcript by removing filler words, repeated phrases, and normalizing whitespace.
+    func cleanTranscript(_ text: String) -> String {
+        var cleaned = text
+
+        // Remove common filler words/sounds (only standalone, not part of words)
+        let fillers = [
+            "\\bum\\b", "\\buh\\b", "\\buhm\\b", "\\bhmm\\b", "\\bmm\\b",
+            "\\byou know\\b", "\\blike,\\b", "\\bI mean,\\b", "\\bso,\\s*so\\b",
+            "\\bbasically,\\b", "\\bactually,\\b", "\\bliterally,\\b"
+        ]
+        for filler in fillers {
+            if let regex = try? NSRegularExpression(pattern: filler, options: .caseInsensitive) {
+                cleaned = regex.stringByReplacingMatches(
+                    in: cleaned, range: NSRange(cleaned.startIndex..., in: cleaned), withTemplate: ""
+                )
+            }
+        }
+
+        // Remove stuttered words (e.g., "the the", "we we", "I I")
+        if let stutter = try? NSRegularExpression(pattern: "\\b(\\w+)\\s+\\1\\b", options: .caseInsensitive) {
+            cleaned = stutter.stringByReplacingMatches(
+                in: cleaned, range: NSRange(cleaned.startIndex..., in: cleaned), withTemplate: "$1"
+            )
+        }
+
+        // Normalize multiple spaces to single space
+        if let multiSpace = try? NSRegularExpression(pattern: "\\s{2,}") {
+            cleaned = multiSpace.stringByReplacingMatches(
+                in: cleaned, range: NSRange(cleaned.startIndex..., in: cleaned), withTemplate: " "
+            )
+        }
+
+        return cleaned.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    /// Validates transcript quality — returns true if usable, false if garbage.
+    func isTranscriptUsable(_ text: String) -> Bool {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Too short = probably silence or noise
+        if trimmed.count < 50 { return false }
+
+        // Count actual words
+        let words = trimmed.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }
+        if words.count < 10 { return false }
+
+        // Check for Whisper hallucination patterns (repeated phrases)
+        let chunks = stride(from: 0, to: max(0, words.count - 5), by: 5).map { i in
+            Array(words[i..<min(i + 5, words.count)]).joined(separator: " ").lowercased()
+        }
+        let uniqueChunks = Set(chunks)
+        if chunks.count > 3 && Double(uniqueChunks.count) / Double(chunks.count) < 0.3 {
+            // Over 70% repeated phrases — hallucination
+            print("[GroqService] Transcript appears to be hallucinated (high repetition ratio)")
+            return false
+        }
+
+        return true
     }
 
     // MARK: - Meeting Brief Generation
@@ -173,20 +275,31 @@ class GroqService: ObservableObject {
         let summaryData = try await chatCompletion(key: key, payload: summaryPayload)
         let richSummary = try extractChatContent(summaryData)
 
-        // Step 2: Extract structured JSON for programmatic use (action items, client, topics)
+        // Step 2: Extract structured JSON — use the SUMMARY (not raw transcript) for consistency
+        // This ensures the JSON data matches what the user sees in the summary
         var jsonPrompt = """
-        Extract structured data from this meeting transcript. Return ONLY valid JSON:
+        You are given a meeting summary. Extract structured data from it. Return ONLY valid JSON — no markdown, no explanation:
         {
-            "title": "short descriptive meeting title",
+            "title": "subject-style title like an email subject — describe WHAT was discussed, not when (max 8 words, e.g. 'Meyer Account POC Progress Review')",
             "decisions": ["decision 1", "decision 2"],
             "actionItems": [
-                {"text": "task description", "owner": "person name", "due": "date or null", "isMine": true}
+                {"text": "clear task description", "owner": "person name", "due": "YYYY-MM-DD or null", "isMine": true}
             ],
             "keyTopics": ["topic 1", "topic 2", "topic 3"],
             "clientName": "detected client/company name or null",
-            "keyQuotes": ["Speaker: exact quote text", "Speaker: another notable quote"]
+            "keyQuotes": ["Speaker: exact notable quote", "Speaker: another impactful quote"],
+            "openQuestions": ["Unresolved question 1", "Question needing follow-up"]
         }
-        Rules: Only extract EXPLICIT commitments for action items. Set isMine=true for items the first speaker (user) committed to. Detect the primary client/company being discussed. Extract up to 3 notable or impactful direct quotes from the transcript, prefixed with the speaker name.
+
+        Rules:
+        - Only extract EXPLICIT commitments as action items (not vague intentions)
+        - Set isMine=true ONLY for items where the user/first speaker committed to do something
+        - owner must be a specific person's name, not "Team" or "Everyone"
+        - due dates must be in YYYY-MM-DD format; use null if no date mentioned
+        - keyTopics: max 5, pick the most important themes
+        - keyQuotes: max 3, pick quotes that are insightful or carry weight — not filler
+        - clientName: the primary external client/company discussed, null if internal-only meeting
+        - openQuestions: items raised but NOT resolved, max 5
         """
         if !templateModifier.isEmpty {
             jsonPrompt += "\n\nAdditional extraction context:\n\(templateModifier)"
@@ -195,10 +308,10 @@ class GroqService: ObservableObject {
         let jsonPayload: [String: Any] = [
             "model": llamaModel,
             "temperature": 0.1,
-            "max_tokens": 800,
+            "max_tokens": 1200,
             "messages": [
                 ["role": "system", "content": jsonPrompt],
-                ["role": "user", "content": "Transcript:\n\n\(transcript)"]
+                ["role": "user", "content": "Meeting summary:\n\n\(richSummary)\n\n---\nRaw transcript (for quotes only):\n\(String(transcript.prefix(4000)))"]
             ]
         ]
 
@@ -211,6 +324,7 @@ class GroqService: ObservableObject {
             brief = try decodeBrief(from: jsonContent)
         } catch {
             // Fallback: create brief from the rich summary
+            print("[GroqService] JSON extraction failed, using fallback. Error: \(error)")
             brief = MeetingBrief(
                 title: "Meeting Notes",
                 summary: richSummary,
@@ -218,7 +332,8 @@ class GroqService: ObservableObject {
                 actionItems: [],
                 keyTopics: [],
                 clientName: nil,
-                keyQuotes: nil
+                keyQuotes: nil,
+                openQuestions: nil
             )
         }
 
@@ -230,7 +345,8 @@ class GroqService: ObservableObject {
             actionItems: brief.actionItems,
             keyTopics: brief.keyTopics,
             clientName: brief.clientName,
-            keyQuotes: brief.keyQuotes
+            keyQuotes: brief.keyQuotes,
+            openQuestions: brief.openQuestions
         )
 
         return brief
@@ -323,11 +439,15 @@ class GroqService: ObservableObject {
         let key = try apiKey()
 
         let systemPrompt = """
-        You are MeetMind, an AI assistant with access to the user's meeting transcripts and briefs. \
-        Answer the user's question based ONLY on the meeting context provided. \
-        If the answer isn't in the context, say so honestly. \
-        When referencing information, mention which meeting it came from. \
-        Be concise but thorough. Use bullet points for lists.
+        You are MeetMind, a meeting intelligence assistant. Answer based ONLY on the meeting context provided.
+
+        Rules:
+        - Be direct and concise. Lead with the answer, not preamble.
+        - Use **bold** for names, dates, and key terms.
+        - Use bullet points for lists — never long paragraphs.
+        - If the answer isn't in the context, say "I don't have that information in your meetings."
+        - When referencing a meeting, mention its title in *italics*.
+        - Keep responses under 200 words unless detail is requested.
         """
 
         let payload: [String: Any] = [
@@ -436,6 +556,70 @@ class GroqService: ObservableObject {
 
         let data = try await chatCompletion(key: key, payload: payload)
         return try extractChatContent(data)
+    }
+
+    // MARK: - Speaker Identification via LLM
+
+    /// Asks the LLM to identify real speaker names from a labeled transcript.
+    /// Returns a mapping from generic labels ("Speaker 1") to detected names ("Mitchell").
+    func identifySpeakersFromTranscript(labeledTranscript: String, speakerCount: Int) async throws -> [String: String] {
+        let key = try apiKey()
+
+        let systemPrompt = """
+        You are analyzing a meeting transcript where speakers are labeled as "Speaker 1", "Speaker 2", etc. \
+        Your job is to identify the REAL names of each speaker using context clues such as:
+        - Self-introductions ("Hi, I'm Mitchell", "This is Sarah speaking")
+        - Others addressing them by name ("Thanks, John", "What do you think, Alice?")
+        - Sign-offs or greetings that reveal names
+        - Email addresses or references mentioned
+
+        There are \(speakerCount) speaker(s) detected.
+
+        Return ONLY valid JSON — no markdown, no explanation. Format:
+        {"Speaker 1": "Real Name or Speaker 1", "Speaker 2": "Real Name or Speaker 2"}
+
+        Rules:
+        - If you can confidently identify a speaker's name, use it
+        - If you cannot determine a name, keep the original label (e.g., "Speaker 1")
+        - Do NOT guess names — only use names explicitly mentioned in context
+        - Use the most complete form of the name available (e.g., "Mitchell Park" over just "Mitchell")
+        """
+
+        let payload: [String: Any] = [
+            "model": llamaModel,
+            "temperature": 0.1,
+            "max_tokens": 500,
+            "messages": [
+                ["role": "system", "content": systemPrompt],
+                ["role": "user", "content": labeledTranscript]
+            ]
+        ]
+
+        let data = try await chatCompletion(key: key, payload: payload)
+        let content = try extractChatContent(data)
+
+        // Parse the JSON mapping
+        var cleaned = content
+        if cleaned.hasPrefix("```") {
+            cleaned = cleaned
+                .replacingOccurrences(of: "```json", with: "")
+                .replacingOccurrences(of: "```", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+
+        guard let jsonData = cleaned.data(using: .utf8) else {
+            print("[GroqService] Empty speaker identification response, returning empty mapping")
+            return [:]
+        }
+
+        do {
+            let mapping = try JSONDecoder().decode([String: String].self, from: jsonData)
+            print("[GroqService] Speaker mapping: \(mapping)")
+            return mapping
+        } catch {
+            print("[GroqService] Speaker identification parse error: \(error). Returning empty mapping.")
+            return [:]
+        }
     }
 
     // MARK: - Shared Network Helpers

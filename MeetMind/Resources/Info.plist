@@ -25,7 +25,11 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>MeetMind needs microphone access to record your meetings and capture voice todos.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>MeetMind uses speech recognition for voice todo capture.</string>
+    <string>MeetMind uses speech recognition for voice todo capture and live transcription during meetings.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>MeetMind reads your calendar to show upcoming meetings and suggest when to start recording.</string>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>MeetMind reads your calendar to show upcoming meetings and suggest when to start recording.</string>
     <key>UIBackgroundModes</key>
     <array>
         <string>audio</string>

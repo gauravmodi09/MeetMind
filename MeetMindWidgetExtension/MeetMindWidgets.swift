@@ -85,7 +85,13 @@ struct MeetMindRecordWidget: Widget {
         }
         .configurationDisplayName("Quick Record")
         .description("One tap to start recording a meeting")
-        .supportedFamilies([.systemSmall, .accessoryCircular, .accessoryRectangular])
+        .supportedFamilies({
+            var families: [WidgetFamily] = [.systemSmall, .accessoryCircular, .accessoryRectangular, .accessoryInline]
+            #if os(watchOS)
+            families.append(.accessoryCorner)
+            #endif
+            return families
+        }())
     }
 }
 
@@ -101,9 +107,24 @@ struct RecordWidgetView: View {
             circularRecordView
         case .accessoryRectangular:
             rectangularRecordView
+        case .accessoryInline:
+            inlineRecordView
+        #if os(watchOS)
+        case .accessoryCorner:
+            circularRecordView
+        #endif
         default:
             smallRecordView
         }
+    }
+
+    // Watch inline complication
+    private var inlineRecordView: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "mic.fill")
+            Text("\(entry.data.todayMeetingCount) meetings today")
+        }
+        .widgetURL(URL(string: "meetmind://record"))
     }
 
     // Small home screen widget

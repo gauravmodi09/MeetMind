@@ -3,6 +3,8 @@ import SwiftUI
 struct MeetingCard: View {
     let meeting: Meeting
     var onCopy: (() -> Void)? = nil
+    var onRetry: (() -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
     var onChangeClient: ((String?) -> Void)? = nil
     var availableClients: [String] = []
 
@@ -25,6 +27,11 @@ struct MeetingCard: View {
                             .lineLimit(1)
 
                         statusIndicator
+
+                        if meeting.status == .complete {
+                            // Simple sentiment dot based on meeting content
+                            SentimentIndicator(score: estimateSentiment(meeting), showLabel: false)
+                        }
                     }
 
                     if let clientName = meeting.clientName {
@@ -62,6 +69,22 @@ struct MeetingCard: View {
 
                 // Right actions
                 HStack(spacing: 8) {
+                    if meeting.status == .failed, let onRetry {
+                        Button(action: onRetry) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("Retry")
+                                    .font(MMTypography.caption1)
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(MMColors.primary)
+                            .cornerRadius(8)
+                        }
+                    }
+
                     if meeting.status == .complete, let onCopy {
                         Button(action: onCopy) {
                             Image(systemName: "doc.on.doc")
@@ -126,6 +149,14 @@ struct MeetingCard: View {
                     onCopy()
                 } label: {
                     Label("Copy Brief", systemImage: "doc.on.doc")
+                }
+            }
+
+            if let onDelete {
+                Button(role: .destructive) {
+                    onDelete()
+                } label: {
+                    Label("Delete Meeting", systemImage: "trash")
                 }
             }
         }
@@ -195,6 +226,17 @@ struct MeetingCard: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM d"
         return formatter.string(from: meeting.date)
+    }
+
+    private func estimateSentiment(_ meeting: Meeting) -> Double {
+        guard let summary = meeting.briefSummary else { return 0.0 }
+        let positive = ["agreed", "success", "positive", "great", "excellent", "approved", "achieved", "progress"]
+        let negative = ["blocked", "risk", "concern", "delay", "failed", "issue", "problem", "overdue"]
+        let text = summary.lowercased()
+        let posCount = positive.filter { text.contains($0) }.count
+        let negCount = negative.filter { text.contains($0) }.count
+        let total = max(posCount + negCount, 1)
+        return Double(posCount - negCount) / Double(total)
     }
 
     private var formattedDuration: String {

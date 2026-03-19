@@ -1,50 +1,170 @@
 import SwiftUI
 
-/// MeetMind App Icon Design
-/// Export this as a 1024x1024 image for App Store
-/// Use Xcode's asset catalog or a screenshot tool to capture
+/// MeetMind App Icon — Buddy Style
+/// A friendly, warm app icon with a character feel
 
 struct AppIconView: View {
     var body: some View {
         ZStack {
-            // Background gradient — deep purple to dark
+            // Warm purple gradient background
             LinearGradient(
                 colors: [
-                    Color(red: 108/255, green: 92/255, blue: 231/255),   // #6C5CE7
-                    Color(red: 75/255, green: 58/255, blue: 190/255),    // #4B3ABE
-                    Color(red: 45/255, green: 32/255, blue: 140/255)     // #2D208C
+                    Color(red: 124/255, green: 104/255, blue: 238/255),  // Soft purple
+                    Color(red: 88/255, green: 70/255, blue: 210/255),    // Mid purple
+                    Color(red: 60/255, green: 42/255, blue: 170/255)     // Deep purple
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
 
-            // Subtle radial glow behind the icon
-            RadialGradient(
+            // Soft ambient glow
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [Color.white.opacity(0.2), Color.clear],
+                        center: .center,
+                        startRadius: 80,
+                        endRadius: 400
+                    )
+                )
+                .offset(y: -60)
+
+            // Main buddy character
+            VStack(spacing: 0) {
+                // Buddy face — a friendly rounded shape with eyes
+                ZStack {
+                    // Head/body — rounded blob
+                    RoundedRectangle(cornerRadius: 120)
+                        .fill(Color.white)
+                        .frame(width: 520, height: 480)
+                        .shadow(color: Color.black.opacity(0.1), radius: 20, y: 10)
+
+                    // Face content
+                    VStack(spacing: 30) {
+                        // Eyes — friendly dots
+                        HStack(spacing: 100) {
+                            // Left eye
+                            ZStack {
+                                Circle()
+                                    .fill(Color(red: 60/255, green: 42/255, blue: 170/255))
+                                    .frame(width: 70, height: 70)
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 22, height: 22)
+                                    .offset(x: 10, y: -10)
+                            }
+
+                            // Right eye
+                            ZStack {
+                                Circle()
+                                    .fill(Color(red: 60/255, green: 42/255, blue: 170/255))
+                                    .frame(width: 70, height: 70)
+                                Circle()
+                                    .fill(Color.white)
+                                    .frame(width: 22, height: 22)
+                                    .offset(x: 10, y: -10)
+                            }
+                        }
+
+                        // Smile — friendly curved line
+                        Capsule()
+                            .fill(Color(red: 60/255, green: 42/255, blue: 170/255).opacity(0.8))
+                            .frame(width: 120, height: 24)
+                            .offset(y: -5)
+                    }
+                    .offset(y: 10)
+
+                    // Headphones — the meeting recording element
+                    // Left ear
+                    ZStack {
+                        Circle()
+                            .fill(Color(red: 108/255, green: 92/255, blue: 231/255))
+                            .frame(width: 80, height: 80)
+                        Circle()
+                            .fill(Color(red: 88/255, green: 70/255, blue: 210/255))
+                            .frame(width: 56, height: 56)
+                    }
+                    .offset(x: -250, y: -20)
+
+                    // Right ear
+                    ZStack {
+                        Circle()
+                            .fill(Color(red: 108/255, green: 92/255, blue: 231/255))
+                            .frame(width: 80, height: 80)
+                        Circle()
+                            .fill(Color(red: 88/255, green: 70/255, blue: 210/255))
+                            .frame(width: 56, height: 56)
+                    }
+                    .offset(x: 250, y: -20)
+
+                    // Headband arc (simplified as a thick capsule)
+                    Capsule()
+                        .fill(Color(red: 108/255, green: 92/255, blue: 231/255))
+                        .frame(width: 440, height: 28)
+                        .offset(y: -230)
+
+                    // Mic boom from left headphone
+                    ZStack {
+                        // Boom arm
+                        Capsule()
+                            .fill(Color(red: 88/255, green: 70/255, blue: 210/255))
+                            .frame(width: 8, height: 100)
+                            .rotationEffect(.degrees(30))
+
+                        // Mic head
+                        Circle()
+                            .fill(Color(red: 255/255, green: 100/255, blue: 100/255))
+                            .frame(width: 40, height: 40)
+                            .offset(x: 30, y: 50)
+                    }
+                    .offset(x: -210, y: 80)
+
+                    // AI sparkle on forehead
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 60, weight: .bold))
+                        .foregroundColor(Color(red: 255/255, green: 210/255, blue: 80/255))
+                        .offset(x: 140, y: -180)
+                }
+            }
+        }
+        .frame(width: 1024, height: 1024)
+        .clipShape(RoundedRectangle(cornerRadius: 224))
+    }
+}
+
+/// Alternative: Clean modern icon (non-buddy)
+struct AppIconCleanView: View {
+    var body: some View {
+        ZStack {
+            // Purple gradient
+            LinearGradient(
                 colors: [
-                    Color.white.opacity(0.15),
-                    Color.clear
+                    Color(red: 124/255, green: 104/255, blue: 238/255),
+                    Color(red: 60/255, green: 42/255, blue: 170/255)
                 ],
-                center: .center,
-                startRadius: 50,
-                endRadius: 350
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
 
-            // Icon content
-            VStack(spacing: -8) {
-                // Brain + waveform combined icon
+            // Glow
+            Circle()
+                .fill(Color.white.opacity(0.12))
+                .frame(width: 500, height: 500)
+                .offset(y: -100)
+
+            // Friendly mic with brain waves
+            VStack(spacing: -20) {
                 ZStack {
-                    // Waveform bars behind brain
-                    HStack(spacing: 6) {
-                        ForEach([0.3, 0.6, 1.0, 0.7, 0.4], id: \.self) { height in
-                            RoundedRectangle(cornerRadius: 3)
-                                .fill(Color.white.opacity(0.2))
-                                .frame(width: 6, height: 80 * height)
-                        }
+                    // Sound waves
+                    ForEach(0..<3, id: \.self) { i in
+                        Circle()
+                            .stroke(Color.white.opacity(0.15 - Double(i) * 0.04), lineWidth: 4)
+                            .frame(width: CGFloat(300 + i * 120), height: CGFloat(300 + i * 120))
                     }
 
-                    // Main brain icon
-                    Image(systemName: "brain.head.profile")
-                        .font(.system(size: 180, weight: .thin))
+                    // Central mic icon
+                    Image(systemName: "mic.fill")
+                        .font(.system(size: 260, weight: .medium))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [.white, .white.opacity(0.85)],
@@ -52,93 +172,17 @@ struct AppIconView: View {
                                 endPoint: .bottom
                             )
                         )
-                        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
                 }
-
-                // "MM" text below
-                Text("MM")
-                    .font(.system(size: 80, weight: .heavy, design: .rounded))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.white, .white.opacity(0.7)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .kerning(-6)
-            }
-        }
-        .frame(width: 1024, height: 1024)
-        .clipShape(RoundedRectangle(cornerRadius: 224)) // iOS icon radius
-    }
-}
-
-/// Alternative: Minimal mic + brain design
-struct AppIconMinimalView: View {
-    var body: some View {
-        ZStack {
-            // Solid purple background
-            Color(red: 108/255, green: 92/255, blue: 231/255)
-
-            // Subtle gradient overlay
-            LinearGradient(
-                colors: [
-                    Color.white.opacity(0.08),
-                    Color.clear,
-                    Color.black.opacity(0.1)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-
-            // Combined mic + brain symbol
-            ZStack {
-                // Microphone
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 280, weight: .regular))
-                    .foregroundColor(.white)
-                    .offset(x: -60)
 
                 // Brain sparkle
-                Image(systemName: "sparkles")
-                    .font(.system(size: 120, weight: .bold))
-                    .foregroundColor(Color(red: 255/255, green: 200/255, blue: 100/255))
-                    .offset(x: 130, y: -120)
-            }
-        }
-        .frame(width: 1024, height: 1024)
-        .clipShape(RoundedRectangle(cornerRadius: 224))
-    }
-}
-
-/// Alternative: Clean waveform + brain
-struct AppIconWaveformView: View {
-    var body: some View {
-        ZStack {
-            // Background
-            LinearGradient(
-                colors: [
-                    Color(red: 108/255, green: 92/255, blue: 231/255),
-                    Color(red: 60/255, green: 45/255, blue: 170/255)
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-
-            VStack(spacing: 20) {
-                // Brain icon
-                Image(systemName: "brain")
-                    .font(.system(size: 250, weight: .light))
-                    .foregroundColor(.white)
-
-                // Waveform bars below
-                HStack(spacing: 10) {
-                    ForEach([0.25, 0.5, 0.8, 1.0, 0.8, 0.5, 0.25], id: \.self) { h in
-                        RoundedRectangle(cornerRadius: 5)
-                            .fill(Color.white.opacity(0.6))
-                            .frame(width: 12, height: 100 * h)
-                    }
+                HStack(spacing: 8) {
+                    Image(systemName: "brain")
+                        .font(.system(size: 50))
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 36))
                 }
+                .foregroundColor(Color(red: 255/255, green: 210/255, blue: 80/255))
+                .offset(y: 20)
             }
         }
         .frame(width: 1024, height: 1024)
@@ -146,22 +190,30 @@ struct AppIconWaveformView: View {
     }
 }
 
-// MARK: - Previews
+// MARK: - PNG Generator
 
-#Preview("Option A: Brain + MM") {
+struct AppIconGenerator {
+    @MainActor
+    static func generateIcon() {
+        let renderer = ImageRenderer(content: AppIconView().frame(width: 1024, height: 1024))
+        renderer.scale = 1.0
+
+        if let image = renderer.uiImage,
+           let data = image.pngData() {
+            let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileURL = docsURL.appendingPathComponent("MeetMindAppIcon.png")
+            try? data.write(to: fileURL)
+            print("[AppIcon] Saved to: \(fileURL.path)")
+        }
+    }
+}
+
+#Preview("Buddy Icon") {
     AppIconView()
-        .frame(width: 200, height: 200)
-        .previewLayout(.sizeThatFits)
+        .frame(width: 300, height: 300)
 }
 
-#Preview("Option B: Mic + Sparkle") {
-    AppIconMinimalView()
-        .frame(width: 200, height: 200)
-        .previewLayout(.sizeThatFits)
-}
-
-#Preview("Option C: Brain + Waveform") {
-    AppIconWaveformView()
-        .frame(width: 200, height: 200)
-        .previewLayout(.sizeThatFits)
+#Preview("Clean Icon") {
+    AppIconCleanView()
+        .frame(width: 300, height: 300)
 }

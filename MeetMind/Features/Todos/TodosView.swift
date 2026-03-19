@@ -216,12 +216,14 @@ struct TodosView: View {
             Text(voiceFormattedDuration)
                 .font(MMTypography.monoMedium)
                 .foregroundColor(.white)
+                .fixedSize()
 
             Text("Listening...")
                 .font(MMTypography.footnoteMedium)
                 .foregroundColor(.white.opacity(0.6))
+                .lineLimit(1)
 
-            Spacer()
+            Spacer(minLength: 4)
 
             // Stop button
             Button {
@@ -232,12 +234,14 @@ struct TodosView: View {
                         .font(.system(size: 12, weight: .bold))
                     Text("Done")
                         .font(MMTypography.footnoteMedium)
+                        .fixedSize()
                 }
                 .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
                 .background(MMColors.recording)
                 .cornerRadius(20)
+                .fixedSize()
             }
 
             // Cancel
@@ -429,22 +433,25 @@ struct UpcomingView: View {
                             .listRowSeparator(.hidden)
                         } else {
                             ForEach(dayTodos) { todo in
-                                TodoRow(
-                                    todo: todo,
-                                    onToggle: {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            todoService.toggleComplete(todo)
+                                NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
+                                    TodoRow(
+                                        todo: todo,
+                                        onToggle: {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                todoService.toggleComplete(todo)
+                                            }
+                                        },
+                                        onReschedule: { date in
+                                            todoService.reschedule(todo, to: date)
+                                        },
+                                        onDelete: {
+                                            withAnimation {
+                                                todoService.deleteTodo(todo)
+                                            }
                                         }
-                                    },
-                                    onReschedule: { date in
-                                        todoService.reschedule(todo, to: date)
-                                    },
-                                    onDelete: {
-                                        withAnimation {
-                                            todoService.deleteTodo(todo)
-                                        }
-                                    }
-                                )
+                                    )
+                                }
+                                .buttonStyle(.plain)
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                             }
@@ -671,33 +678,7 @@ struct AllTodosView: View {
                     if !pendingTodos.isEmpty {
                         Section {
                             ForEach(pendingTodos) { todo in
-                                TodoRow(
-                                    todo: todo,
-                                    onToggle: {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            todoService.toggleComplete(todo)
-                                        }
-                                    },
-                                    onReschedule: { date in
-                                        todoService.reschedule(todo, to: date)
-                                    },
-                                    onDelete: {
-                                        withAnimation {
-                                            todoService.deleteTodo(todo)
-                                        }
-                                    }
-                                )
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                            }
-                        }
-                    }
-
-                    // Completed section (collapsible)
-                    if !completedTodos.isEmpty {
-                        Section {
-                            if showCompleted {
-                                ForEach(completedTodos) { todo in
+                                NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
                                     TodoRow(
                                         todo: todo,
                                         onToggle: {
@@ -714,6 +695,38 @@ struct AllTodosView: View {
                                             }
                                         }
                                     )
+                                }
+                                .buttonStyle(.plain)
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                            }
+                        }
+                    }
+
+                    // Completed section (collapsible)
+                    if !completedTodos.isEmpty {
+                        Section {
+                            if showCompleted {
+                                ForEach(completedTodos) { todo in
+                                    NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
+                                        TodoRow(
+                                            todo: todo,
+                                            onToggle: {
+                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                    todoService.toggleComplete(todo)
+                                                }
+                                            },
+                                            onReschedule: { date in
+                                                todoService.reschedule(todo, to: date)
+                                            },
+                                            onDelete: {
+                                                withAnimation {
+                                                    todoService.deleteTodo(todo)
+                                                }
+                                            }
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
                                     .listRowInsets(EdgeInsets())
                                     .listRowSeparator(.hidden)
                                 }

@@ -77,14 +77,14 @@ struct MeetingChatView: View {
 
     private var suggestionChips: [String] {
         [
+            "How many meetings this week?",
             "What action items are on me?",
-            "How many tasks are related to Databricks?",
-            "What were the key decisions this week?",
-            "List all my pending tasks",
-            "What did the customer ask me to work on?",
+            "What were the key decisions?",
+            "Tasks related to Databricks",
+            "What did the customer ask for?",
             "Summarize yesterday's meetings",
-            "What topics came up most often?",
-            "Show overdue action items"
+            "Show overdue items",
+            "What's my busiest client?"
         ]
     }
 
@@ -184,7 +184,7 @@ struct MessageBubble: View {
             if message.isUser { Spacer(minLength: 60) }
 
             VStack(alignment: message.isUser ? .trailing : .leading, spacing: 6) {
-                Text(message.content)
+                renderMarkdownText(message.content)
                     .font(.subheadline)
                     .foregroundColor(message.isUser ? .white : MMColors.textPrimary)
                     .textSelection(.enabled)
@@ -215,6 +215,69 @@ struct MessageBubble: View {
             if !message.isUser { Spacer(minLength: 60) }
         }
     }
+
+    /// Parses basic markdown: **bold** and *italic* into styled Text views.
+    private func renderMarkdownText(_ string: String) -> Text {
+        var result = Text("")
+        var remaining = string[string.startIndex...]
+
+        while !remaining.isEmpty {
+            // Look for **bold**
+            if let boldStart = remaining.range(of: "**") {
+                // Add text before the bold marker
+                let before = remaining[remaining.startIndex..<boldStart.lowerBound]
+                if !before.isEmpty {
+                    result = result + renderItalic(String(before))
+                }
+                remaining = remaining[boldStart.upperBound...]
+
+                // Find closing **
+                if let boldEnd = remaining.range(of: "**") {
+                    let boldText = String(remaining[remaining.startIndex..<boldEnd.lowerBound])
+                    result = result + Text(boldText).bold()
+                    remaining = remaining[boldEnd.upperBound...]
+                } else {
+                    // No closing **, treat as plain text
+                    result = result + Text("**")
+                }
+            } else {
+                // No more bold markers — process remaining for italic
+                result = result + renderItalic(String(remaining))
+                break
+            }
+        }
+
+        return result
+    }
+
+    /// Parses *italic* within a text segment (after bold has been extracted).
+    private func renderItalic(_ string: String) -> Text {
+        var result = Text("")
+        var remaining = string[string.startIndex...]
+
+        while !remaining.isEmpty {
+            if let italicStart = remaining.range(of: "*") {
+                let before = remaining[remaining.startIndex..<italicStart.lowerBound]
+                if !before.isEmpty {
+                    result = result + Text(String(before))
+                }
+                remaining = remaining[italicStart.upperBound...]
+
+                if let italicEnd = remaining.range(of: "*") {
+                    let italicText = String(remaining[remaining.startIndex..<italicEnd.lowerBound])
+                    result = result + Text(italicText).italic()
+                    remaining = remaining[italicEnd.upperBound...]
+                } else {
+                    result = result + Text("*")
+                }
+            } else {
+                result = result + Text(String(remaining))
+                break
+            }
+        }
+
+        return result
+    }
 }
 
 // MARK: - ViewModel
@@ -228,35 +291,248 @@ class MeetingChatViewModel: ObservableObject {
     var meetingService: MeetingService?
     var todoService: TodoService?
 
+    // MARK: - Query Type Detection
+
+    enum QueryType {
+        case stats, actionItems, taskQuery, general
+    }
+
+    private func detectQueryType(_ query: String) -> QueryType {
+        let q = query.lowercased()
+        if q.contains("how many meeting") || q.contains("meetings this week") || q.contains("meetings today") || q.contains("total meetings") || q.contains("meeting count") || q.contains("busiest") {
+            return .stats
+        }
+        if q.contains("action item") || q.contains("on me") || q.contains("my tasks") || q.contains("assigned to me") || q.contains("what do i need") || q.contains("my action") {
+            return .actionItems
+        }
+        if q.contains("tasks related") || q.contains("todos about") || q.contains("how many task") || q.contains("pending task") || q.contains("overdue") {
+            return .taskQuery
+        }
+        return .general
+    }
+
+    // MARK: - Send Query (Smart Routing)
+
     func sendQuery(_ query: String) async {
         let userMessage = ChatMessage(content: query, isUser: true)
         messages.append(userMessage)
 
-        isLoading = true
+        let queryType = detectQueryType(query)
 
-        do {
-            let context = buildMeetingContext(for: query)
-            let response = try await GroqService.shared.chatAboutMeetings(
-                query: query,
-                meetingContext: context.text
-            )
-
-            let aiMessage = ChatMessage(
-                content: response,
-                isUser: false,
-                sourceMeetings: context.meetingTitles
-            )
-            messages.append(aiMessage)
-        } catch {
-            let errorMessage = ChatMessage(
-                content: "Sorry, I couldn't process that request: \(error.localizedDescription)",
-                isUser: false
-            )
-            messages.append(errorMessage)
+        switch queryType {
+        case .stats:
+            messages.append(ChatMessage(content: answerStatsDirectly(query), isUser: false))
+            return
+        case .actionItems:
+            messages.append(ChatMessage(content: answerActionItemsDirectly(query), isUser: false))
+            return
+        case .taskQuery:
+            messages.append(ChatMessage(content: answerTaskQuery(query), isUser: false))
+            return
+        case .general:
+            break // Fall through to LLM
         }
 
+        // LLM for complex queries
+        isLoading = true
+        do {
+            let context = buildMeetingContext(for: query)
+            let response = try await GroqService.shared.chatAboutMeetings(query: query, meetingContext: context.text)
+            messages.append(ChatMessage(content: response, isUser: false, sourceMeetings: context.meetingTitles))
+        } catch {
+            messages.append(ChatMessage(content: "Sorry: \(error.localizedDescription)", isUser: false))
+        }
         isLoading = false
     }
+
+    // MARK: - Direct Answer Methods
+
+    private func answerStatsDirectly(_ query: String) -> String {
+        guard let meetings = meetingService?.meetings else {
+            return "No meetings available yet."
+        }
+
+        let completed = meetings.filter { $0.status == .complete }
+        let cal = Calendar.current
+        let now = Date()
+
+        let today = completed.filter { cal.isDateInToday($0.date) }
+        let thisWeek = completed.filter { cal.isDate($0.date, equalTo: now, toGranularity: .weekOfYear) }
+        let thisMonth = completed.filter { cal.isDate($0.date, equalTo: now, toGranularity: .month) }
+
+        let q = query.lowercased()
+
+        // Busiest client query
+        if q.contains("busiest") {
+            let clientCounts = Dictionary(grouping: completed.filter { $0.clientName != nil }, by: { $0.clientName! })
+                .mapValues { $0.count }
+                .sorted { $0.value > $1.value }
+
+            if clientCounts.isEmpty {
+                return "No client data available across your meetings."
+            }
+
+            var result = "Your busiest clients:\n\n"
+            for (i, entry) in clientCounts.prefix(5).enumerated() {
+                result += "\(i + 1). **\(entry.key)** — \(entry.value) meeting\(entry.value == 1 ? "" : "s")\n"
+            }
+            return result
+        }
+
+        // Meetings today
+        if q.contains("today") {
+            if today.isEmpty {
+                return "No completed meetings today."
+            }
+            var result = "**\(today.count)** meeting\(today.count == 1 ? "" : "s") today:\n\n"
+            let fmt = DateFormatter()
+            fmt.timeStyle = .short
+            for m in today {
+                let client = m.clientName.map { " (*\($0)*)" } ?? ""
+                result += "- **\(m.title)**\(client) at \(fmt.string(from: m.date))\n"
+            }
+            return result
+        }
+
+        // Meetings this week
+        if q.contains("this week") || q.contains("week") {
+            if thisWeek.isEmpty {
+                return "No completed meetings this week."
+            }
+            var result = "**\(thisWeek.count)** meeting\(thisWeek.count == 1 ? "" : "s") this week:\n\n"
+            let fmt = DateFormatter()
+            fmt.dateFormat = "EEE, MMM d"
+            for m in thisWeek.sorted(by: { $0.date < $1.date }) {
+                let client = m.clientName.map { " (*\($0)*)" } ?? ""
+                result += "- **\(m.title)**\(client) — \(fmt.string(from: m.date))\n"
+            }
+            return result
+        }
+
+        // General stats
+        var result = "Meeting stats:\n\n"
+        result += "- **\(today.count)** today\n"
+        result += "- **\(thisWeek.count)** this week\n"
+        result += "- **\(thisMonth.count)** this month\n"
+        result += "- **\(completed.count)** total completed\n"
+
+        if let latest = completed.sorted(by: { $0.date > $1.date }).first {
+            let fmt = DateFormatter()
+            fmt.dateStyle = .medium
+            result += "\nMost recent: *\(latest.title)* on \(fmt.string(from: latest.date))"
+        }
+
+        return result
+    }
+
+    private func answerActionItemsDirectly(_ query: String) -> String {
+        guard let meetings = meetingService?.meetings else {
+            return "No meetings available yet."
+        }
+
+        let completed = meetings.filter { $0.status == .complete }
+        let myItems = completed.flatMap { meeting in
+            meeting.briefActionItems.filter { $0.isMine && !$0.isCompleted }.map { (meeting.title, $0) }
+        }
+
+        if myItems.isEmpty {
+            return "No pending action items assigned to you."
+        }
+
+        var result = "**\(myItems.count)** action item\(myItems.count == 1 ? "" : "s") on you:\n\n"
+        for (meetingTitle, item) in myItems {
+            let due = item.dueDate.map { d in
+                let fmt = DateFormatter()
+                fmt.dateStyle = .short
+                return " (due \(fmt.string(from: d)))"
+            } ?? ""
+            result += "- \(item.text)\(due)\n  from *\(meetingTitle)*\n"
+        }
+
+        return result
+    }
+
+    private func answerTaskQuery(_ query: String) -> String {
+        guard let todos = todoService?.todos, !todos.isEmpty else {
+            return "No tasks found."
+        }
+
+        let q = query.lowercased()
+
+        // Overdue items
+        if q.contains("overdue") {
+            let overdue = todos.filter { !$0.isCompleted && $0.dueDate < Date() }
+            if overdue.isEmpty {
+                return "No overdue tasks — you're all caught up!"
+            }
+            var result = "**\(overdue.count)** overdue task\(overdue.count == 1 ? "" : "s"):\n\n"
+            let fmt = DateFormatter()
+            fmt.dateStyle = .short
+            for task in overdue.sorted(by: { $0.dueDate < $1.dueDate }) {
+                let client = task.clientTag.map { " [\($0)]" } ?? ""
+                result += "- **\(task.title)**\(client) — was due \(fmt.string(from: task.dueDate))\n"
+            }
+            return result
+        }
+
+        // Pending tasks
+        if q.contains("pending") {
+            let pending = todos.filter { !$0.isCompleted }
+            if pending.isEmpty {
+                return "No pending tasks — all done!"
+            }
+            var result = "**\(pending.count)** pending task\(pending.count == 1 ? "" : "s"):\n\n"
+            let fmt = DateFormatter()
+            fmt.dateStyle = .short
+            for task in pending.sorted(by: { $0.dueDate < $1.dueDate }).prefix(15) {
+                let client = task.clientTag.map { " [\($0)]" } ?? ""
+                let pri = task.priority == .high ? " !!" : ""
+                result += "- **\(task.title)**\(client)\(pri) — due \(fmt.string(from: task.dueDate))\n"
+            }
+            if pending.count > 15 {
+                result += "\n...and **\(pending.count - 15)** more"
+            }
+            return result
+        }
+
+        // Tasks related to keyword — extract keyword after "related to" or "about"
+        let keyword: String? = {
+            if let range = q.range(of: "related to ") {
+                return String(q[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespaces).first
+            }
+            if let range = q.range(of: "about ") {
+                return String(q[range.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines).components(separatedBy: .whitespaces).first
+            }
+            return nil
+        }()
+
+        if let keyword = keyword, !keyword.isEmpty {
+            let matched = todos.filter {
+                $0.title.lowercased().contains(keyword) ||
+                ($0.clientTag?.lowercased().contains(keyword) ?? false)
+            }
+            if matched.isEmpty {
+                return "No tasks found related to **\(keyword)**."
+            }
+            let pending = matched.filter { !$0.isCompleted }
+            let done = matched.filter { $0.isCompleted }
+            var result = "**\(matched.count)** task\(matched.count == 1 ? "" : "s") related to **\(keyword)** (\(pending.count) pending, \(done.count) done):\n\n"
+            let fmt = DateFormatter()
+            fmt.dateStyle = .short
+            for task in matched.prefix(10) {
+                let status = task.isCompleted ? "~~done~~" : "pending"
+                result += "- **\(task.title)** — \(status), due \(fmt.string(from: task.dueDate))\n"
+            }
+            return result
+        }
+
+        // Generic task count
+        let pending = todos.filter { !$0.isCompleted }
+        let done = todos.filter { $0.isCompleted }
+        return "You have **\(todos.count)** total tasks: **\(pending.count)** pending, **\(done.count)** completed."
+    }
+
+    // MARK: - Build LLM Context
 
     private func buildMeetingContext(for query: String) -> (text: String, meetingTitles: [String]) {
         guard let meetings = meetingService?.meetings else {

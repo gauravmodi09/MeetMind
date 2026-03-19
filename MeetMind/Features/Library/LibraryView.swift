@@ -40,6 +40,46 @@ struct LibraryView: View {
                             .padding(.horizontal, 20)
                             .padding(.top, 8)
 
+                            // Meeting Intelligence shortcut
+                            NavigationLink {
+                                MeetingInsightsView()
+                                    .environmentObject(meetingService)
+                            } label: {
+                                HStack(spacing: 12) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(MMColors.info.opacity(0.12))
+                                            .frame(width: 40, height: 40)
+
+                                        Image(systemName: "chart.bar.xaxis")
+                                            .font(.system(size: 16, weight: .semibold))
+                                            .foregroundColor(MMColors.info)
+                                    }
+
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Meeting Intelligence")
+                                            .font(MMTypography.headline)
+                                            .foregroundColor(MMColors.textPrimary)
+
+                                        Text("Analytics across all meetings")
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    }
+
+                                    Spacer()
+
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(14)
+                                .background(MMColors.cardBg)
+                                .cornerRadius(14)
+                                .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 2)
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 20)
+
                             // Action Items shortcut
                             NavigationLink {
                                 ActionItemsView()
@@ -115,11 +155,13 @@ struct LibraryView: View {
                     .accessibilityHint("Open full search across all meetings")
                     NavigationLink {
                         PeopleView()
+                            .environmentObject(meetingService)
                     } label: {
                         Image(systemName: "person.2")
                     }
                     NavigationLink {
                         RecipesView()
+                            .environmentObject(meetingService)
                     } label: {
                         Image(systemName: "sparkles")
                     }
