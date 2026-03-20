@@ -514,38 +514,30 @@ struct MeetingDetailView: View {
                         }
                     }
                 } else if trimmed.hasPrefix("|") && trimmed.hasSuffix("|") {
-                    // Markdown table — render as card rows instead of cramped columns
+                    // Markdown table — convert rows to clean bullet points
                     if trimmed.contains("---") {
                         // Skip separator line
                         EmptyView()
                     } else {
                         let cells = trimmed.split(separator: "|").map { String($0).trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
-                        // Check if this is a header row (Task, Owner, Due, Priority)
                         let isHeader = cells.contains(where: { ["Task", "Owner", "Due", "Priority", "Date"].contains($0) })
                         if !isHeader && cells.count >= 2 {
-                            // Render as a compact action item card
-                            VStack(alignment: .leading, spacing: 4) {
-                                // Task description (first cell)
-                                renderBoldText(cells[0])
-                                // Meta info (remaining cells)
-                                HStack(spacing: 12) {
-                                    ForEach(Array(cells.dropFirst().enumerated()), id: \.offset) { _, cell in
-                                        if !cell.isEmpty {
-                                            Text(cell.replacingOccurrences(of: "**", with: ""))
-                                                .font(.system(size: 12, weight: .medium))
-                                                .foregroundColor(MMColors.textSecondary)
-                                        }
+                            // Render as a clean bullet point: Task → Owner, Due, Priority
+                            HStack(alignment: .top, spacing: 8) {
+                                Circle()
+                                    .fill(MMColors.primary.opacity(0.5))
+                                    .frame(width: 5, height: 5)
+                                    .padding(.top, 7)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    renderBoldText(cells[0])
+                                    let meta = cells.dropFirst().filter { !$0.isEmpty }.map { $0.replacingOccurrences(of: "**", with: "") }.joined(separator: " · ")
+                                    if !meta.isEmpty {
+                                        Text(meta)
+                                            .font(.system(size: 12))
+                                            .foregroundColor(MMColors.textSecondary)
                                     }
                                 }
                             }
-                            .padding(12)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(MMColors.primary.opacity(0.04))
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(MMColors.border, lineWidth: 1)
-                            )
                         }
                     }
                 } else {
