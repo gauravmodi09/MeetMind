@@ -513,17 +513,40 @@ struct MeetingDetailView: View {
                             renderBoldText(String(parts[1]).trimmingCharacters(in: .whitespaces))
                         }
                     }
-                } else if trimmed.hasPrefix("|") && trimmed.hasSuffix("|") && !trimmed.contains("---") {
-                    // Markdown table row
-                    let cells = trimmed.split(separator: "|").map { String($0).trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
-                    if !cells.isEmpty {
-                        HStack(spacing: 12) {
-                            ForEach(Array(cells.enumerated()), id: \.offset) { idx, cell in
-                                renderBoldText(cell)
-                                    .frame(maxWidth: .infinity, alignment: idx == 0 ? .leading : .center)
+                } else if trimmed.hasPrefix("|") && trimmed.hasSuffix("|") {
+                    // Markdown table — render as card rows instead of cramped columns
+                    if trimmed.contains("---") {
+                        // Skip separator line
+                        EmptyView()
+                    } else {
+                        let cells = trimmed.split(separator: "|").map { String($0).trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+                        // Check if this is a header row (Task, Owner, Due, Priority)
+                        let isHeader = cells.contains(where: { ["Task", "Owner", "Due", "Priority", "Date"].contains($0) })
+                        if !isHeader && cells.count >= 2 {
+                            // Render as a compact action item card
+                            VStack(alignment: .leading, spacing: 4) {
+                                // Task description (first cell)
+                                renderBoldText(cells[0])
+                                // Meta info (remaining cells)
+                                HStack(spacing: 12) {
+                                    ForEach(Array(cells.dropFirst().enumerated()), id: \.offset) { _, cell in
+                                        if !cell.isEmpty {
+                                            Text(cell.replacingOccurrences(of: "**", with: ""))
+                                                .font(.system(size: 12, weight: .medium))
+                                                .foregroundColor(MMColors.textSecondary)
+                                        }
+                                    }
+                                }
                             }
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(MMColors.primary.opacity(0.04))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(MMColors.border, lineWidth: 1)
+                            )
                         }
-                        .padding(.vertical, 4)
                     }
                 } else {
                     // Normal paragraph text with **bold** support
