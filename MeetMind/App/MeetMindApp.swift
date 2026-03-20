@@ -2,9 +2,23 @@ import SwiftUI
 
 @main
 struct MeetMindApp: App {
-    let persistence = PersistenceController.shared
+    let persistence: PersistenceController = {
+        if UserDefaults.standard.bool(forKey: "iCloudSyncEnabled") {
+            return PersistenceController.cloudKitController() ?? PersistenceController.shared
+        }
+        return PersistenceController.shared
+    }()
     @AppStorage("hasCompletedOnboarding") var hasOnboarded = false
     @AppStorage("groqAPIKey") var apiKey = ""
+    @AppStorage("appTheme") var appTheme = "system"
+
+    var colorSchemeFromSetting: ColorScheme? {
+        switch appTheme {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil
+        }
+    }
 
     init() {
         // Auto-load API key from Secrets.plist if not set
@@ -31,11 +45,13 @@ struct MeetMindApp: App {
                     .onOpenURL { url in
                         handleDeepLink(url)
                     }
+                    .preferredColorScheme(colorSchemeFromSetting)
             } else {
                 OnboardingView()
                     .environment(\.managedObjectContext, persistence.container.viewContext)
                     .environmentObject(MeetingService.shared)
                     .environmentObject(TodoService.shared)
+                    .preferredColorScheme(colorSchemeFromSetting)
             }
         }
     }

@@ -158,6 +158,20 @@ struct MeetingDetailView: View {
                                 copyForNotion()
                             }
 
+                            if !(UserDefaults.standard.string(forKey: "teamsWebhookURL") ?? "").isEmpty {
+                                MMButton("Send to Teams", icon: "paperplane.fill", style: .secondary) {
+                                    Task {
+                                        let items = meeting.briefActionItems.map { "\($0.text) (\($0.owner))" }
+                                        await TeamsIntegrationService.shared.sendToTeams(
+                                            title: meeting.title,
+                                            summary: meeting.briefSummary ?? "",
+                                            actionItems: items,
+                                            webhookURL: UserDefaults.standard.string(forKey: "teamsWebhookURL") ?? ""
+                                        )
+                                    }
+                                }
+                            }
+
                             // Regenerate notes with latest AI prompt
                             if meeting.rawTranscript != nil && !isRegenerating {
                                 MMButton("Regenerate Notes", icon: "arrow.clockwise", style: .ghost) {

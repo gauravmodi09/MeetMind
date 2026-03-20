@@ -57,6 +57,7 @@
 		80B5CF5100B74D1EB75D5595 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657A4827D44E498EBA8C0BB6 /* StatsView.swift */; };
 		845546EAB09EDA85D3598EFD /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF2464699D1E2A79179E056 /* GlobalSearchView.swift */; };
 		89D9425FA7988C5C757253CF /* GroqService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9278463BAF4B45E41B1D87E4 /* GroqService.swift */; };
+		T34M51NTEGR4T10N5ERV1CE1 /* TeamsIntegrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */; };
 		95E7474D8FCFB4A1EDBF39B1 /* MeetMindModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */; };
 		981241E8A9D38A10531AB82F /* MMColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0814810B7F70157CCF2236E /* MMColors.swift */; };
 		9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22C43F2AF83E1632F507ACC /* DataExportService.swift */; };
@@ -281,6 +282,7 @@
 		9180C9A3ECDB451AB24CB12E /* DoseConfirmationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseConfirmationOverlay.swift; sourceTree = "<group>"; };
 		923D4C75B450CB23642B34AA /* MMComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMComponents.swift; path = MeetMind/DesignSystem/MMComponents.swift; sourceTree = SOURCE_ROOT; };
 		9278463BAF4B45E41B1D87E4 /* GroqService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqService.swift; path = MeetMind/Services/GroqService.swift; sourceTree = SOURCE_ROOT; };
+		T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TeamsIntegrationService.swift; path = MeetMind/Services/TeamsIntegrationService.swift; sourceTree = SOURCE_ROOT; };
 		938D83A193BD3E835B3A2C7A /* MCBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCBadge.swift; sourceTree = "<group>"; };
 		94314E6E9407D130F884388B /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoService.swift; path = MeetMind/Services/TodoService.swift; sourceTree = SOURCE_ROOT; };
 		94B747D8AFE535F51B12C9C6 /* MCAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MCAnimations.swift; path = MeetMind/Core/Components/MCAnimations.swift; sourceTree = SOURCE_ROOT; };
@@ -494,6 +496,7 @@
 				1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */,
 				C22C43F2AF83E1632F507ACC /* DataExportService.swift */,
 				9278463BAF4B45E41B1D87E4 /* GroqService.swift */,
+				T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */,
 				E8CC45FDB10D711132EF449A /* KeychainService.swift */,
 				C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */,
 				C9C44E978FFF9A25119BBA7E /* MeetingService.swift */,
@@ -1244,6 +1247,7 @@
 				6AE045C49DE0A15B9D8C8CA8 /* BackgroundTaskService.swift in Sources */,
 				9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */,
 				89D9425FA7988C5C757253CF /* GroqService.swift in Sources */,
+				T34M51NTEGR4T10N5ERV1CE1 /* TeamsIntegrationService.swift in Sources */,
 				CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */,
 				3DCD4D1DBCB3D7D5D5F683FB /* MeetingPipeline.swift in Sources */,
 				764A422CB5D45331285479A5 /* MeetingService.swift in Sources */,

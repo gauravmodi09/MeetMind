@@ -8,6 +8,8 @@ struct SettingsView: View {
     @AppStorage("audioRetention") private var audioRetention = AudioRetention.fourteenDays.rawValue
     @AppStorage("autoDeleteAudioAfterProcessing") private var autoDeleteAudio = true
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
+    @AppStorage("teamsWebhookURL") private var teamsWebhookURL = ""
+    @AppStorage("appTheme") private var appTheme = "system"
 
     @StateObject private var storageService = StorageManagementService.shared
     @StateObject private var analytics = AnalyticsService.shared
@@ -17,6 +19,7 @@ struct SettingsView: View {
     @State private var showExportSheet = false
     @State private var showDeleteConfirmation = false
     @State private var showCleanupConfirmation = false
+    @State private var showICloudAlert = false
     @State private var exportURLs: [URL] = []
 
     private var maskedKey: String {
@@ -161,6 +164,82 @@ struct SettingsView: View {
                             }
                             .padding(.horizontal, 16)
                             .padding(.vertical, 12)
+                        }
+                    }
+
+                    // MARK: - Integrations
+                    settingsSection(header: "INTEGRATIONS") {
+                        VStack(spacing: 0) {
+                            // Teams Integration
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color(red: 0.45, green: 0.34, blue: 0.86).opacity(0.12))
+                                        .frame(width: 36, height: 36)
+                                    Image(systemName: "bubble.left.and.text.bubble.right")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(Color(red: 0.45, green: 0.34, blue: 0.86))
+                                }
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Microsoft Teams")
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    if teamsWebhookURL.isEmpty {
+                                        Text("Add webhook URL to send notes to Teams")
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    } else {
+                                        Text("Connected")
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.success)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+
+                            sectionDivider
+
+                            TextField("Teams Webhook URL", text: $teamsWebhookURL)
+                                .font(MMTypography.footnote)
+                                .foregroundColor(MMColors.textPrimary)
+                                .textContentType(.URL)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+
+                            Text("Paste your Microsoft Teams Incoming Webhook URL to send meeting notes directly to a channel.")
+                                .font(MMTypography.caption1)
+                                .foregroundColor(MMColors.textTertiary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                        }
+                    }
+
+                    // MARK: - Appearance
+                    settingsSection(header: "APPEARANCE") {
+                        VStack(spacing: 0) {
+                            HStack {
+                                Image(systemName: "paintbrush")
+                                    .foregroundColor(MMColors.primary)
+                                    .frame(width: 20)
+                                Text("Theme")
+                                    .font(MMTypography.body)
+                                    .foregroundColor(MMColors.textPrimary)
+                                Spacer()
+                                Picker("", selection: $appTheme) {
+                                    Text("System").tag("system")
+                                    Text("Dark").tag("dark")
+                                    Text("Light").tag("light")
+                                }
+                                .pickerStyle(.menu)
+                                .tint(MMColors.primary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
                         }
                     }
 
@@ -356,7 +435,16 @@ struct SettingsView: View {
                     // MARK: - iCloud
                     settingsSection(header: "ICLOUD") {
                         VStack(spacing: 0) {
-                            Toggle(isOn: $iCloudSyncEnabled) {
+                            Toggle(isOn: Binding(
+                                get: { iCloudSyncEnabled },
+                                set: { newValue in
+                                    if newValue {
+                                        showICloudAlert = true
+                                    } else {
+                                        iCloudSyncEnabled = false
+                                    }
+                                }
+                            )) {
                                 Text("iCloud Sync")
                                     .font(MMTypography.body)
                                     .foregroundColor(MMColors.textPrimary)
@@ -365,7 +453,7 @@ struct SettingsView: View {
                             .padding(.horizontal, 16)
                             .padding(.vertical, 14)
 
-                            Text("Sync meetings and todos across your devices.")
+                            Text("Requires app restart to take effect. Your meetings and todos will sync across all your Apple devices.")
                                 .font(MMTypography.caption1)
                                 .foregroundColor(MMColors.textTertiary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -619,6 +707,14 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("This will delete all \(storageService.processedFileCount) audio file(s) (\(storageService.formatSize(storageService.totalAudioSize))). Meeting briefs will be preserved.")
+            }
+            .alert("Enable iCloud Sync", isPresented: $showICloudAlert) {
+                Button("Enable") {
+                    iCloudSyncEnabled = true
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Your meetings and todos will sync across all your Apple devices. You will need to restart the app for this change to take effect.")
             }
             .sheet(isPresented: $showExportSheet) {
                 if !exportURLs.isEmpty {
