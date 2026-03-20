@@ -363,7 +363,7 @@ struct MeetingDetailView: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(MMColors.warning)
 
-                Text("Summary")
+                Text("Executive Summary")
                     .font(MMTypography.headline)
                     .foregroundColor(MMColors.warning)
             }
@@ -422,19 +422,30 @@ struct MeetingDetailView: View {
     private func extractTLDR(from summary: String) -> String? {
         let lines = summary.components(separatedBy: "\n")
         var capturing = false
-        var tldr = ""
+        var result = ""
         for line in lines {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
-            if trimmed.hasPrefix("## Summary") || trimmed.hasPrefix("## Summary") {
+            // Match any of: ## Summary, ## Executive Summary, ## TL;DR, ## TLDR, ## Meeting Overview
+            if trimmed.hasPrefix("## Executive Summary") ||
+               trimmed.hasPrefix("## Summary") ||
+               trimmed.hasPrefix("## TL;DR") ||
+               trimmed.hasPrefix("## TLDR") {
                 capturing = true
                 continue
             }
             if capturing && trimmed.hasPrefix("##") { break }
-            if capturing && !trimmed.isEmpty {
-                tldr += (tldr.isEmpty ? "" : " ") + trimmed
+            if capturing && !trimmed.isEmpty && !trimmed.hasPrefix("#") && !trimmed.hasPrefix("---") {
+                result += (result.isEmpty ? "" : " ") + trimmed
             }
         }
-        return tldr.isEmpty ? nil : tldr
+        // Limit to first ~500 chars for the summary card (keep it scannable)
+        if result.count > 500 {
+            let index = result.index(result.startIndex, offsetBy: 500)
+            if let spaceIndex = result[...index].lastIndex(of: " ") {
+                result = String(result[...spaceIndex]) + "..."
+            }
+        }
+        return result.isEmpty ? nil : result
     }
 
     // MARK: - Extract Open Questions
