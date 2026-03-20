@@ -25,6 +25,7 @@ struct RecordingView: View {
 
     let onStop: (Meeting?) -> Void
     let onCancel: () -> Void
+    let onMinimize: () -> Void
 
     private let barCount = 30
 
@@ -80,6 +81,16 @@ struct RecordingView: View {
                     .accessibilityLabel("Audio waveform visualization")
                     .accessibilityHidden(true)
 
+                // Live transcription (inline)
+                if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                    ScrollView {
+                        LiveTranscriptOverlay(transcriptionService: liveTranscription)
+                    }
+                    .frame(height: 90)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
+                }
+
                 // Meeting template selector
                 MeetingTemplateSelector(selectedTemplate: $selectedTemplate)
                     .padding(.horizontal, 16)
@@ -95,14 +106,6 @@ struct RecordingView: View {
                     .padding(.bottom, 40)
             }
 
-            // Live transcription overlay
-            if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
-                VStack {
-                    Spacer()
-                    LiveTranscriptOverlay(transcriptionService: liveTranscription)
-                        .padding(.bottom, 100) // above control buttons
-                }
-            }
         }
         .onAppear {
             startRecording()
@@ -200,6 +203,18 @@ struct RecordingView: View {
             .accessibilityHint("Double-tap to discard the current recording")
 
             Spacer()
+
+            Button {
+                // Minimize — don't stop recording
+                onMinimize()
+            } label: {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.7))
+            }
+            .padding(.trailing, 16)
+            .accessibilityLabel("Minimize recording")
+            .accessibilityHint("Double-tap to minimize and continue recording in background")
         }
     }
 
@@ -543,7 +558,8 @@ struct RecordingView: View {
 #Preview {
     RecordingView(
         onStop: { _ in },
-        onCancel: {}
+        onCancel: {},
+        onMinimize: {}
     )
     .environmentObject(MeetingService.shared)
 }

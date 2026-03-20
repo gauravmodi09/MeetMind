@@ -27,7 +27,9 @@ struct UpcomingMeetingsView: View {
             }
         }
         .task {
-            if calendarService.authorizationStatus == .authorized {
+            if calendarService.authorizationStatus == .notDetermined {
+                _ = await calendarService.requestAccess()
+            } else if calendarService.authorizationStatus == .authorized {
                 await calendarService.fetchEvents()
                 calendarService.startAutoRefresh()
             }

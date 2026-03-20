@@ -33,6 +33,34 @@ struct MeetingsView: View {
                     mainContent
                 }
             }
+            .overlay(alignment: .top) {
+                if audioService.isRecording && !showRecording {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(MMColors.recording)
+                            .frame(width: 8, height: 8)
+                        Text("Recording...")
+                            .font(MMTypography.caption1)
+                            .foregroundColor(.white)
+                        Spacer()
+                        Text(formattedRecordingTime)
+                            .font(MMTypography.monoSmall)
+                            .foregroundColor(.white)
+                        Button("Return") {
+                            showRecording = true
+                        }
+                        .font(MMTypography.footnoteMedium)
+                        .foregroundColor(MMColors.primary)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(Color(red: 26/255, green: 26/255, blue: 46/255))
+                    .cornerRadius(12)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -68,6 +96,9 @@ struct MeetingsView: View {
                     onCancel: {
                         showRecording = false
                         meetingService.cancelRecording()
+                    },
+                    onMinimize: {
+                        showRecording = false
                     }
                 )
                 .environmentObject(meetingService)
@@ -391,6 +422,14 @@ struct MeetingsView: View {
 
     private var sortedMeetings: [Meeting] {
         meetingService.meetings.sorted { $0.date > $1.date }
+    }
+
+    private var formattedRecordingTime: String {
+        let totalSeconds = Int(audioService.duration)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     private var todayDateString: String {

@@ -73,9 +73,7 @@ struct SettingsView: View {
                             // Google Calendar
                             Button {
                                 // Open iPhone Settings to add Google account
-                                if let url = URL(string: "App-Prefs:ACCOUNTS_AND_PASSWORDS") {
-                                    UIApplication.shared.open(url)
-                                } else if let url = URL(string: UIApplication.openSettingsURLString) {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
                                     UIApplication.shared.open(url)
                                 }
                             } label: {
@@ -109,9 +107,7 @@ struct SettingsView: View {
 
                             // Outlook Calendar
                             Button {
-                                if let url = URL(string: "App-Prefs:ACCOUNTS_AND_PASSWORDS") {
-                                    UIApplication.shared.open(url)
-                                } else if let url = URL(string: UIApplication.openSettingsURLString) {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
                                     UIApplication.shared.open(url)
                                 }
                             } label: {

@@ -64,43 +64,48 @@ class MeetingService: ObservableObject {
                 status: .complete,
                 template: .general,
                 briefSummary: """
-                # Q3 Product Roadmap Review
+                # Q3 Product Roadmap Review: Prioritizing Mobile-First Strategy Amid Resource Constraints
 
-                **Attendees:** **Sarah** (Product), **James** (Engineering), **Lisa** (Design)
-                **Type:** Planning
+                ## Executive Summary
 
-                ---
+                This planning session focused on defining the product priorities for Q3, with a critical strategic pivot towards a mobile-first approach. The data presented was compelling — **68% of active users** are now accessing the platform via mobile devices, a figure that has grown **15% quarter-over-quarter**. The team made the difficult but necessary decision to defer the API redesign to Q4, acknowledging that the engineering team is operating at full capacity and cannot support both initiatives simultaneously. A significant portion of the discussion centered around the proposed design system investment, which would require **20% of the quarterly budget** but promises to accelerate development velocity by an estimated **40%** in subsequent quarters. Finance approval is still pending for this allocation, creating some uncertainty around the timeline. The meeting concluded with clear ownership assignments and a shared understanding that Q3 is the quarter to win on mobile or risk losing market position.
 
-                ## Summary
-                The team reviewed the Q3 product roadmap and agreed to prioritize mobile-first features. The API redesign will be pushed to Q4 due to resource constraints. Budget approval is pending from finance for the new design system.
+                ## Meeting Overview
+
+                This quarterly roadmap review brought together the product, engineering, and design leads to align on priorities for the upcoming quarter. The meeting was prompted by recent analytics showing a dramatic shift in user behavior towards mobile, combined with growing pressure from the executive team to demonstrate faster feature delivery. The discussion revealed tensions between ambitious product goals and realistic engineering capacity, ultimately resulting in a pragmatic prioritization framework that focuses resources on the highest-impact initiatives.
+
+                ## The Mobile-First Imperative
+
+                The most significant data point driving the Q3 strategy is the **68% mobile usage figure**. The product team presented a detailed analytics report showing that not only are the majority of users on mobile, but mobile users exhibit **2.3x higher engagement rates** and **35% better retention** compared to desktop users. Despite this, the current mobile experience has been described internally as "adequate but uninspiring." The team discussed several specific improvements including a redesigned navigation pattern for smaller screens, optimized loading times targeting **sub-2-second page loads**, and a new gesture-based interaction model. The design team has already begun prototyping these changes and showed early mockups that received positive feedback. The consensus was clear: if the team doesn't invest heavily in mobile this quarter, competitors who are already mobile-native will continue to erode market share.
+
+                ## Resource Constraints and the Q4 Deferral
+
+                The engineering lead delivered a candid assessment of team capacity. The current team of **12 engineers** is fully allocated across maintenance, bug fixes, and existing feature commitments. Taking on both the mobile redesign and the API overhaul would require either significant overtime or a reduction in quality — neither of which is acceptable. The API redesign, while important for long-term scalability, was deemed less urgent than the mobile initiative because the current API, though not elegant, is functional and stable. The team agreed to use Q3 to complete the mobile work and begin preliminary architecture planning for the API redesign, which would then become the primary focus in Q4 when **two additional senior engineers** are expected to join the team.
+
+                ## Design System Investment Decision
+
+                A heated but productive discussion took place around the proposed investment in a new design system. The design lead made a compelling case that the current ad-hoc approach to UI components is creating inconsistency across the product and slowing down development. Each new feature currently requires **2-3 additional days** of design reconciliation work. The proposed design system would standardize components, establish a shared design language, and enable engineers to build UI **40% faster** once adopted. However, the **20% budget allocation** required has not yet been approved by finance. The team agreed to proceed with planning and component inventory work immediately, while the product lead takes the budget request to the CFO this week. If approved, full implementation would begin mid-quarter.
 
                 ## Key Decisions
-                - **Prioritize mobile features for Q3** — decided by **Sarah**. 68% of users are now on mobile.
-                - **Push API redesign to Q4** — decided by **James**. Current team bandwidth won't support both.
-                - **Allocate 20% of budget to design system** — pending finance approval.
 
-                ## Action Items
-                | Task | Owner | Due | Priority |
-                |------|-------|-----|----------|
-                | Send updated proposal with revised timeline | **Sarah** | This week | High |
-                | Review contract terms with legal | **James** | Next Friday | Medium |
-                | Prepare demo for stakeholder review | **Lisa** | Next week | High |
+                - **Mobile-first is the #1 priority for Q3** — driven by the 68% mobile usage data and competitive pressure. All new feature development will be mobile-first with desktop as secondary.
+                - **API redesign deferred to Q4** — a pragmatic decision based on team capacity. Preliminary architecture work will begin in Q3.
+                - **Design system budget pending** — the team is proceeding with planning work while the 20% budget allocation awaits finance approval.
 
-                ## Discussion Notes
+                ## Action Items & Next Steps
 
-                ### Mobile Strategy
-                - **Sarah** presented data showing **68% of users** are now on mobile
-                - Team agreed mobile-first approach is critical for Q3
-                - **Lisa** proposed a new navigation pattern for small screens
+                - **Product Lead**: Send updated proposal with revised timeline to executive team — this week
+                - **Engineering Lead**: Review contract terms with legal for the new hires — by next Friday
+                - **Design Lead**: Prepare interactive demo of mobile prototypes for stakeholder review — next week
+                - **Product Lead**: Present design system budget request to CFO — this week
+                - **Engineering Lead**: Begin preliminary API architecture documentation for Q4 planning — ongoing
 
-                ### Resource Planning
-                - **James** flagged that the engineering team is at capacity
-                - Two new hires starting next month will help with Q4 workload
-                - Discussed possibility of contractor support for the design system
+                ## Open Questions & Risks
 
-                ## Open Questions
-                - When will finance approve the design system budget?
-                - Should we hire a contractor for the mobile redesign?
+                - When will finance approve the design system budget? Delay could push implementation to Q4.
+                - Should the team hire a contractor to supplement mobile redesign capacity?
+                - What is the competitive timeline? Are competitors shipping mobile improvements this quarter?
+                - Risk: If the design system budget is rejected, the team may face increasing UI inconsistency.
                 """,
                 briefDecisions: [
                     "Prioritize mobile features for Q3 — 68% of users are on mobile",
