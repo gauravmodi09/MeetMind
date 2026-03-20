@@ -499,6 +499,60 @@ class MeetingService: ObservableObject {
         currentRecording = nil
     }
 
+    /// Regenerate meeting notes from existing transcript using the latest AI prompt.
+    func regenerateNotes(_ meeting: Meeting) async {
+        guard let transcript = meeting.rawTranscript, !transcript.isEmpty else {
+            print("[MeetingService] Cannot regenerate: no transcript for \(meeting.title)")
+            return
+        }
+
+        var updatedMeeting = meeting
+        updatedMeeting.status = .processing
+        updateMeetingInCoreData(updatedMeeting)
+        loadMeetings()
+
+        do {
+            print("[MeetingService] Regenerating notes for: \(meeting.title)")
+            let brief = try await GroqService.shared.generateMeetingBrief(
+                transcript: transcript,
+                userNotes: meeting.userNotes,
+                template: meeting.template
+            )
+
+            updatedMeeting.status = .complete
+            updatedMeeting.title = extractMarkdownTitle(from: brief.summary) ?? brief.title
+            updatedMeeting.briefSummary = brief.summary
+            updatedMeeting.briefDecisions = brief.decisions
+            updatedMeeting.briefKeyTopics = brief.keyTopics
+            updatedMeeting.clientName = brief.clientName ?? meeting.clientName
+            updatedMeeting.briefKeyQuotes = brief.keyQuotes ?? []
+
+            let actionItems: [ActionItem] = brief.actionItems.map { item in
+                ActionItem(text: item.text, owner: item.owner, dueDate: parseDateString(item.due), isMine: item.isMine)
+            }
+            updatedMeeting.briefActionItems = actionItems
+
+            updateMeetingInCoreData(updatedMeeting)
+            loadMeetings()
+            print("[MeetingService] Regenerated notes for: \(updatedMeeting.title)")
+        } catch {
+            updatedMeeting.status = .complete // Keep old status, don't mark as failed
+            updateMeetingInCoreData(updatedMeeting)
+            loadMeetings()
+            print("[MeetingService] Regeneration failed: \(error)")
+        }
+    }
+
+    /// Regenerate notes for ALL completed meetings that have transcripts.
+    func regenerateAllNotes() async {
+        let toRegenerate = meetings.filter { $0.status == .complete && $0.rawTranscript != nil && !($0.rawTranscript ?? "").isEmpty }
+        print("[MeetingService] Regenerating notes for \(toRegenerate.count) meetings...")
+        for meeting in toRegenerate {
+            await regenerateNotes(meeting)
+        }
+        print("[MeetingService] Done regenerating all notes")
+    }
+
     /// Reprocess a failed meeting — retries the entire AI pipeline from the existing audio file.
     func reprocessMeeting(_ meeting: Meeting) async {
         guard meeting.status == .failed, let path = meeting.audioFilePath else {

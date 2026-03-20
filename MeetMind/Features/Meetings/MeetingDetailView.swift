@@ -7,6 +7,7 @@ struct MeetingDetailView: View {
     @State private var showTranscript = false
     @State private var copiedBrief = false
     @State private var copiedNotion = false
+    @State private var isRegenerating = false
     @State private var completedItems: Set<UUID> = []
     @State private var showShareSheet = false
     @State private var showFollowUpEmail = false
@@ -155,6 +156,26 @@ struct MeetingDetailView: View {
 
                             MMButton(copiedNotion ? "Copied for Notion!" : "Copy for Notion", icon: "doc.on.clipboard", style: .ghost) {
                                 copyForNotion()
+                            }
+
+                            // Regenerate notes with latest AI prompt
+                            if meeting.rawTranscript != nil && !isRegenerating {
+                                MMButton("Regenerate Notes", icon: "arrow.clockwise", style: .ghost) {
+                                    isRegenerating = true
+                                    Task {
+                                        await MeetingService.shared.regenerateNotes(meeting)
+                                        isRegenerating = false
+                                    }
+                                }
+                            }
+                            if isRegenerating {
+                                HStack(spacing: 8) {
+                                    ProgressView()
+                                        .tint(MMColors.primary)
+                                    Text("Regenerating notes with latest AI...")
+                                        .font(MMTypography.caption1)
+                                        .foregroundColor(MMColors.textSecondary)
+                                }
                             }
                         }
                         .padding(.horizontal, 16)
