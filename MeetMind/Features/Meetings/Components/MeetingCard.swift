@@ -12,19 +12,26 @@ struct MeetingCard: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Left color bar
+            // Left gradient color bar
             Rectangle()
-                .fill(clientColor)
-                .frame(width: 3)
+                .fill(
+                    LinearGradient(
+                        colors: [clientColor, clientColor.opacity(0.4)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .frame(width: 4)
+                .shadow(color: clientColor.opacity(0.5), radius: 8, x: 2, y: 0)
 
             HStack(spacing: 16) {
                 // Content
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
                         Text(meeting.title)
-                            .font(.system(size: 14, weight: .bold))
+                            .font(.system(size: 16, weight: .bold))
                             .foregroundColor(MMColors.textPrimary)
-                            .lineLimit(1)
+                            .lineLimit(2)
 
                         statusIndicator
 
@@ -54,13 +61,38 @@ struct MeetingCard: View {
                             .foregroundColor(MMColors.textSecondary)
 
                         if !meeting.briefActionItems.isEmpty {
-                            Text("\(meeting.briefActionItems.count)")
-                                .font(MMTypography.caption1)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(MMColors.primary)
-                                .cornerRadius(8)
+                            HStack(spacing: 4) {
+                                Image(systemName: "checklist")
+                                    .font(.system(size: 10, weight: .semibold))
+                                Text("\(meeting.briefActionItems.count)")
+                                    .font(.system(size: 11, weight: .bold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule()
+                                    .fill(MMColors.primary)
+                            )
+                        }
+                    }
+
+                    // Key topics pills
+                    if !meeting.briefKeyTopics.isEmpty {
+                        HStack(spacing: 6) {
+                            ForEach(meeting.briefKeyTopics.prefix(3), id: \.self) { topic in
+                                Text(topic)
+                                    .font(.system(size: 10, weight: .medium))
+                                    .foregroundColor(MMColors.textSecondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(MMColors.glass)
+                                    .cornerRadius(6)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .stroke(MMColors.borderSubtle, lineWidth: 1)
+                                    )
+                            }
                         }
                     }
                 }
@@ -103,14 +135,29 @@ struct MeetingCard: View {
             }
             .padding(16)
         }
-        .background(MMColors.cardBg)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(MMColors.border, lineWidth: 1)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .light)
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 2)
-        .shadow(color: Color.black.opacity(0.04), radius: 2, x: 0, y: 1)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.15),
+                            Color.white.opacity(0.05),
+                            Color.white.opacity(0.02)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 20, x: 0, y: 8)
+        .shadow(color: clientColor.opacity(0.05), radius: 16, x: 0, y: 4)
         .scaleEffect(isPressed ? 0.97 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in

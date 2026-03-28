@@ -75,8 +75,10 @@ struct MainTabView: View {
             // Purple pill badge styling instead of default red
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
-            appearance.backgroundEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-            appearance.backgroundColor = UIColor.clear
+            appearance.backgroundEffect = UIBlurEffect(style: .systemChromeMaterialDark)
+            appearance.backgroundColor = UIColor(white: 0.04, alpha: 0.6)
+            appearance.shadowColor = UIColor(white: 1.0, alpha: 0.06)
+            appearance.shadowImage = UIImage()
 
             // Badge appearance — purple pill
             let itemAppearance = UITabBarItemAppearance()
