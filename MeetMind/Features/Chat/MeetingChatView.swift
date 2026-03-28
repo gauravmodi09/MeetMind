@@ -5,6 +5,7 @@ struct MeetingChatView: View {
     @EnvironmentObject var todoService: TodoService
     @StateObject private var viewModel = MeetingChatViewModel()
     @FocusState private var isInputFocused: Bool
+    @State private var showRecipePicker = false
 
     var body: some View {
         NavigationStack {
@@ -15,9 +16,23 @@ struct MeetingChatView: View {
                     messagesList
                 }
 
+                ZStack(alignment: .bottom) {
+                    Color.clear.frame(height: 0)
+
+                    if showRecipePicker {
+                        recipePickerOverlay
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+
                 inputBar
             }
             .background(MMColors.background)
+            .onChange(of: viewModel.inputText) { _, newValue in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showRecipePicker = newValue.hasPrefix("/")
+                }
+            }
             .navigationTitle("Chat")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
@@ -163,9 +178,85 @@ struct MeetingChatView: View {
         }
     }
 
+    // MARK: - Recipe Picker
+
+    private var recipePickerOverlay: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("RECIPES")
+                .font(MMTypography.overline)
+                .foregroundColor(MMColors.textSecondary)
+                .tracking(0.8)
+                .padding(.horizontal, 12)
+
+            let query = String(viewModel.inputText.dropFirst()).lowercased()
+            let allRecipes = MeetingRecipe.builtIn + loadCustomRecipes()
+            let filtered = query.isEmpty ? allRecipes : allRecipes.filter { $0.name.lowercased().contains(query) }
+
+            if filtered.isEmpty {
+                Text("No matching recipes")
+                    .font(.caption)
+                    .foregroundColor(MMColors.textTertiary)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+            } else {
+                ForEach(filtered) { recipe in
+                    Button {
+                        viewModel.inputText = "/\(recipe.name)"
+                        showRecipePicker = false
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: recipe.icon)
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(MMColors.primary)
+                                .frame(width: 28, height: 28)
+                                .background(MMColors.primaryLight)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            Text(recipe.name)
+                                .font(MMTypography.subheadline)
+                                .foregroundColor(MMColors.textPrimary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .padding(.vertical, 10)
+        .background(MMColors.backgroundElevated)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(color: Color.black.opacity(0.1), radius: 8, y: -4)
+        .padding(.horizontal, 16)
+    }
+
+    private func loadCustomRecipes() -> [MeetingRecipe] {
+        guard let data = UserDefaults.standard.data(forKey: "customMeetingRecipes"),
+              let recipes = try? JSONDecoder().decode([MeetingRecipe].self, from: data) else {
+            return []
+        }
+        return recipes
+    }
+
     private func sendMessage() {
         let text = viewModel.inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty else { return }
+
+        // Handle recipe "/" commands
+        if text.hasPrefix("/") {
+            let recipeName = String(text.dropFirst()).trimmingCharacters(in: .whitespaces)
+            let allRecipes = MeetingRecipe.builtIn + loadCustomRecipes()
+            if let recipe = allRecipes.first(where: { $0.name.lowercased() == recipeName.lowercased() }) {
+                viewModel.inputText = ""
+                showRecipePicker = false
+                isInputFocused = false
+                Task {
+                    await viewModel.executeRecipe(recipe)
+                }
+                return
+            }
+        }
+
         viewModel.inputText = ""
         isInputFocused = false
         Task {
@@ -341,6 +432,30 @@ class MeetingChatViewModel: ObservableObject {
             messages.append(ChatMessage(content: response, isUser: false, sourceMeetings: context.meetingTitles))
         } catch {
             messages.append(ChatMessage(content: "Sorry: \(error.localizedDescription)", isUser: false))
+        }
+        isLoading = false
+    }
+
+    // MARK: - Recipe Execution
+
+    func executeRecipe(_ recipe: MeetingRecipe) async {
+        let userMessage = ChatMessage(content: "/\(recipe.name)", isUser: true)
+        messages.append(userMessage)
+
+        guard let meeting = meetingService?.meetings.first(where: { $0.status == .complete && $0.rawTranscript != nil }) else {
+            let errorMsg = ChatMessage(content: "No completed meetings with transcripts found. Record a meeting first!", isUser: false)
+            messages.append(errorMsg)
+            return
+        }
+
+        isLoading = true
+        do {
+            let result = try await GroqService.shared.executeRecipe(prompt: recipe.prompt, transcript: meeting.rawTranscript!)
+            let aiMessage = ChatMessage(content: "**\(recipe.name)** — *\(meeting.title)*\n\n\(result)", isUser: false)
+            messages.append(aiMessage)
+        } catch {
+            let errorMsg = ChatMessage(content: "Recipe failed: \(error.localizedDescription)", isUser: false)
+            messages.append(errorMsg)
         }
         isLoading = false
     }
