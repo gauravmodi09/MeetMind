@@ -87,7 +87,7 @@ class GroqService: ObservableObject {
 
     // MARK: - API Key
 
-    private func apiKey() throws -> String {
+    func apiKey() throws -> String {
         // Try Keychain first
         if let key = KeychainService.load(), !key.isEmpty {
             return key

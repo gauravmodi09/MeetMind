@@ -481,6 +481,13 @@ class MeetingService: ObservableObject {
 
             sendBriefReadyNotification(meeting: meeting)
 
+            // Auto-enhance notes if user wrote notepad content
+            if meeting.notepadContent != nil || meeting.userNotes != nil {
+                Task {
+                    await enhanceNotes(for: meeting)
+                }
+            }
+
         } catch {
             meeting.status = .failed
             updateMeetingInCoreData(meeting)
@@ -544,6 +551,36 @@ class MeetingService: ObservableObject {
     }
 
     /// Regenerate notes for ALL completed meetings that have transcripts.
+    /// Enhance user notes with AI by merging with transcript (Granola-style).
+    func enhanceNotes(for meeting: Meeting) async {
+        guard let transcript = meeting.rawTranscript, !transcript.isEmpty else {
+            print("[MeetingService] Cannot enhance: no transcript for \(meeting.title)")
+            return
+        }
+
+        let notesToEnhance = meeting.notepadContent ?? meeting.userNotes ?? ""
+        guard !notesToEnhance.isEmpty else {
+            print("[MeetingService] Cannot enhance: no notes for \(meeting.title)")
+            return
+        }
+
+        do {
+            let blocks = try await NoteEnhancementService.shared.enhanceNotes(
+                userNotes: notesToEnhance,
+                transcript: transcript,
+                template: meeting.template
+            )
+
+            var updatedMeeting = meeting
+            updatedMeeting.enhancedNotes = blocks
+            updateMeetingInCoreData(updatedMeeting)
+            loadMeetings()
+            print("[MeetingService] Enhanced notes for: \(meeting.title) (\(blocks.count) blocks)")
+        } catch {
+            print("[MeetingService] Note enhancement failed: \(error)")
+        }
+    }
+
     func regenerateAllNotes() async {
         let toRegenerate = meetings.filter { $0.status == .complete && $0.rawTranscript != nil && !($0.rawTranscript ?? "").isEmpty }
         print("[MeetingService] Regenerating notes for \(toRegenerate.count) meetings...")
