@@ -116,6 +116,7 @@
 		997A0AC8732F42ADA53AEE85 /* CitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2082AAB23B8045A4844A729E /* CitationView.swift */; };
 		D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA89A91491DD4890A971756C /* NoteTemplates.swift */; };
 		7DA8D472A7A0487BBE5C3804 /* VoiceDictationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D668BE5F554428380F35DC4 /* VoiceDictationService.swift */; };
+		E0198B257F3E4C5E92203B3A /* TextCleanupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D157A7AF91943FE87C4C78B /* TextCleanupService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -381,6 +382,7 @@
 		2082AAB23B8045A4844A729E /* CitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/CitationView.swift"; sourceTree = SOURCE_ROOT; };
 		AA89A91491DD4890A971756C /* NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/NoteTemplates.swift"; sourceTree = SOURCE_ROOT; };
 		1D668BE5F554428380F35DC4 /* VoiceDictationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/VoiceDictationService.swift"; sourceTree = SOURCE_ROOT; };
+		3D157A7AF91943FE87C4C78B /* TextCleanupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/TextCleanupService.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1252,6 +1254,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0198B257F3E4C5E92203B3A /* TextCleanupService.swift in Sources */,
 				7DA8D472A7A0487BBE5C3804 /* VoiceDictationService.swift in Sources */,
 				B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */,
 				D34A4B3FAF56774B09CF4B8B /* MeetMindApp.swift in Sources */,
