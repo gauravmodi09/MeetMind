@@ -19,13 +19,8 @@ struct MeetingsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Gradient background
-                LinearGradient(
-                    colors: [MMColors.background, MMColors.backgroundElevated],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                // Animated floating orb background
+                AnimatedMeshBackground()
 
                 if meetingService.meetings.isEmpty && !showRecording {
                     emptyState
@@ -249,75 +244,127 @@ struct MeetingsView: View {
         let todayActionItems = todayMeetings.flatMap { $0.briefActionItems }
         let todayActionCount = todayActionItems.count
         let pendingTodos = todayActionItems.filter { !$0.isCompleted }.count
+        let completedTodos = todayActionCount - pendingTodos
+        let completionRate = todayActionCount > 0 ? Double(completedTodos) / Double(todayActionCount) : 0.0
 
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE, MMMM d"
         let todayString = dateFormatter.string(from: Date())
 
         return HStack(spacing: 0) {
-            // Purple accent line on left
+            // Gradient accent line on left
             Rectangle()
-                .fill(MMColors.primary)
+                .fill(
+                    LinearGradient(
+                        colors: [MMColors.primary, MMColors.success],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
                 .frame(width: 4)
 
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Today")
-                        .font(MMTypography.headline)
-                        .foregroundColor(MMColors.textPrimary)
+            HStack(spacing: 16) {
+                // Left content
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Today")
+                            .font(.system(size: 18, weight: .bold))
+                            .foregroundColor(MMColors.textPrimary)
 
-                    Spacer()
+                        Spacer()
 
-                    Text(todayString)
-                        .font(MMTypography.caption1)
-                        .foregroundColor(MMColors.textTertiary)
+                        Text(todayString)
+                            .font(MMTypography.caption1)
+                            .foregroundColor(MMColors.textTertiary)
+                    }
+
+                    if todayMeetingCount == 0 {
+                        HStack(spacing: 8) {
+                            Image(systemName: "mic.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(MMColors.textTertiary)
+
+                            Text("No meetings yet — tap to record your first one")
+                                .font(MMTypography.footnote)
+                                .foregroundColor(MMColors.textSecondary)
+                        }
+                    } else {
+                        HStack(spacing: 16) {
+                            todayStatItem(
+                                value: "\(todayMeetingCount)",
+                                label: "meeting\(todayMeetingCount == 1 ? "" : "s")",
+                                icon: "mic.fill",
+                                color: MMColors.primary
+                            )
+
+                            todayStatItem(
+                                value: "\(todayActionCount)",
+                                label: "action\(todayActionCount == 1 ? "" : "s")",
+                                icon: "checklist",
+                                color: MMColors.success
+                            )
+
+                            todayStatItem(
+                                value: "\(pendingTodos)",
+                                label: "pending",
+                                icon: "clock",
+                                color: MMColors.warning
+                            )
+                        }
+                    }
                 }
 
-                if todayMeetingCount == 0 {
-                    HStack(spacing: 8) {
-                        Image(systemName: "mic.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(MMColors.textTertiary)
+                // Activity ring (only when there are items)
+                if todayActionCount > 0 {
+                    ZStack {
+                        Circle()
+                            .stroke(MMColors.glass, lineWidth: 4)
+                            .frame(width: 44, height: 44)
 
-                        Text("No meetings yet -- tap to record your first one")
-                            .font(MMTypography.footnote)
-                            .foregroundColor(MMColors.textSecondary)
-                    }
-                } else {
-                    HStack(spacing: 16) {
-                        todayStatItem(
-                            value: "\(todayMeetingCount)",
-                            label: "meeting\(todayMeetingCount == 1 ? "" : "s")",
-                            icon: "mic.fill",
-                            color: MMColors.primary
-                        )
+                        Circle()
+                            .trim(from: 0, to: completionRate)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [MMColors.success, MMColors.primary],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                style: StrokeStyle(lineWidth: 4, lineCap: .round)
+                            )
+                            .frame(width: 44, height: 44)
+                            .rotationEffect(.degrees(-90))
 
-                        todayStatItem(
-                            value: "\(todayActionCount)",
-                            label: "action item\(todayActionCount == 1 ? "" : "s")",
-                            icon: "checklist",
-                            color: MMColors.success
-                        )
-
-                        todayStatItem(
-                            value: "\(pendingTodos)",
-                            label: "pending",
-                            icon: "clock",
-                            color: MMColors.warning
-                        )
+                        Text("\(Int(completionRate * 100))%")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundColor(MMColors.textPrimary)
                     }
                 }
             }
             .padding(16)
         }
-        .background(MMColors.cardBg)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(MMColors.border, lineWidth: 1)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .light)
         )
-        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
-        .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20)
+                .stroke(
+                    LinearGradient(
+                        colors: [
+                            Color.white.opacity(0.15),
+                            Color.white.opacity(0.05),
+                            Color.white.opacity(0.02)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1
+                )
+        )
+        .shadow(color: Color.black.opacity(0.06), radius: 20, x: 0, y: 8)
+        .shadow(color: MMColors.primary.opacity(0.1), radius: 12, x: 0, y: 4)
     }
 
     private func todayStatItem(value: String, label: String, icon: String, color: Color) -> some View {
@@ -343,36 +390,63 @@ struct MeetingsView: View {
     private var recordButton: some View {
         VStack(spacing: 8) {
             Button {
-                showMeetingPrep = true
+                let context = MeetingPrepService.shared.prepareContext(for: nil)
+                if context.hasContext {
+                    showMeetingPrep = true
+                } else {
+                    showRecording = true
+                }
             } label: {
                 ZStack {
-                    // Pulsing glow ring
+                    // Outer ambient glow
                     Circle()
-                        .stroke(MMColors.primary.opacity(0.3), lineWidth: 3)
-                        .frame(width: 96, height: 96)
+                        .fill(MMColors.primary.opacity(0.15))
+                        .frame(width: 140, height: 140)
+                        .blur(radius: 30)
+                        .scaleEffect(pulseGlow ? 1.2 : 0.8)
+                        .opacity(pulseGlow ? 0.8 : 0.4)
+
+                    // Secondary pulsing ring
+                    Circle()
+                        .stroke(
+                            LinearGradient(
+                                colors: [MMColors.primary.opacity(0.6), MMColors.primary.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 2
+                        )
+                        .frame(width: 110, height: 110)
                         .scaleEffect(pulseGlow ? 1.15 : 0.95)
-                        .opacity(pulseGlow ? 0.0 : 0.6)
+                        .opacity(pulseGlow ? 0.0 : 0.8)
 
+                    // Frosted glass backing for the button
                     Circle()
-                        .stroke(MMColors.primary.opacity(0.15), lineWidth: 2)
-                        .frame(width: 112, height: 112)
-                        .scaleEffect(pulseGlow ? 1.25 : 0.9)
-                        .opacity(pulseGlow ? 0.0 : 0.4)
+                        .fill(.ultraThinMaterial)
+                        .environment(\.colorScheme, .light)
+                        .frame(width: 88, height: 88)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white.opacity(0.8), lineWidth: 1)
+                        )
+                        .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 4)
 
+                    // The actual button core
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [MMColors.primary, MMColors.primary.opacity(0.8)],
+                                colors: [MMColors.primary, MMColors.primaryDark],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
                         )
                         .frame(width: 72, height: 72)
-                        .shadow(color: MMColors.primary.opacity(0.4), radius: 16, x: 0, y: 4)
+                        .shadow(color: MMColors.primary.opacity(0.6), radius: 16, x: 0, y: 4)
 
                     Image(systemName: "mic.fill")
                         .font(.system(size: 28, weight: .semibold))
                         .foregroundColor(.white)
+                        .shimmer() // Add the premium shimmer effect
                 }
             }
             .accessibilityLabel("Record meeting")
@@ -401,8 +475,13 @@ struct MeetingsView: View {
 
             recordButton
 
-            VStack(spacing: 8) {
-                Text("Record your first meeting")
+            VStack(spacing: 16) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 32, weight: .light))
+                    .foregroundColor(MMColors.primary)
+                    .shimmer()
+
+                Text("Your AI Meeting Assistant")
                     .font(MMTypography.title3)
                     .foregroundColor(MMColors.textPrimary)
 
@@ -410,8 +489,10 @@ struct MeetingsView: View {
                     .font(MMTypography.subheadline)
                     .foregroundColor(MMColors.textSecondary)
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: 280)
+                    .lineSpacing(4)
             }
+            .glassmorphic(padding: 24)
+            .padding(.horizontal, 32)
 
             Spacer()
             Spacer()
