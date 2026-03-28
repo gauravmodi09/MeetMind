@@ -970,5 +970,355 @@
     "priority": "high",
     "status": "done",
     "created": "2026-03-18"
+  },
+
+  {
+    "id": "MM-109",
+    "title": "Phase 1: Google Sign-In — Firebase Auth setup + SDK integration",
+    "desc": "Add Firebase Auth with Google Sign-In provider. Install GoogleSignIn SDK via SPM. Configure OAuth client ID, URL schemes in Info.plist. Create AuthService singleton with sign-in, sign-out, session persistence. Store user profile (name, email, photo URL).",
+    "category": "infra",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-110",
+    "title": "Phase 1: Auth UI — Sign-in screen with Google button + branded splash",
+    "desc": "Full-screen sign-in view with MeetMind branding, Google Sign-In button (official GIDSignInButton style), and 'Continue without account' option. Animated purple gradient background. Handle auth state to skip sign-in on subsequent launches.",
+    "category": "design",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-111",
+    "title": "Phase 1: Session management — persist auth across app launches",
+    "desc": "Use Firebase Auth state listener to persist sessions. Auto-refresh tokens. Handle token expiry gracefully. Sync user ID with Core Data for multi-device data ownership. Keychain storage for auth tokens.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-112",
+    "title": "Phase 1: Onboarding — mic permission + user profiling flow",
+    "desc": "After sign-in, 3-step onboarding: 1) Request microphone permission with explanation screen, 2) Ask 'What kind of work do you do?' (Consulting, Engineering, Sales, Product, Executive, Other) with free-text option, 3) Ask meeting frequency and tools used (Teams/Meet/Zoom). Store profile in UserDefaults + Firebase user doc. AI uses this context for better summaries.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-113",
+    "title": "Phase 1: User profile settings — edit role, preferences, sign out",
+    "desc": "Settings section showing user profile (photo, name, email from Google). Edit work role, meeting preferences. Sign out button with confirmation. Delete account option (Firebase + local data). Link to privacy policy.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-114",
+    "title": "Phase 2: AI Notepad — in-meeting note-taking tab UI",
+    "desc": "When recording starts, show a tabbed interface: 'Recording' (waveform + timer) and 'Notes' (text editor). Notes tab is a rich text editor where user types freely during the meeting. Minimal toolbar: bold, bullet list, heading. Auto-save every 5 seconds. Keyboard-optimized with no distractions.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-115",
+    "title": "Phase 2: AI note enhancement — merge user notes with transcript",
+    "desc": "After recording ends, AI enhances user's raw notes by merging them with the full transcript. User text stays in black, AI-generated expansions in gray (Granola-style). Use Groq Llama to: expand bullet points with meeting context, add missed details, structure with headings. User can edit freely — changed AI text turns black.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-116",
+    "title": "Phase 2: Transcript-only mode — no audio file storage",
+    "desc": "After transcription completes, delete the audio file from disk. Only store the transcript text and AI-enhanced notes. Add toggle in Settings: 'Keep audio files' (default OFF). When OFF, audio is deleted after successful transcription. Reduces storage dramatically. Show estimated storage savings in Settings.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-117",
+    "title": "Phase 2: Note templates — pre-built structures for meeting types",
+    "desc": "Templates that pre-populate the notepad with structured sections based on meeting type: 1:1 (Updates, Blockers, Action Items), Standup (Yesterday, Today, Blockers), Sales (Needs, Pain Points, Next Steps), Interview (Questions, Impressions, Scoring), Discovery (Goals, Challenges, Budget). User selects template before or during recording.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-118",
+    "title": "Phase 2: Transcript citation — verify AI notes against source",
+    "desc": "Magnifying glass icon next to AI-enhanced text. Tap to see the exact transcript segment that supports each AI-generated point. Highlights the relevant portion of the transcript with timestamp. Builds trust in AI output — user can verify any claim.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-119",
+    "title": "Phase 3: Voice-to-type — SpeechAnalyzer integration for live dictation",
+    "desc": "Add voice-to-type button in the AI Notepad. Uses Apple SpeechAnalyzer (iOS 26+) for on-device real-time transcription. Show volatile results immediately (fast preview), replace with final results (accurate). Fallback to SFSpeechRecognizer on older iOS. Mic button toggles dictation on/off. Visual waveform indicator while active.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-120",
+    "title": "Phase 3: Voice-to-type — AI text cleanup post-dictation",
+    "desc": "After voice dictation ends, run through Groq Llama for cleanup: remove filler words (um, uh, like), fix grammar and punctuation, smart formatting (auto-paragraphs, lists). Show cleaned text with option to revert to raw. Subtle animation during cleanup processing.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-121",
+    "title": "Phase 3: Voice-to-type — inline in todo and search",
+    "desc": "Add mic button to todo text input and search bar. Tap to dictate todo items or search queries. Uses same SpeechAnalyzer pipeline. Auto-punctuation enabled. For todos, AI parses dates and priorities from spoken text (existing Groq pipeline).",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-122",
+    "title": "Phase 4: Calendar integration — Google Calendar API setup",
+    "desc": "Add Google Calendar API scope to Firebase/Google Sign-In. Request calendar read permission during onboarding. Fetch upcoming meetings (next 24h) on app launch. CalendarService reads event title, time, participants, meeting link. Store calendar events locally for offline access.",
+    "category": "infra",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-123",
+    "title": "Phase 4: Calendar UI — upcoming meetings feed on home screen",
+    "desc": "Home screen shows 'Upcoming' section with next 3-5 meetings from calendar. Each card shows: meeting title, time, participants, one-tap 'Start Recording' button. Auto-associates recording with calendar event (pre-fills client, title, participants). Empty state: 'No upcoming meetings — connect your calendar'.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-124",
+    "title": "Phase 4: Calendar — pre-meeting context with past meetings",
+    "desc": "Before a meeting starts, show context card: 'You last met with [person] on [date]. Key topics: [topics]. Open action items: [items].' Uses calendar participant matching against meeting library. Granola-style 'Prep me' feature. Powered by Groq Llama summarizing past meeting history with this contact.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-125",
+    "title": "Phase 4: Calendar — auto-detect meeting start + smart recording prompt",
+    "desc": "When a calendar meeting starts (based on event time), send local notification: 'Your meeting [title] is starting. Tap to record.' If app is open, show banner with 'Start Recording' button. Configurable: 1 min before, at start time, or disabled.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-126",
+    "title": "Phase 5: Chat UI — 'Ask anything' interface across all meetings",
+    "desc": "Granola-style chat tab. Text input: 'Transcribe a meeting to start asking questions'. AI searches across all meeting transcripts and briefs to answer questions. Uses embedding-based search (existing MM-107 feature) + Groq Llama for conversational response. Show inline citations linking to source meetings.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-127",
+    "title": "Phase 5: Recipes — saved AI prompts for common tasks",
+    "desc": "Recipes are pre-built prompt templates that run across your meeting data. Built-in recipes: 'List recent todos', 'Write weekly recap', 'Prep me for [person]', 'Find blind spots', 'Summarize this week'. Users can create custom recipes. Type '/' in chat to invoke. Each recipe has icon, title, description. Results rendered as rich markdown.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-128",
+    "title": "Phase 5: Spaces — folder organization for meetings",
+    "desc": "Spaces are named collections/folders for organizing meetings. Default: 'My Notes' (all personal meetings). Users can create custom spaces: 'Client A', 'Hiring', 'Product Roadmap'. Move meetings between spaces. Sidebar navigation with space list. Chat is scoped to selected space. Color-coded space icons.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-129",
+    "title": "Phase 5: Chat — model selection for AI responses",
+    "desc": "In chat settings, let user choose AI model for responses. Options: 'Auto' (default — Groq Llama 3.3 70B), or manual selection if additional providers are added later. Show model name in chat input area (like Granola's 'Sonnet 4.6' badge). Extensible for future model additions.",
+    "category": "feature",
+    "priority": "low",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-130",
+    "title": "Phase 5: Enhanced home screen — meetings + chat + recipes unified",
+    "desc": "Redesign home screen to match Granola-style layout: top section with 'Ask anything' chat bar, 'My notes' / 'All meetings' tabs, Recipe buttons grid below chat. Bottom: recent meetings list. Clean, minimal design with MeetMind purple branding. Sidebar with Spaces navigation.",
+    "category": "design",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-131",
+    "title": "Phase 6: macOS app — Xcode project setup with shared code",
+    "desc": "Create macOS target in MeetMind Xcode project. Share Core Data model, GroqService, MeetingPipeline, and data models between iOS and macOS. Use Swift Package for shared code. macOS Deployment target: macOS 14+. Menu bar app with popover UI.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-132",
+    "title": "Phase 6: macOS — ScreenCaptureKit system audio capture",
+    "desc": "Use ScreenCaptureKit (macOS 13+) to capture system audio from meeting apps. SCStreamConfiguration for audio-only capture (no screen recording). Capture both mic input and system audio output simultaneously. Request 'Screen & System Audio Recording' permission. Works with earphones/AirPods — captures at OS level, not room audio.",
+    "category": "feature",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-133",
+    "title": "Phase 6: macOS — menu bar UI with recording controls",
+    "desc": "Menu bar icon (MeetMind mic icon) with popover: recording status, start/stop button, current meeting info, waveform visualization. Minimal always-accessible interface. CMD+Shift+R global hotkey to toggle recording. Menu bar icon changes color when recording (purple pulse).",
+    "category": "design",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-134",
+    "title": "Phase 6: macOS — full meeting window with notepad + briefs",
+    "desc": "Main window (opened from menu bar): shows upcoming meetings (from calendar), meeting library, AI notepad during recording, meeting briefs after processing. Reuses SwiftUI views from iOS where possible. macOS-native navigation (sidebar + detail). NSWindow with toolbar.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-135",
+    "title": "Phase 6: macOS — auto-detect meeting apps for smart recording",
+    "desc": "Detect when Teams, Google Meet, Zoom, Slack, or Webex is actively in a meeting. Use NSWorkspace + accessibility APIs to detect meeting state. Auto-prompt 'Start recording?' when a meeting begins. Auto-stop when meeting app closes or call ends. Calendar event matching for context.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-136",
+    "title": "Phase 6: macOS — shared auth with iPhone via Google Sign-In",
+    "desc": "Same Firebase Auth + Google Sign-In on macOS. User signs in once, same account on both devices. Shared user profile and preferences. macOS Google Sign-In uses ASWebAuthenticationSession for OAuth flow.",
+    "category": "infra",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-137",
+    "title": "Phase 7: Cross-device sync — Firebase Firestore for meetings + notes",
+    "desc": "Set up Firebase Firestore to sync meetings, transcripts, briefs, notes, and todos across iPhone and Mac. Each document keyed by user ID + meeting ID. Real-time listeners for live sync. Offline persistence enabled. Conflict resolution: last-write-wins with timestamp. Compress transcript data before upload.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-138",
+    "title": "Phase 7: Sync — migrate Core Data to Firestore-backed storage",
+    "desc": "Create FirestoreDataService that mirrors PersistenceController API. Meetings, todos, clients sync to Firestore collections. Keep local Core Data as cache for offline. Background sync on app launch and after each recording. Handle first-launch data migration from Core Data-only to Firestore.",
+    "category": "infra",
+    "priority": "critical",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-139",
+    "title": "Phase 7: Sync — real-time meeting updates across devices",
+    "desc": "When a meeting is recorded on Mac, it appears on iPhone within seconds. Firestore snapshot listeners on both platforms. Push notification to other device when new meeting is processed. Sync status indicator in app (last synced timestamp). Handle large transcript syncing efficiently (chunked writes).",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-140",
+    "title": "Phase 7: Sync — todo and note sync across iPhone + Mac",
+    "desc": "Todos created on any device appear everywhere. Completing a todo on iPhone marks it done on Mac. Notes edited during meeting on Mac sync to iPhone meeting library. Bidirectional real-time sync via Firestore listeners. Merge conflicts handled gracefully.",
+    "category": "feature",
+    "priority": "high",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+
+  {
+    "id": "MM-141",
+    "title": "Phase 8: Windows desktop app — Electron/Tauri project setup",
+    "desc": "Create cross-platform desktop app using Tauri (Rust + web frontend) or Electron. Shared web UI components where possible. Windows installer (MSI/NSIS). Firebase Auth for same-account login. System tray icon with recording controls.",
+    "category": "infra",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-142",
+    "title": "Phase 8: Windows — WASAPI system audio capture",
+    "desc": "Use Windows Audio Session API (WASAPI) loopback capture for system audio recording. Captures all audio output including meeting apps with earphones. Equivalent of macOS ScreenCaptureKit. Record to WAV/M4A, then send to Groq for transcription.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-143",
+    "title": "Phase 8: Windows — meeting detection + recording UI",
+    "desc": "Detect active meeting apps (Teams, Zoom, Meet in browser). System tray notification to start recording. Recording overlay with waveform. Notepad for in-meeting notes. Same AI pipeline (Groq API) for transcription and briefs. Sync via Firebase.",
+    "category": "feature",
+    "priority": "medium",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-144",
+    "title": "Phase 8: Android app — project setup with Kotlin/Compose",
+    "desc": "Create Android app using Kotlin + Jetpack Compose. Firebase Auth (shared with iOS/macOS/Windows). Material Design 3 with MeetMind purple theme. Recording via Android AudioRecord API. Same Groq API pipeline. Firestore sync for cross-platform data.",
+    "category": "infra",
+    "priority": "low",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-145",
+    "title": "Phase 8: Android — meeting recording + AI notepad",
+    "desc": "Android equivalent of iOS recording: AudioRecord with AAC encoding, background recording service, notification controls. AI notepad during recording. Voice-to-type via Android SpeechRecognizer. Process audio through Groq pipeline. Meeting library with briefs.",
+    "category": "feature",
+    "priority": "low",
+    "status": "backlog",
+    "created": "2026-03-28"
+  },
+  {
+    "id": "MM-146",
+    "title": "Phase 8: Android — calendar integration + chat + recipes",
+    "desc": "Google Calendar integration (native on Android). Chat UI with 'Ask anything'. Recipe templates. Spaces/folders. Full feature parity with iOS. Material Design components matching MeetMind design system.",
+    "category": "feature",
+    "priority": "low",
+    "status": "backlog",
+    "created": "2026-03-28"
   }
 ]

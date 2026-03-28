@@ -11,6 +11,8 @@ struct SettingsView: View {
     @AppStorage("teamsWebhookURL") private var teamsWebhookURL = ""
     @AppStorage("appTheme") private var appTheme = "system"
 
+    @EnvironmentObject var authService: AuthService
+
     @StateObject private var storageService = StorageManagementService.shared
     @StateObject private var analytics = AnalyticsService.shared
 
@@ -21,6 +23,7 @@ struct SettingsView: View {
     @State private var showCleanupConfirmation = false
     @State private var showICloudAlert = false
     @State private var exportURLs: [URL] = []
+    @State private var showSignOutConfirmation = false
 
     private var maskedKey: String {
         guard apiKey.count > 8 else { return String(repeating: "\u{2022}", count: max(apiKey.count, 8)) }
@@ -33,6 +36,65 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
+                    // MARK: - Account
+                    settingsSection(header: "ACCOUNT") {
+                        VStack(spacing: 0) {
+                            HStack(spacing: 12) {
+                                if let photoURL = authService.photoURL {
+                                    AsyncImage(url: photoURL) { image in
+                                        image.resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                    } placeholder: {
+                                        Circle().fill(MMColors.primary.opacity(0.2))
+                                    }
+                                    .frame(width: 44, height: 44)
+                                    .clipShape(Circle())
+                                } else {
+                                    ZStack {
+                                        Circle().fill(MMColors.primary.opacity(0.2))
+                                            .frame(width: 44, height: 44)
+                                        Image(systemName: "person.fill")
+                                            .foregroundColor(MMColors.primary)
+                                    }
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(authService.displayName)
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    if !authService.email.isEmpty {
+                                        Text(authService.email)
+                                            .font(MMTypography.caption1)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    }
+                                    Text(authService.userProfile.role.displayName)
+                                        .font(MMTypography.caption1)
+                                        .foregroundColor(MMColors.primary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            sectionDivider
+
+                            Button {
+                                showSignOutConfirmation = true
+                            } label: {
+                                HStack {
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                        .foregroundColor(MMColors.recording)
+                                    Text("Sign Out")
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.recording)
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                            }
+                        }
+                    }
+
                     // MARK: - AI Configuration
                     settingsSection(header: "AI CONFIGURATION") {
                         VStack(spacing: 0) {
@@ -715,6 +777,15 @@ struct SettingsView: View {
                 Button("Cancel", role: .cancel) {}
             } message: {
                 Text("Your meetings and todos will sync across all your Apple devices. You will need to restart the app for this change to take effect.")
+            }
+            .alert("Sign Out", isPresented: $showSignOutConfirmation) {
+                Button("Sign Out", role: .destructive) {
+                    authService.signOut()
+                    UserDefaults.standard.set(false, forKey: "hasCompletedOnboarding")
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("You'll need to sign in again to sync your data across devices.")
             }
             .sheet(isPresented: $showExportSheet) {
                 if !exportURLs.isEmpty {

@@ -249,7 +249,12 @@ class GroqService: ObservableObject {
         let key = try apiKey()
 
         // Step 1: Generate rich markdown summary — use custom prompt from UserDefaults if available
-        var summaryPrompt = customMeetingPrompt()
+        let profileContext = UserProfile.load().aiContextString
+        var summaryPrompt = """
+        \(profileContext)
+
+        \(customMeetingPrompt())
+        """
 
         // Append template-specific instructions if not general
         let templateModifier = template.promptModifier
@@ -278,6 +283,8 @@ class GroqService: ObservableObject {
         // Step 2: Extract structured JSON — use the SUMMARY (not raw transcript) for consistency
         // This ensures the JSON data matches what the user sees in the summary
         var jsonPrompt = """
+        \(profileContext)
+
         You are given a meeting summary. Extract structured data from it. Return ONLY valid JSON — no markdown, no explanation:
         {
             "title": "subject-style title like an email subject — describe WHAT was discussed, not when (max 8 words, e.g. 'Meyer Account POC Progress Review')",
@@ -438,7 +445,10 @@ class GroqService: ObservableObject {
     func chatAboutMeetings(query: String, meetingContext: String) async throws -> String {
         let key = try apiKey()
 
+        let profileContext = UserProfile.load().aiContextString
         let systemPrompt = """
+        \(profileContext)
+
         You are MeetMind, a meeting intelligence assistant. Answer based ONLY on the meeting context provided.
 
         Rules:
@@ -535,7 +545,10 @@ class GroqService: ObservableObject {
     func generateFollowUpEmail(brief: String, meetingTitle: String) async throws -> String {
         let key = try apiKey()
 
+        let profileContext = UserProfile.load().aiContextString
         let systemPrompt = """
+        \(profileContext)
+
         You are a professional email writer. Write a follow-up email based on the meeting brief provided. \
         The email should be clean plain text — no markdown symbols, no asterisks, no hashtags. \
         Include: a warm greeting, a brief recap of the meeting, key decisions made, action items with owners, \

@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseCore
 
 @main
 struct MeetMindApp: App {
@@ -8,6 +9,8 @@ struct MeetMindApp: App {
         }
         return PersistenceController.shared
     }()
+
+    @StateObject private var authService = AuthService.shared
     @AppStorage("hasCompletedOnboarding") var hasOnboarded = false
     @AppStorage("groqAPIKey") var apiKey = ""
     @AppStorage("appTheme") var appTheme = "system"
@@ -21,7 +24,6 @@ struct MeetMindApp: App {
     }
 
     init() {
-        // Auto-load API key from Secrets.plist if not set
         if apiKey.isEmpty {
             if let path = Bundle.main.path(forResource: "Secrets", ofType: "plist"),
                let dict = NSDictionary(contentsOfFile: path),
@@ -37,21 +39,39 @@ struct MeetMindApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if hasOnboarded {
-                MainTabView()
-                    .environment(\.managedObjectContext, persistence.container.viewContext)
-                    .environmentObject(MeetingService.shared)
-                    .environmentObject(TodoService.shared)
-                    .onOpenURL { url in
-                        handleDeepLink(url)
-                    }
-                    .preferredColorScheme(colorSchemeFromSetting)
-            } else {
-                OnboardingView()
-                    .environment(\.managedObjectContext, persistence.container.viewContext)
-                    .environmentObject(MeetingService.shared)
-                    .environmentObject(TodoService.shared)
-                    .preferredColorScheme(colorSchemeFromSetting)
+            Group {
+                if authService.isLoading {
+                    splashView
+                } else if !authService.isSignedIn {
+                    SignInView()
+                        .environmentObject(authService)
+                } else if !hasOnboarded {
+                    ProfileSetupView()
+                        .environmentObject(authService)
+                } else {
+                    MainTabView()
+                        .environment(\.managedObjectContext, persistence.container.viewContext)
+                        .environmentObject(MeetingService.shared)
+                        .environmentObject(TodoService.shared)
+                        .environmentObject(authService)
+                        .onOpenURL { url in
+                            handleDeepLink(url)
+                        }
+                }
+            }
+            .preferredColorScheme(colorSchemeFromSetting)
+        }
+    }
+
+    private var splashView: some View {
+        ZStack {
+            MMColors.background.ignoresSafeArea()
+            VStack(spacing: 16) {
+                Image(systemName: "waveform.circle.fill")
+                    .font(.system(size: 56))
+                    .foregroundColor(MMColors.primary)
+                ProgressView()
+                    .tint(MMColors.primary)
             }
         }
     }
@@ -72,8 +92,6 @@ struct MeetMindApp: App {
         }
     }
 }
-
-// MARK: - Deep Link Notification Names
 
 extension Notification.Name {
     static let widgetStartRecording = Notification.Name("widgetStartRecording")

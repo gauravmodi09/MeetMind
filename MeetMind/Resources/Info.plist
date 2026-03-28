@@ -34,6 +34,15 @@
     <array>
         <string>audio</string>
     </array>
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>com.googleusercontent.apps.698361079308-buptrotvp9p8q86js1eijnm4iq7rak6n</string>
+            </array>
+        </dict>
+    </array>
     <key>UIApplicationSceneManifest</key>
     <dict>
         <key>UIApplicationSupportsMultipleScenes</key>
