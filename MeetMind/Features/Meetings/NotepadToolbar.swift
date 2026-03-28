@@ -18,6 +18,11 @@ struct NotepadToolbar: View {
                 insertHeading()
             }
 
+            // Voice dictation
+            DictationButton(text: $text) { rawText in
+                try? await TextCleanupService.shared.cleanupDictatedText(rawText).cleanedText
+            }
+
             Spacer()
 
             toolbarButton("keyboard.chevron.compact.down", label: "Dismiss") {
