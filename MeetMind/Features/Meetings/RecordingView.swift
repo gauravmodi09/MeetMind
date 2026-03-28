@@ -34,17 +34,16 @@ struct RecordingView: View {
                 topBar
                     .padding(.top, 8)
 
-                // Full-page notepad
+                // Full-page notepad — fills all available space
                 notepadArea
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
-
-                Spacer(minLength: 0)
+                    .frame(maxHeight: .infinity)
 
                 // Meeting type pills
                 meetingTypePills
                     .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
+                    .padding(.bottom, 10)
 
                 // Bottom recording bar
                 recordingBar
@@ -206,22 +205,28 @@ struct RecordingView: View {
     // MARK: - Live Transcript Peek
 
     private var liveTranscriptPeek: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 10) {
+            // Pulsing waveform icon
             Image(systemName: "waveform")
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(MMColors.primary)
+                .symbolEffect(.pulse, isActive: !audioService.isPaused)
 
-            Text(liveTranscription.liveText.suffix(80))
-                .font(.system(size: 12))
-                .foregroundColor(MMColors.textTertiary)
-                .lineLimit(1)
+            Text(String(liveTranscription.liveText.suffix(120)))
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(MMColors.textSecondary)
+                .lineLimit(2)
                 .truncationMode(.head)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(MMColors.primaryLight.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .background(MMColors.primaryLight)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(MMColors.primary.opacity(0.2), lineWidth: 1)
+        )
     }
 
     // MARK: - Meeting Type Pills
@@ -266,86 +271,87 @@ struct RecordingView: View {
 
     private var recordingBar: some View {
         VStack(spacing: 0) {
-            // Subtle top border
             Rectangle()
                 .fill(MMColors.border)
                 .frame(height: 1)
 
-            HStack(spacing: 0) {
-                // Compact waveform
+            VStack(spacing: 12) {
+                // Centered waveform — full width
                 compactWaveform
-                    .frame(width: 80, height: 28)
-                    .padding(.leading, 20)
+                    .frame(height: 36)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 14)
 
-                Spacer()
-
-                // Pause / Resume button
-                Button {
-                    if audioService.isPaused {
-                        audioService.resumeRecording()
+                // Controls row
+                HStack(spacing: 24) {
+                    // Duration warning (left)
+                    if audioService.duration >= 7200 {
+                        let remaining = max(0, 10800 - audioService.duration)
+                        let remainingMinutes = Int(remaining) / 60
+                        Text("\(remainingMinutes)m left")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
+                            .frame(width: 60)
                     } else {
-                        audioService.pauseRecording()
+                        Color.clear.frame(width: 60)
                     }
-                } label: {
-                    Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(MMColors.textPrimary)
-                        .frame(width: 44, height: 44)
-                        .background(MMColors.cardBg)
-                        .clipShape(Circle())
-                        .overlay(
-                            Circle().stroke(MMColors.border, lineWidth: 1)
-                        )
-                }
 
-                Spacer()
-                    .frame(width: 16)
+                    Spacer()
 
-                // Stop button
-                Button {
-                    stopAndFinish()
-                } label: {
-                    ZStack {
-                        Circle()
-                            .fill(MMColors.recording)
-                            .frame(width: 44, height: 44)
-                            .shadow(color: MMColors.recording.opacity(0.4), radius: 8, x: 0, y: 2)
-
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(.white)
-                            .frame(width: 16, height: 16)
+                    // Pause / Resume
+                    Button {
+                        if audioService.isPaused {
+                            audioService.resumeRecording()
+                        } else {
+                            audioService.pauseRecording()
+                        }
+                    } label: {
+                        Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
+                            .font(.system(size: 22, weight: .medium))
+                            .foregroundColor(MMColors.textPrimary)
+                            .frame(width: 54, height: 54)
+                            .background(MMColors.cardBg)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle().stroke(MMColors.border, lineWidth: 1)
+                            )
                     }
-                }
 
-                Spacer()
+                    // Stop
+                    Button {
+                        stopAndFinish()
+                    } label: {
+                        ZStack {
+                            Circle()
+                                .fill(MMColors.recording)
+                                .frame(width: 54, height: 54)
+                                .shadow(color: MMColors.recording.opacity(0.4), radius: 10, x: 0, y: 3)
 
-                // Duration warning or remaining
-                if audioService.duration >= 7200 {
-                    let remaining = max(0, 10800 - audioService.duration)
-                    let remainingMinutes = Int(remaining) / 60
-                    Text("\(remainingMinutes)m left")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
-                        .padding(.trailing, 20)
-                } else {
-                    Color.clear.frame(width: 80)
-                        .padding(.trailing, 20)
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(.white)
+                                .frame(width: 20, height: 20)
+                        }
+                    }
+
+                    Spacer()
+
+                    Color.clear.frame(width: 60)
                 }
+                .padding(.horizontal, 24)
+                .padding(.bottom, 16)
             }
-            .padding(.vertical, 14)
             .background(MMColors.backgroundElevated)
         }
-        .padding(.bottom, 0)
     }
 
     // MARK: - Compact Waveform
 
     private var compactWaveform: some View {
-        HStack(spacing: 2) {
+        HStack(spacing: 3) {
             ForEach(0..<barCount, id: \.self) { index in
-                RoundedRectangle(cornerRadius: 1.5)
-                    .fill(MMColors.primary.opacity(audioService.isPaused ? 0.3 : 0.7))
-                    .frame(width: 3, height: max(3, waveformLevels[index] * 28))
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(MMColors.primary.opacity(audioService.isPaused ? 0.25 : 0.65))
+                    .frame(maxWidth: .infinity, minHeight: 4, maxHeight: max(4, waveformLevels[index] * 36))
                     .animation(.easeOut(duration: 0.1), value: waveformLevels[index])
             }
         }
