@@ -55,16 +55,23 @@
 		71A1CBD1D3C8439C4BA5EFC4 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9172FED27F5FB8AA88CB887B /* Secrets.plist */; };
 		764A422CB5D45331285479A5 /* MeetingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9C44E978FFF9A25119BBA7E /* MeetingService.swift */; };
 		7AFD7FA34C684FA9ADD1596F /* AudioHighlightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A289626DAAB48FAB0D22093 /* AudioHighlightsView.swift */; };
+		7DA8D472A7A0487BBE5C3804 /* MeetMind/Services/VoiceDictationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D668BE5F554428380F35DC4 /* MeetMind/Services/VoiceDictationService.swift */; };
 		7DCD45D59B099AD0CA8D0185 /* ConfettiView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71F54ADDBA64040E1966C5C8 /* ConfettiView.swift */; };
 		80B5CF5100B74D1EB75D5595 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 657A4827D44E498EBA8C0BB6 /* StatsView.swift */; };
 		845546EAB09EDA85D3598EFD /* GlobalSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF2464699D1E2A79179E056 /* GlobalSearchView.swift */; };
 		89D9425FA7988C5C757253CF /* GroqService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9278463BAF4B45E41B1D87E4 /* GroqService.swift */; };
-		T34M51NTEGR4T10N5ERV1CE1 /* TeamsIntegrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */; };
+		8E1F195568C3458FBFC3691C /* MeetMind/DesignSystem/DictationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFFE6E8335D49278180617D /* MeetMind/DesignSystem/DictationButton.swift */; };
+		9597472FACF4D2052279F108 /* MeetingAppDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AF4F15B985172E5B9118D5 /* MeetingAppDetector.swift */; };
 		95E7474D8FCFB4A1EDBF39B1 /* MeetMindModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */; };
 		981241E8A9D38A10531AB82F /* MMColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0814810B7F70157CCF2236E /* MMColors.swift */; };
+		997A0AC8732F42ADA53AEE85 /* MeetMind/Features/Meetings/CitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2082AAB23B8045A4844A729E /* MeetMind/Features/Meetings/CitationView.swift */; };
+		9E1CA6D194AD41C3A4768E7B /* MeetMind/Services/NoteEnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A81A90F05974CDFA824E134 /* MeetMind/Services/NoteEnhancementService.swift */; };
 		9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22C43F2AF83E1632F507ACC /* DataExportService.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
 		A1E34EB3B1474C05AD2B302C /* DemoMeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70946479A42F23B31FBA395 /* DemoMeetingView.swift */; };
 		A6C0A570D3F04320875B7ADD /* MeetingPrepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC96060C7D074106AD8AF067 /* MeetingPrepView.swift */; };
+		A7B8C9D0E1F2A3B4C5D6E7F8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* GoogleSignIn */; };
+		A9594A10A47040EA1D4BFC88 /* SystemAudioCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = B69243548B9A71FEF149CF88 /* SystemAudioCapture.swift */; };
 		AB0B4B5AADEA9A934CDD8DEB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E434460CA6C56AF72E80EC67 /* SettingsView.swift */; };
 		AB38E920BEB0424F8DEBDBE5 /* MeetingPrepService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9AD5F204040239A92FA85 /* MeetingPrepService.swift */; };
 		AE1E4E35B57803E9787F2B5B /* FollowUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */; };
@@ -77,49 +84,44 @@
 		B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5F4873AC1AC524814F7CB7 /* MainTabView.swift */; };
 		B591414EADB34FC1F0DDF959 /* MMComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923D4C75B450CB23642B34AA /* MMComponents.swift */; };
 		B70C40BFA8C6FB1E2711D76A /* MeetingTemplateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */; };
+		B8C9D0E1F2A3B4C5D6E7F8A9 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E5F6A7B8C9D0E1F2A3B4C5D6 /* GoogleSignInSwift */; };
 		B9EC4F0587876A572E410BD4 /* MeetMindWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C34D0895B6244F1BF6F91D /* MeetMindWidgetBundle.swift */; };
+		BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* SignInView.swift */; };
 		BDE04D85934177E48CC4090B /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACE4F8B9922BE0FC415B5E8 /* AudioPlayerView.swift */; };
 		C0924905982AEEE69C90DB73 /* AudioRecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */; };
 		C502A7F62F6BA5970041A292 /* MeetMindWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C586007F2F6C92E200B14973 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C586007E2F6C92E200B14973 /* WidgetKit.framework */; };
 		C58600812F6C92E200B14973 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58600802F6C92E200B14973 /* SwiftUI.framework */; };
 		C58600902F6C92E300B14973 /* MeetMindWatchWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C586007D2F6C92E200B14973 /* MeetMindWatchWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C6D137C800AB4893BB396BC5 /* NotepadView.swift in None */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
+		C9D0E1F2A3B4C5D6E7F8A9B0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79556B905F65E2B695E8851D /* UserProfile.swift */; };
 		CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CC45FDB10D711132EF449A /* KeychainService.swift */; };
+		CC33DD44EE55FF66AA11BB22 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */; };
+		D0E1F2A3B4C5D6E7F8A9B0C1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A95801BD8DE01FDE044462 /* AuthService.swift */; };
 		D1D341AEBA5C50442CC6CB8F /* StorageManagementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */; };
 		D34A4B3FAF56774B09CF4B8B /* MeetMindApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 896E4E4A8F73A32B7138B2A2 /* MeetMindApp.swift */; };
 		D35240CD8441D3134CCB2570 /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 460E4BAA932792C94C89CE7B /* PeopleView.swift */; };
+		D3DFD7E089CC4023BA298FDE /* MeetMind/Features/Meetings/NoteTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA89A91491DD4890A971756C /* MeetMind/Features/Meetings/NoteTemplates.swift */; };
 		D5C547A19584CD2668883FA0 /* RecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7E344DCB414C5989D062EA3 /* RecordingView.swift */; };
+		D6E7F8091A2B3C4D5E6F7081 /* NotepadToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
 		D8164BA5B13C8CB2A2EBD50F /* WatchRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED2547F8842C6A176C0D4927 /* WatchRecordingView.swift */; };
 		DCE1785523B74E98A3E2985E /* SentimentIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F914FE7C4E874AF4B0817CFE /* SentimentIndicator.swift */; };
 		DDDD463F8256C8F380560E92 /* TodoRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 217745C0971D530CC07B00A0 /* TodoRow.swift */; };
+		E0198B257F3E4C5E92203B3A /* MeetMind/Services/TextCleanupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D157A7AF91943FE87C4C78B /* MeetMind/Services/TextCleanupService.swift */; };
+		E1632E4D9E2E43658F3B1288 /* MeetMind/Features/Meetings/EnhancedNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068149CB17D84F1A84BC0728 /* MeetMind/Features/Meetings/EnhancedNotesView.swift */; };
+		E1F2A3B4C5D6E7F8A9B0C1D2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */; };
 		E92A4E4F9CD7D21F1648A5DD /* ProcessingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE14400BBEB85FD874D6D4E /* ProcessingView.swift */; };
 		E9D1E32F46634E84B5BC581A /* LiveTranscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7553F9645D42669FF607DC /* LiveTranscriptionService.swift */; };
+		E9EA9BD0F9E24204A7FE715B /* NotepadToolbar.swift in None */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
 		EBDC43B6A6C05A0389151DB7 /* TodosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB84F91BD2502DF4CC90C82 /* TodosView.swift */; };
 		F379D5B4D8BE4BDE9169D9FF /* SpeakerIdentificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B2345E80AFC4C2CA50C7D24 /* SpeakerIdentificationService.swift */; };
+		F6A7B8C9D0E1F2A3B4C5D6E7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* FirebaseAuth */; };
 		FA444889BDA035348201D27D /* BriefLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66324588AA339F43E86D5740 /* BriefLoadingView.swift */; };
 		FA5641D1808C9851BFDBFDA1 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A714E9C8D8451E378CC6266 /* ShareSheet.swift */; };
 		FA8FB840B8964936B548D9BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B3F8819FB594A59BFA8A67D /* Assets.xcassets */; };
 		FB424459B1E4C339D705BB6B /* MeetingChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B455BBBCEA35170A3BCD1 /* MeetingChatSheet.swift */; };
 		FB9E4F7F99E2490CAE41926C /* WatchWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */; };
-		F6A7B8C9D0E1F2A3B4C5D6E7 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C3D4E5F6A7B8C9D0E1F2A3B4 /* FirebaseAuth */; };
-		A7B8C9D0E1F2A3B4C5D6E7F8 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D4E5F6A7B8C9D0E1F2A3B4C5 /* GoogleSignIn */; };
-		B8C9D0E1F2A3B4C5D6E7F8A9 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E5F6A7B8C9D0E1F2A3B4C5D6 /* GoogleSignInSwift */; };
-		C9D0E1F2A3B4C5D6E7F8A9B0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79556B905F65E2B695E8851D /* UserProfile.swift */; };
-		CC33DD44EE55FF66AA11BB22 /* ProfileSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */; };
-		BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* SignInView.swift */; };
-		D0E1F2A3B4C5D6E7F8A9B0C1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A95801BD8DE01FDE044462 /* AuthService.swift */; };
-		E1F2A3B4C5D6E7F8A9B0C1D2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */; };
-		C6D137C800AB4893BB396BC5 /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
-		E9EA9BD0F9E24204A7FE715B /* NotepadToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
-		A1B2C3D4E5F60718293A4B5C /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
-		D6E7F8091A2B3C4D5E6F7081 /* NotepadToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
-		9E1CA6D194AD41C3A4768E7B /* NoteEnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A81A90F05974CDFA824E134 /* NoteEnhancementService.swift */; };
-		E1632E4D9E2E43658F3B1288 /* EnhancedNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068149CB17D84F1A84BC0728 /* EnhancedNotesView.swift */; };
-		997A0AC8732F42ADA53AEE85 /* CitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2082AAB23B8045A4844A729E /* CitationView.swift */; };
-		D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA89A91491DD4890A971756C /* NoteTemplates.swift */; };
-		7DA8D472A7A0487BBE5C3804 /* VoiceDictationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D668BE5F554428380F35DC4 /* VoiceDictationService.swift */; };
-		E0198B257F3E4C5E92203B3A /* TextCleanupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D157A7AF91943FE87C4C78B /* TextCleanupService.swift */; };
-		8E1F195568C3458FBFC3691C /* DictationButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBFFE6E8335D49278180617D /* DictationButton.swift */; };
+		'T34M51NTEGR4T10N5ERV1CE1' = {isa = PBXBuildFile; fileRef = T34M51NTEGR4T10NREF00001; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,7 +203,9 @@
 		03062A9D3A3A338EFB504CA4 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		0379F3DD718078F4ACACFF99 /* PhoneLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLoginView.swift; sourceTree = "<group>"; };
 		065DE45299423273167DDCFF /* EpisodeFilesTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeFilesTabView.swift; sourceTree = "<group>"; };
+		068149CB17D84F1A84BC0728 /* MeetMind/Features/Meetings/EnhancedNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Features/Meetings/EnhancedNotesView.swift; sourceTree = SOURCE_ROOT; };
 		08DF44ADBEF3EE4BF4E57F8E /* RecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RecipesView.swift; path = MeetMind/Features/Recipes/RecipesView.swift; sourceTree = SOURCE_ROOT; };
+		0A81A90F05974CDFA824E134 /* MeetMind/Services/NoteEnhancementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Services/NoteEnhancementService.swift; sourceTree = SOURCE_ROOT; };
 		0B0D4E9CB03C016C76BB4D97 /* TextTodoEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TextTodoEntryView.swift; path = MeetMind/Features/Todos/TextTodoEntryView.swift; sourceTree = SOURCE_ROOT; };
 		0C57BE048F0A112EB6DBF2ED /* DoseReminderLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseReminderLiveActivity.swift; sourceTree = "<group>"; };
 		0C76CC51ADE9415693A894E4 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
@@ -214,6 +218,8 @@
 		163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MeetMindWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		17314FFEAFB9823429F3D32C /* SubscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SubscriptionView.swift; path = MeetMind/Features/Settings/SubscriptionView.swift; sourceTree = SOURCE_ROOT; };
 		1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = BackgroundTaskService.swift; path = MeetMind/Services/BackgroundTaskService.swift; sourceTree = SOURCE_ROOT; };
+		1D668BE5F554428380F35DC4 /* MeetMind/Services/VoiceDictationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Services/VoiceDictationService.swift; sourceTree = SOURCE_ROOT; };
+		2082AAB23B8045A4844A729E /* MeetMind/Features/Meetings/CitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Features/Meetings/CitationView.swift; sourceTree = SOURCE_ROOT; };
 		2105B5488586FB05EE78836A /* AddDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDocumentView.swift; sourceTree = "<group>"; };
 		217745C0971D530CC07B00A0 /* TodoRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoRow.swift; path = MeetMind/Features/Todos/Components/TodoRow.swift; sourceTree = SOURCE_ROOT; };
 		21E545D48B39B6290602E699 /* CompanyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompanyView.swift; path = MeetMind/Features/People/CompanyView.swift; sourceTree = SOURCE_ROOT; };
@@ -226,7 +232,6 @@
 		2B26F8797DF6B90CD0C8BCDC /* AIChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatView.swift; sourceTree = "<group>"; };
 		2B5FB0A2DDF46C68E31AF399 /* ConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationView.swift; sourceTree = "<group>"; };
 		2E93F8220F2CE84FE9F98E81 /* PharmaDataNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmaDataNetwork.swift; sourceTree = "<group>"; };
-		AA11BB22CC33DD44EE55FF66 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		32C9F44F1AD84C570EE2007E /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
 		33B93A5950B339B58BA65880 /* ProfileFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFilesView.swift; sourceTree = "<group>"; };
@@ -236,8 +241,9 @@
 		3B698A28C46329BC1C47C012 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		3C0F8A594CE3402FA4B10718 /* CoachingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoachingView.swift; path = MeetMind/Features/Meetings/CoachingView.swift; sourceTree = SOURCE_ROOT; };
 		3C81A826372397B5FA1EC28A /* DocumentThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentThumbnailCard.swift; sourceTree = "<group>"; };
-		3F1A2B3C4D5E6F7A8B9C0D1E /* SpaceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpaceService.swift; path = MeetMind/Services/SpaceService.swift; sourceTree = SOURCE_ROOT; };
+		3D157A7AF91943FE87C4C78B /* MeetMind/Services/TextCleanupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Services/TextCleanupService.swift; sourceTree = SOURCE_ROOT; };
 		3E4F62CF8A1F26336018727C /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		3F1A2B3C4D5E6F7A8B9C0D1E /* SpaceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpaceService.swift; path = MeetMind/Services/SpaceService.swift; sourceTree = SOURCE_ROOT; };
 		3F4DEDBEBAD4454E0CF7A83A /* MeetMindWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MeetMindWidgetExtension.entitlements; sourceTree = "<group>"; };
 		411572CD64A8B9EB2DC4A554 /* MCEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCEmptyState.swift; sourceTree = "<group>"; };
 		42D3414EA0E04B110742A6E8 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingView.swift; path = MeetMind/Features/Onboarding/OnboardingView.swift; sourceTree = SOURCE_ROOT; };
@@ -246,8 +252,8 @@
 		44714D64814D7A30D1E9F527 /* ChatSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatSession.swift; path = MeetMind/Models/ChatSession.swift; sourceTree = SOURCE_ROOT; };
 		460E4BAA932792C94C89CE7B /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeopleView.swift; path = MeetMind/Features/People/PeopleView.swift; sourceTree = SOURCE_ROOT; };
 		47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingTemplateSelector.swift; path = MeetMind/Features/Meetings/MeetingTemplateSelector.swift; sourceTree = SOURCE_ROOT; };
-		4A2B3C4D5E6F7A8B9C0D1E2F /* SpacesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpacesView.swift; path = MeetMind/Features/Spaces/SpacesView.swift; sourceTree = SOURCE_ROOT; };
 		4A289626DAAB48FAB0D22093 /* AudioHighlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioHighlightsView.swift; path = MeetMind/Features/Meetings/Components/AudioHighlightsView.swift; sourceTree = SOURCE_ROOT; };
+		4A2B3C4D5E6F7A8B9C0D1E2F /* SpacesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpacesView.swift; path = MeetMind/Features/Spaces/SpacesView.swift; sourceTree = SOURCE_ROOT; };
 		4A96CB51A32C79ED676F5A46 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		4B3F8819FB594A59BFA8A67D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4C924DA29DA9CF1BE60D822C /* MeetMindWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindWidgets.swift; path = MeetMindWidgetExtension/MeetMindWidgets.swift; sourceTree = SOURCE_ROOT; };
@@ -306,10 +312,10 @@
 		9180C9A3ECDB451AB24CB12E /* DoseConfirmationOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseConfirmationOverlay.swift; sourceTree = "<group>"; };
 		923D4C75B450CB23642B34AA /* MMComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMComponents.swift; path = MeetMind/DesignSystem/MMComponents.swift; sourceTree = SOURCE_ROOT; };
 		9278463BAF4B45E41B1D87E4 /* GroqService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GroqService.swift; path = MeetMind/Services/GroqService.swift; sourceTree = SOURCE_ROOT; };
-		T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TeamsIntegrationService.swift; path = MeetMind/Services/TeamsIntegrationService.swift; sourceTree = SOURCE_ROOT; };
 		938D83A193BD3E835B3A2C7A /* MCBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCBadge.swift; sourceTree = "<group>"; };
 		94314E6E9407D130F884388B /* TodoService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TodoService.swift; path = MeetMind/Services/TodoService.swift; sourceTree = SOURCE_ROOT; };
 		94B747D8AFE535F51B12C9C6 /* MCAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MCAnimations.swift; path = MeetMind/Core/Components/MCAnimations.swift; sourceTree = SOURCE_ROOT; };
+		94C32F63ED1D411081E80529 /* NotepadToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadToolbar.swift; path = MeetMind/Features/Meetings/NotepadToolbar.swift; sourceTree = SOURCE_ROOT; };
 		96A13E97377FB815714F7615 /* TimelineMilestoneCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineMilestoneCard.swift; sourceTree = "<group>"; };
 		97AE99DC7E1745619D6748CB /* StreakService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreakService.swift; path = MeetMind/Services/StreakService.swift; sourceTree = SOURCE_ROOT; };
 		97E2419391B3B95C3217E9B0 /* StreakBadgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StreakBadgeView.swift; path = MeetMind/Core/Components/StreakBadgeView.swift; sourceTree = SOURCE_ROOT; };
@@ -322,11 +328,15 @@
 		A92A48CD959560A5ADF8771B /* ChatHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatHistoryView.swift; path = MeetMind/Features/AIChat/Views/ChatHistoryView.swift; sourceTree = SOURCE_ROOT; };
 		A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FollowUpEmailView.swift; path = MeetMind/Features/Meetings/FollowUpEmailView.swift; sourceTree = SOURCE_ROOT; };
 		A9E063B71DD33DDA14099AFA /* ProfileManagementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileManagementView.swift; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE55FF66 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		AA836C2DFF66A9A72C043D86 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		AA89A91491DD4890A971756C /* MeetMind/Features/Meetings/NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Features/Meetings/NoteTemplates.swift; sourceTree = SOURCE_ROOT; };
 		B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchWidgetData.swift; path = MeetMind/WatchApp/WatchWidgetData.swift; sourceTree = SOURCE_ROOT; };
 		B353E5360CE9EF2259BC5455 /* DoseReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseReminderAttributes.swift; sourceTree = "<group>"; };
 		B51D8F97D9C7342B90B4719D /* MCTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCTypography.swift; sourceTree = "<group>"; };
 		B5E84F0ABBB19FB2894DD476 /* MeetingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingDetailView.swift; path = MeetMind/Features/Meetings/MeetingDetailView.swift; sourceTree = SOURCE_ROOT; };
+		B69243548B9A71FEF149CF88 /* SystemAudioCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SystemAudioCapture.swift; path = MeetMind/MacApp/SystemAudioCapture.swift; sourceTree = SOURCE_ROOT; };
+		B6AF4F15B985172E5B9118D5 /* MeetingAppDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingAppDetector.swift; path = MeetMind/MacApp/MeetingAppDetector.swift; sourceTree = SOURCE_ROOT; };
 		B70946479A42F23B31FBA395 /* DemoMeetingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DemoMeetingView.swift; path = MeetMind/Features/Onboarding/DemoMeetingView.swift; sourceTree = SOURCE_ROOT; };
 		B70C4D388D6806D813303B39 /* ActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionItemsView.swift; path = MeetMind/Features/ActionItems/ActionItemsView.swift; sourceTree = SOURCE_ROOT; };
 		BB4173F5BD62B9418CD1C077 /* WidgetDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataService.swift; sourceTree = "<group>"; };
@@ -364,10 +374,13 @@
 		E71B1D931596710E77FA6FC1 /* SymptomLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymptomLog.swift; sourceTree = "<group>"; };
 		E8CC45FDB10D711132EF449A /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = KeychainService.swift; path = MeetMind/Services/KeychainService.swift; sourceTree = SOURCE_ROOT; };
 		E9437066F5AC49458E69E887 /* SentimentAnalysisService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SentimentAnalysisService.swift; path = MeetMind/Services/SentimentAnalysisService.swift; sourceTree = SOURCE_ROOT; };
+		EBFFE6E8335D49278180617D /* MeetMind/DesignSystem/DictationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/DesignSystem/DictationButton.swift; sourceTree = SOURCE_ROOT; };
 		ED2547F8842C6A176C0D4927 /* WatchRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchRecordingView.swift; path = MeetMind/WatchApp/WatchRecordingView.swift; sourceTree = SOURCE_ROOT; };
 		ED446B8156A2397EC61607C1 /* MeetMind.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MeetMind.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEC06F56E11C5093059156A8 /* DocumentDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentDetailView.swift; sourceTree = "<group>"; };
 		F03B4B7281CA6C9B53069456 /* DoseCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DoseCalendarView.swift; path = MeetMind/Features/History/Views/DoseCalendarView.swift; sourceTree = SOURCE_ROOT; };
+		F0F23F6B7CA948408F74212F /* NotepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadView.swift; path = MeetMind/Features/Meetings/NotepadView.swift; sourceTree = SOURCE_ROOT; };
+		F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "MeetMind/Resources/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		F4754543AE2C020C8A5BA9CA /* MeetMindModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindModels.swift; path = MeetMind/Data/MeetMindModels.swift; sourceTree = SOURCE_ROOT; };
 		F520431DDEA8AF8185D13977 /* Nudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nudge.swift; sourceTree = "<group>"; };
 		F64E9ECF7FC0DEAA7532C56B /* AIChatService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatService.swift; sourceTree = "<group>"; };
@@ -379,20 +392,11 @@
 		FD0946C6947F1833325126E2 /* MMTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMTypography.swift; path = MeetMind/DesignSystem/MMTypography.swift; sourceTree = SOURCE_ROOT; };
 		FD6E1C1C90AB02B05D4B7CBF /* PositioningDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningDashboard.swift; sourceTree = "<group>"; };
 		FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StorageManagementService.swift; path = MeetMind/Services/StorageManagementService.swift; sourceTree = SOURCE_ROOT; };
-		F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "MeetMind/Resources/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		F0F23F6B7CA948408F74212F /* NotepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadView.swift; path = MeetMind/Features/Meetings/NotepadView.swift; sourceTree = SOURCE_ROOT; };
-		94C32F63ED1D411081E80529 /* NotepadToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadToolbar.swift; path = MeetMind/Features/Meetings/NotepadToolbar.swift; sourceTree = SOURCE_ROOT; };
-		0A81A90F05974CDFA824E134 /* NoteEnhancementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/NoteEnhancementService.swift"; sourceTree = SOURCE_ROOT; };
-		068149CB17D84F1A84BC0728 /* EnhancedNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/EnhancedNotesView.swift"; sourceTree = SOURCE_ROOT; };
-		2082AAB23B8045A4844A729E /* CitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/CitationView.swift"; sourceTree = SOURCE_ROOT; };
-		AA89A91491DD4890A971756C /* NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/NoteTemplates.swift"; sourceTree = SOURCE_ROOT; };
-		1D668BE5F554428380F35DC4 /* VoiceDictationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/VoiceDictationService.swift"; sourceTree = SOURCE_ROOT; };
-		3D157A7AF91943FE87C4C78B /* TextCleanupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/TextCleanupService.swift"; sourceTree = SOURCE_ROOT; };
-		EBFFE6E8335D49278180617D /* DictationButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/DesignSystem/DictationButton.swift"; sourceTree = SOURCE_ROOT; };
+		'T34M51NTEGR4T10NREF00001' = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TeamsIntegrationService.swift; path = MeetMind/Services/TeamsIntegrationService.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		C58600912F6C92E300B14973 /* Exceptions for "MeetMindWatchWidgets" folder in "MeetMindWatchWidgetsExtension" target */ = {
+		C58600912F6C92E300B14973 = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -402,22 +406,21 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C58600822F6C92E200B14973 /* MeetMindWatchWidgets */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				C58600912F6C92E300B14973 /* Exceptions for "MeetMindWatchWidgets" folder in "MeetMindWatchWidgetsExtension" target */,
-			);
-			path = MeetMindWatchWidgets;
-			sourceTree = "<group>";
-		};
-		C5ED847D2F6C4D4F000F59F9 /* MeetMindWatch Watch App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "MeetMindWatch Watch App";
-			sourceTree = "<group>";
-		};
+		C58600822F6C92E200B14973 /* MeetMindWatchWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C58600912F6C92E300B14973, ); path = MeetMindWatchWidgets; sourceTree = "<group>"; };
+		C5ED847D2F6C4D4F000F59F9 /* MeetMindWatch Watch App */ = {isa = PBXFileSystemSynchronizedRootGroup; path = "MeetMindWatch Watch App"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A3B4C5D6E7F8A9B0C1D2E3F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6A7B8C9D0E1F2A3B4C5D6E7 /* FirebaseAuth in Frameworks */,
+				A7B8C9D0E1F2A3B4C5D6E7F8 /* GoogleSignIn in Frameworks */,
+				B8C9D0E1F2A3B4C5D6E7F8A9 /* GoogleSignInSwift in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C586007A2F6C92E200B14973 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -431,16 +434,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A3B4C5D6E7F8A9B0C1D2E3F4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F6A7B8C9D0E1F2A3B4C5D6E7 /* FirebaseAuth in Frameworks */,
-				A7B8C9D0E1F2A3B4C5D6E7F8 /* GoogleSignIn in Frameworks */,
-				B8C9D0E1F2A3B4C5D6E7F8A9 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -541,7 +534,7 @@
 				1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */,
 				C22C43F2AF83E1632F507ACC /* DataExportService.swift */,
 				9278463BAF4B45E41B1D87E4 /* GroqService.swift */,
-				T34M51NTEGR4T10NREF00001 /* TeamsIntegrationService.swift */,
+				T34M51NTEGR4T10NREF00001,
 				E8CC45FDB10D711132EF449A /* KeychainService.swift */,
 				C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */,
 				C9C44E978FFF9A25119BBA7E /* MeetingService.swift */,
@@ -561,6 +554,8 @@
 				C502A7F52F6BA5970041A292 /* Frameworks */,
 				89C943A4A84DB59CCAC02384 /* AppIconDesign.swift */,
 				C5ED84772F6C4BD2000F59F9 /* Recovered References */,
+				B69243548B9A71FEF149CF88 /* SystemAudioCapture.swift */,
+				B6AF4F15B985172E5B9118D5 /* MeetingAppDetector.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1175,13 +1170,13 @@
 			);
 			mainGroup = 0BAC5FD9955ECA536967D147;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
-			productRefGroup = 0BA9CFF8ADB5E6497E3F454D /* Products */;
-			projectDirPath = "";
 			packageReferences = (
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				B2C3D4E5F6A7B8C9D0E1F2A3 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0BA9CFF8ADB5E6497E3F454D /* Products */;
+			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				146C724ADAD4D7B0040AE367 /* MeetMind */,
@@ -1262,9 +1257,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E1F195568C3458FBFC3691C /* DictationButton.swift in Sources */,
-				E0198B257F3E4C5E92203B3A /* TextCleanupService.swift in Sources */,
-				7DA8D472A7A0487BBE5C3804 /* VoiceDictationService.swift in Sources */,
+				8E1F195568C3458FBFC3691C /* MeetMind/DesignSystem/DictationButton.swift in Sources */,
+				E0198B257F3E4C5E92203B3A /* MeetMind/Services/TextCleanupService.swift in Sources */,
+				7DA8D472A7A0487BBE5C3804 /* MeetMind/Services/VoiceDictationService.swift in Sources */,
 				B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */,
 				D34A4B3FAF56774B09CF4B8B /* MeetMindApp.swift in Sources */,
 				95E7474D8FCFB4A1EDBF39B1 /* MeetMindModels.swift in Sources */,
@@ -1309,13 +1304,13 @@
 				6AE045C49DE0A15B9D8C8CA8 /* BackgroundTaskService.swift in Sources */,
 				9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */,
 				89D9425FA7988C5C757253CF /* GroqService.swift in Sources */,
-				T34M51NTEGR4T10N5ERV1CE1 /* TeamsIntegrationService.swift in Sources */,
+				T34M51NTEGR4T10N5ERV1CE1,
 				CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */,
 				3DCD4D1DBCB3D7D5D5F683FB /* MeetingPipeline.swift in Sources */,
 				764A422CB5D45331285479A5 /* MeetingService.swift in Sources */,
-				997A0AC8732F42ADA53AEE85 /* CitationView.swift in Sources */,
-				E1632E4D9E2E43658F3B1288 /* EnhancedNotesView.swift in Sources */,
-				9E1CA6D194AD41C3A4768E7B /* NoteEnhancementService.swift in Sources */,
+				997A0AC8732F42ADA53AEE85 /* MeetMind/Features/Meetings/CitationView.swift in Sources */,
+				E1632E4D9E2E43658F3B1288 /* MeetMind/Features/Meetings/EnhancedNotesView.swift in Sources */,
+				9E1CA6D194AD41C3A4768E7B /* MeetMind/Services/NoteEnhancementService.swift in Sources */,
 				55244BBD8D1621149E40E5C0 /* OfflineQueueService.swift in Sources */,
 				D1D341AEBA5C50442CC6CB8F /* StorageManagementService.swift in Sources */,
 				2BD44B3F9E286CC4DB927E49 /* TodoService.swift in Sources */,
@@ -1349,9 +1344,11 @@
 				D0E1F2A3B4C5D6E7F8A9B0C1 /* AuthService.swift in Sources */,
 				BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */,
 				CC33DD44EE55FF66AA11BB22 /* ProfileSetupView.swift in Sources */,
-				D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */,
+				D3DFD7E089CC4023BA298FDE /* MeetMind/Features/Meetings/NoteTemplates.swift in Sources */,
 				2D0A5B3C8E4F6A7D9B1C2E3F /* SpaceService.swift in Sources */,
 				2D0B6C4D9F5A7B8E0C2D3E4F /* SpacesView.swift in Sources */,
+				A9594A10A47040EA1D4BFC88 /* SystemAudioCapture.swift in Sources */,
+				9597472FACF4D2052279F108 /* MeetingAppDetector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
