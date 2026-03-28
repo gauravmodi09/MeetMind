@@ -74,6 +74,22 @@ struct MeetingDetailView: View {
                             .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.1), value: sectionsAppeared)
                     }
 
+                    // Enhanced Notes
+                    if let enhancedNotes = meeting.enhancedNotes, !enhancedNotes.isEmpty {
+                        EnhancedNotesView(
+                            blocks: enhancedNotes,
+                            onReEnhance: {
+                                Task {
+                                    await MeetingService.shared.enhanceNotes(for: meeting)
+                                }
+                            }
+                        )
+                        .padding(.horizontal, 16)
+                        .opacity(sectionsAppeared ? 1 : 0)
+                        .offset(y: sectionsAppeared ? 0 : 16)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.15), value: sectionsAppeared)
+                    }
+
                     // Decisions
                     if !meeting.briefDecisions.isEmpty {
                         decisionsSection
@@ -256,27 +272,76 @@ struct MeetingDetailView: View {
     // MARK: - Header
 
     private var headerSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
+            // Hero title
             Text(meeting.title)
-                .font(MMTypography.title1)
+                .font(.system(size: 28, weight: .bold, design: .default))
                 .foregroundColor(MMColors.textPrimary)
+                .lineSpacing(2)
 
-            HStack(spacing: 16) {
-                Label(formattedDate, systemImage: "calendar")
-                    .font(MMTypography.footnote)
-                    .foregroundColor(MMColors.textSecondary)
+            // Metadata row with richer styling
+            HStack(spacing: 12) {
+                HStack(spacing: 6) {
+                    Image(systemName: "calendar")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(MMColors.primary)
+                    Text(formattedDate)
+                        .font(MMTypography.footnote)
+                        .foregroundColor(MMColors.textSecondary)
+                }
 
-                Label(formattedDuration, systemImage: "clock")
-                    .font(MMTypography.footnote)
-                    .foregroundColor(MMColors.textSecondary)
+                HStack(spacing: 6) {
+                    Image(systemName: "clock")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(MMColors.primary)
+                    Text(formattedDuration)
+                        .font(MMTypography.footnote)
+                        .foregroundColor(MMColors.textSecondary)
+                }
+
+                if !meeting.briefActionItems.isEmpty {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checklist")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text("\(meeting.briefActionItems.count) actions")
+                            .font(.system(size: 12, weight: .semibold))
+                    }
+                    .foregroundColor(MMColors.primary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(MMColors.primaryLight)
+                    .clipShape(Capsule())
+                }
 
                 if let client = meeting.clientName {
                     MMBadge(text: client, variant: .client(clientColorHex))
                 }
             }
+
+            // Key topics as horizontal scrolling pills
+            if !meeting.briefKeyTopics.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(meeting.briefKeyTopics, id: \.self) { topic in
+                            Text(topic)
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(MMColors.textSecondary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(MMColors.glass)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(MMColors.glassStroke, lineWidth: 1)
+                                )
+                        }
+                    }
+                }
+            }
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
+        .padding(.bottom, 4)
     }
 
     // MARK: - Sticky Action Bar

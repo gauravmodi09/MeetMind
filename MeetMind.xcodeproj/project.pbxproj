@@ -114,6 +114,7 @@
 		9E1CA6D194AD41C3A4768E7B /* NoteEnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A81A90F05974CDFA824E134 /* NoteEnhancementService.swift */; };
 		E1632E4D9E2E43658F3B1288 /* EnhancedNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068149CB17D84F1A84BC0728 /* EnhancedNotesView.swift */; };
 		997A0AC8732F42ADA53AEE85 /* CitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2082AAB23B8045A4844A729E /* CitationView.swift */; };
+		D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA89A91491DD4890A971756C /* NoteTemplates.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -377,6 +378,7 @@
 		0A81A90F05974CDFA824E134 /* NoteEnhancementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Services/NoteEnhancementService.swift"; sourceTree = SOURCE_ROOT; };
 		068149CB17D84F1A84BC0728 /* EnhancedNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/EnhancedNotesView.swift"; sourceTree = SOURCE_ROOT; };
 		2082AAB23B8045A4844A729E /* CitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/CitationView.swift"; sourceTree = SOURCE_ROOT; };
+		AA89A91491DD4890A971756C /* NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MeetMind/Features/Meetings/NoteTemplates.swift"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1332,6 +1334,7 @@
 				D0E1F2A3B4C5D6E7F8A9B0C1 /* AuthService.swift in Sources */,
 				BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */,
 				CC33DD44EE55FF66AA11BB22 /* ProfileSetupView.swift in Sources */,
+				D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
