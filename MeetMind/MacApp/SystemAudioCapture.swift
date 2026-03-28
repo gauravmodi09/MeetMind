@@ -54,7 +54,7 @@ class SystemAudioCapture: ObservableObject {
                 self?.audioLevel = level
             }
         }
-        try stream.addStreamOutput(output, type: .audio, sampleBufferQueue: .global(qos: .userInteractive))
+        try stream.addStreamOutput(output, type: .audio, sampleHandlerQueue: .global(qos: .userInteractive))
 
         try await stream.startCapture()
         self.stream = stream
