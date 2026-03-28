@@ -243,6 +243,100 @@ class GroqService: ObservableObject {
         return true
     }
 
+    // MARK: - Adaptive Summary Tiers
+
+    private struct SummaryTier {
+        let promptOverride: String
+        let maxTokens: Int
+    }
+
+    private func summaryTier(for transcript: String) -> SummaryTier {
+        let wordCount = transcript.components(separatedBy: .whitespacesAndNewlines).filter { !$0.isEmpty }.count
+
+        if wordCount < 100 {
+            return SummaryTier(
+                promptOverride: """
+                This is a VERY SHORT recording (under 100 words). Generate a brief, proportionate summary.
+
+                Format:
+                # [Short Title]
+
+                **Quick Summary:** 1-2 sentences capturing what was said.
+
+                **Action Items:** (if any mentioned)
+                - Item
+
+                Rules:
+                - Keep total output under 80 words
+                - Do NOT pad or elaborate beyond what was actually said
+                - If the recording is too short for meaningful notes, say so honestly
+                - No filler sections — only include sections that have real content
+                """,
+                maxTokens: 300
+            )
+        } else if wordCount < 500 {
+            return SummaryTier(
+                promptOverride: """
+                This is a SHORT meeting (~\(wordCount) words). Generate a concise, proportionate summary.
+
+                Format:
+                # [Descriptive Title]
+
+                ## Summary
+                2-4 sentences covering the key points discussed.
+
+                ## Key Decisions
+                - Decision (if any)
+
+                ## Action Items
+                - **[Person]**: Task — deadline
+
+                Rules:
+                - Keep total output under 250 words
+                - Be proportionate to the meeting length — short meeting = short notes
+                - Only include sections that have real content
+                - Bold **names** and **key terms**
+                """,
+                maxTokens: 800
+            )
+        } else if wordCount < 2000 {
+            return SummaryTier(
+                promptOverride: """
+                This is a MEDIUM-LENGTH meeting (~\(wordCount) words). Generate a well-structured summary proportionate to the content.
+
+                Format:
+                # [Descriptive Strategic Title]
+
+                ## Executive Summary
+                3-5 sentences covering what was discussed, decided, and what happens next.
+
+                ## Discussion Topics
+                ### [Topic 1]
+                Brief paragraph with key details.
+
+                ## Key Decisions
+                - **[Decision]** — context
+
+                ## Action Items
+                - **[Person]**: Task — deadline
+
+                ## Open Questions
+                - Question (if any unresolved)
+
+                Rules:
+                - Keep total output between 300-600 words
+                - Be proportionate — don't pad thin content
+                - Bold **names**, **dates**, **key terms**
+                - Only include sections with real content
+                """,
+                maxTokens: 2000
+            )
+        } else {
+            // Long meeting: full detailed analysis (existing behavior)
+            return SummaryTier(promptOverride: "", maxTokens: 4000)
+        }
+    }
+
     // MARK: - Meeting Brief Generation
 
     func generateMeetingBrief(transcript: String, userNotes: String?, template: MeetingTemplate = .general) async throws -> MeetingBrief {
@@ -267,12 +361,26 @@ class GroqService: ObservableObject {
             userContent += "\n\n---\nUser notes taken during meeting:\n\(notes)"
         }
 
+        let tier = summaryTier(for: transcript)
+
+        var effectivePrompt: String
+        if tier.maxTokens < 4000 {
+            let profileContext = UserProfile.load().aiContextString
+            effectivePrompt = "\(profileContext)\n\n\(tier.promptOverride)"
+            let templateModifier2 = template.promptModifier
+            if !templateModifier2.isEmpty {
+                effectivePrompt += "\n\nAdditional context:\n\(templateModifier2)"
+            }
+        } else {
+            effectivePrompt = summaryPrompt
+        }
+
         let summaryPayload: [String: Any] = [
             "model": llamaModel,
-            "temperature": 0.3,
-            "max_tokens": 4000,
+            "temperature": tier.maxTokens < 4000 ? 0.2 : 0.3,
+            "max_tokens": tier.maxTokens,
             "messages": [
-                ["role": "system", "content": summaryPrompt],
+                ["role": "system", "content": effectivePrompt],
                 ["role": "user", "content": userContent]
             ]
         ]
@@ -312,10 +420,11 @@ class GroqService: ObservableObject {
             jsonPrompt += "\n\nAdditional extraction context:\n\(templateModifier)"
         }
 
+        let jsonMaxTokens = tier.maxTokens < 2000 ? 600 : 1200
         let jsonPayload: [String: Any] = [
             "model": llamaModel,
             "temperature": 0.1,
-            "max_tokens": 1200,
+            "max_tokens": jsonMaxTokens,
             "messages": [
                 ["role": "system", "content": jsonPrompt],
                 ["role": "user", "content": "Meeting summary:\n\n\(richSummary)\n\n---\nRaw transcript (for quotes only):\n\(String(transcript.prefix(4000)))"]
