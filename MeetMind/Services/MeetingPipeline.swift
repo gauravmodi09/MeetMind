@@ -34,6 +34,11 @@ class MeetingPipeline: ObservableObject {
     @Published var processingState: ProcessingState = .idle
     var lastRawTranscript: String?
 
+    /// Whether to delete audio after successful transcription (transcript-only mode).
+    var transcriptOnlyMode: Bool {
+        !UserDefaults.standard.bool(forKey: "keepAudioFiles")
+    }
+
     private let recorder = AudioRecordingService.shared
     private let groq = GroqService.shared
 
@@ -104,6 +109,17 @@ class MeetingPipeline: ObservableObject {
 
             // Store the raw transcript (not cleaned) so the user sees the original
             lastRawTranscript = rawTranscript
+
+            // Transcript-only mode: delete original audio to save storage
+            if transcriptOnlyMode {
+                let fileSize = (try? FileManager.default.attributesOfItem(atPath: audioURL.path)[.size] as? Int) ?? 0
+                try? FileManager.default.removeItem(at: audioURL)
+                let savedMB = Double(fileSize) / 1_048_576.0
+                let totalSaved = UserDefaults.standard.double(forKey: "storageSavedMB") + savedMB
+                UserDefaults.standard.set(totalSaved, forKey: "storageSavedMB")
+                print("[Pipeline] Transcript-only mode: deleted audio, saved \(String(format: "%.1f", savedMB)) MB (total: \(String(format: "%.1f", totalSaved)) MB)")
+            }
+
             processingState = .complete(brief)
             print("[Pipeline] Pipeline complete! Title: \(brief.title)")
             return brief

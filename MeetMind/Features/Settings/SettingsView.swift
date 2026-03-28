@@ -447,6 +447,38 @@ struct SettingsView: View {
 
                             sectionDivider
 
+                            Toggle(isOn: Binding(
+                                get: { UserDefaults.standard.bool(forKey: "keepAudioFiles") },
+                                set: { UserDefaults.standard.set($0, forKey: "keepAudioFiles") }
+                            )) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Keep Audio Files")
+                                        .font(MMTypography.body)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Text("When off, audio is deleted after transcription to save storage")
+                                        .font(MMTypography.caption1)
+                                        .foregroundColor(MMColors.textSecondary)
+                                }
+                            }
+                            .tint(MMColors.primary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            let savedMB = UserDefaults.standard.double(forKey: "storageSavedMB")
+                            if savedMB > 0 {
+                                HStack {
+                                    Image(systemName: "leaf.fill")
+                                        .foregroundColor(MMColors.success)
+                                    Text("Saved \(String(format: "%.0f", savedMB)) MB by not storing audio")
+                                        .font(MMTypography.footnote)
+                                        .foregroundColor(MMColors.textSecondary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                            }
+
+                            sectionDivider
+
                             Button {
                                 showCleanupConfirmation = true
                             } label: {

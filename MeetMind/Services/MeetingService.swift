@@ -476,6 +476,12 @@ class MeetingService: ObservableObject {
                 }
             }
 
+            // Transcript-only mode OR legacy auto-delete: remove audio file path reference
+            if !UserDefaults.standard.bool(forKey: "keepAudioFiles") ||
+               UserDefaults.standard.bool(forKey: "autoDeleteAudioAfterProcessing") {
+                meeting.audioFilePath = nil
+            }
+
             updateMeetingInCoreData(meeting)
             loadMeetings()
 
