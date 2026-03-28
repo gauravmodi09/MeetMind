@@ -429,6 +429,25 @@ enum MeetingTemplate: String, Codable, CaseIterable {
             """
         }
     }
+
+    var notepadSections: String? {
+        switch self {
+        case .general:
+            return nil
+        case .oneOnOne:
+            return "## Updates\n\n\n## Blockers\n\n\n## Action Items\n\n\n## Follow-up\n"
+        case .salesCall:
+            return "## Needs\n\n\n## Pain Points\n\n\n## Budget\n\n\n## Next Steps\n"
+        case .interview:
+            return "## Questions\n\n\n## Impressions\n\n\n## Technical Score\n\n\n## Culture Fit\n"
+        case .standup:
+            return "## Yesterday\n\n\n## Today\n\n\n## Blockers\n"
+        case .discovery:
+            return "## Goals\n\n\n## Challenges\n\n\n## Current Tools\n\n\n## Budget\n\n\n## Timeline\n"
+        case .brainstorm:
+            return "## Ideas\n\n\n## Pros/Cons\n\n\n## Decisions\n\n\n## Next Steps\n"
+        }
+    }
 }
 
 // MARK: - AI Prompt Style

@@ -15,6 +15,13 @@ struct RecordingView: View {
     @State private var showDurationWarning = false
     @State private var isNotesExpanded = false
     @State private var selectedTemplate: MeetingTemplate = .general
+    @State private var selectedTab: RecordingTab = .recording
+    @State private var notepadContent: String = ""
+
+    enum RecordingTab: String, CaseIterable {
+        case recording = "Recording"
+        case notepad = "Notepad"
+    }
 
     // Ambient blob animation state
     @State private var blob1Offset: CGSize = CGSize(width: -80, height: -120)
@@ -91,15 +98,52 @@ struct RecordingView: View {
                     .padding(.bottom, 12)
                 }
 
-                // Meeting template selector
-                MeetingTemplateSelector(selectedTemplate: $selectedTemplate)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                // Tab picker
+                HStack(spacing: 0) {
+                    ForEach(RecordingTab.allCases, id: \.self) { tab in
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedTab = tab
+                            }
+                        } label: {
+                            VStack(spacing: 6) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: tab == .recording ? "waveform" : "note.text")
+                                        .font(.system(size: 12))
+                                    Text(tab.rawValue)
+                                        .font(MMTypography.footnoteMedium)
+                                }
+                                .foregroundColor(selectedTab == tab ? MMColors.primary : .white.opacity(0.4))
+                                .padding(.vertical, 8)
+                                .frame(maxWidth: .infinity)
 
-                // Notes area
-                notesEditor
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
+                                Rectangle()
+                                    .fill(selectedTab == tab ? MMColors.primary : Color.clear)
+                                    .frame(height: 2)
+                            }
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+
+                // Tab content
+                Group {
+                    if selectedTab == .recording {
+                        VStack(spacing: 16) {
+                            MeetingTemplateSelector(selectedTemplate: $selectedTemplate)
+                            notesEditor
+                        }
+                    } else {
+                        NotepadView(
+                            notepadContent: $notepadContent,
+                            templateSections: selectedTemplate.notepadSections
+                        )
+                        .frame(minHeight: 200)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
 
                 // Controls
                 controlButtons
@@ -510,7 +554,8 @@ struct RecordingView: View {
             clientName: detectedClient,
             status: .processing,
             template: selectedTemplate,
-            userNotes: notes.isEmpty ? nil : notes
+            userNotes: notes.isEmpty ? nil : notes,
+            notepadContent: notepadContent.isEmpty ? nil : notepadContent
         )
 
         meetingService.currentRecording = meeting

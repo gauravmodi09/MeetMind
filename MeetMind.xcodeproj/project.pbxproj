@@ -107,6 +107,10 @@
 		BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* SignInView.swift */; };
 		D0E1F2A3B4C5D6E7F8A9B0C1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A95801BD8DE01FDE044462 /* AuthService.swift */; };
 		E1F2A3B4C5D6E7F8A9B0C1D2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */; };
+		C6D137C800AB4893BB396BC5 /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
+		E9EA9BD0F9E24204A7FE715B /* NotepadToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
+		A1B2C3D4E5F60718293A4B5C /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
+		D6E7F8091A2B3C4D5E6F7081 /* NotepadToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C32F63ED1D411081E80529 /* NotepadToolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -365,6 +369,8 @@
 		FD6E1C1C90AB02B05D4B7CBF /* PositioningDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningDashboard.swift; sourceTree = "<group>"; };
 		FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StorageManagementService.swift; path = MeetMind/Services/StorageManagementService.swift; sourceTree = SOURCE_ROOT; };
 		F2A3B4C5D6E7F8A9B0C1D2E3 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "MeetMind/Resources/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		F0F23F6B7CA948408F74212F /* NotepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadView.swift; path = MeetMind/Features/Meetings/NotepadView.swift; sourceTree = SOURCE_ROOT; };
+		94C32F63ED1D411081E80529 /* NotepadToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NotepadToolbar.swift; path = MeetMind/Features/Meetings/NotepadToolbar.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -1259,6 +1265,8 @@
 				3D404121A5DC4C32EF9AA993 /* MeetingsView.swift in Sources */,
 				E92A4E4F9CD7D21F1648A5DD /* ProcessingView.swift in Sources */,
 				D5C547A19584CD2668883FA0 /* RecordingView.swift in Sources */,
+				A1B2C3D4E5F60718293A4B5C /* NotepadView.swift in Sources */,
+				D6E7F8091A2B3C4D5E6F7081 /* NotepadToolbar.swift in Sources */,
 				A1E34EB3B1474C05AD2B302C /* DemoMeetingView.swift in Sources */,
 				49DA4180A61A265036FBED70 /* OnboardingView.swift in Sources */,
 				3BDA4C54856ECBF52EE724B6 /* CompanyView.swift in Sources */,
