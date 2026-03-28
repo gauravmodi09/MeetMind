@@ -112,6 +112,8 @@ final class PersistenceController {
             attribute("templateRaw", .stringAttributeType, optional: false, defaultValue: "General"),
             attribute("rawTranscript", .stringAttributeType),
             attribute("userNotes", .stringAttributeType),
+            attribute("notepadContent", .stringAttributeType),
+            attribute("enhancedNotesData", .binaryDataAttributeType),
             attribute("createdAt", .dateAttributeType, optional: false),
         ]
 

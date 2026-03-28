@@ -18,6 +18,8 @@ struct Meeting: Identifiable {
     var briefKeyQuotes: [String]
     var rawTranscript: String?
     var userNotes: String?
+    var notepadContent: String?
+    var enhancedNotes: [EnhancedBlock]?
     var createdAt: Date
 
     init(
@@ -36,6 +38,8 @@ struct Meeting: Identifiable {
         briefKeyQuotes: [String] = [],
         rawTranscript: String? = nil,
         userNotes: String? = nil,
+        notepadContent: String? = nil,
+        enhancedNotes: [EnhancedBlock]? = nil,
         createdAt: Date = Date()
     ) {
         self.id = id
@@ -53,7 +57,33 @@ struct Meeting: Identifiable {
         self.briefKeyQuotes = briefKeyQuotes
         self.rawTranscript = rawTranscript
         self.userNotes = userNotes
+        self.notepadContent = notepadContent
+        self.enhancedNotes = enhancedNotes
         self.createdAt = createdAt
+    }
+}
+
+// MARK: - EnhancedBlock
+
+struct EnhancedBlock: Codable, Identifiable {
+    let id: UUID
+    let text: String
+    let isAI: Bool
+    let citationRange: String?
+    let citationText: String?
+
+    init(
+        id: UUID = UUID(),
+        text: String,
+        isAI: Bool,
+        citationRange: String? = nil,
+        citationText: String? = nil
+    ) {
+        self.id = id
+        self.text = text
+        self.isAI = isAI
+        self.citationRange = citationRange
+        self.citationText = citationText
     }
 }
 

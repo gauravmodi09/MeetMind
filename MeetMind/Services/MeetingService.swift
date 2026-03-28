@@ -872,6 +872,10 @@ class MeetingService: ObservableObject {
         obj.setValue(meeting.briefSummary, forKey: "briefSummary")
         obj.setValue(meeting.rawTranscript, forKey: "rawTranscript")
         obj.setValue(meeting.userNotes, forKey: "userNotes")
+        obj.setValue(meeting.notepadContent, forKey: "notepadContent")
+        if let enhancedData = try? JSONEncoder().encode(meeting.enhancedNotes) {
+            obj.setValue(enhancedData, forKey: "enhancedNotesData")
+        }
         obj.setValue(meeting.createdAt, forKey: "createdAt")
 
         if let decisionsData = try? JSONEncoder().encode(meeting.briefDecisions) {
@@ -923,6 +927,12 @@ class MeetingService: ObservableObject {
         let templateRaw = obj.value(forKey: "templateRaw") as? String ?? MeetingTemplate.general.rawValue
         let template = MeetingTemplate(rawValue: templateRaw) ?? .general
 
+        var enhancedNotes: [EnhancedBlock]?
+        if let data = obj.value(forKey: "enhancedNotesData") as? Data {
+            enhancedNotes = try? JSONDecoder().decode([EnhancedBlock].self, from: data)
+        }
+        let notepadContent = obj.value(forKey: "notepadContent") as? String
+
         return Meeting(
             id: id,
             title: title,
@@ -939,6 +949,8 @@ class MeetingService: ObservableObject {
             briefKeyQuotes: keyQuotes,
             rawTranscript: obj.value(forKey: "rawTranscript") as? String,
             userNotes: obj.value(forKey: "userNotes") as? String,
+            notepadContent: notepadContent,
+            enhancedNotes: enhancedNotes,
             createdAt: createdAt
         )
     }
