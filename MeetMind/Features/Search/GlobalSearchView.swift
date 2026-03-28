@@ -106,6 +106,9 @@ struct GlobalSearchView: View {
                 }
                 .accessibilityLabel("Clear search")
             }
+
+            // Voice search
+            DictationButton(text: $searchText)
         }
         .padding(.horizontal, 16)
         .frame(height: 50)
