@@ -9,148 +9,53 @@ struct RecordingView: View {
     @State private var notes: String = ""
     @State private var detectedClient: String?
     @State private var waveformLevels: [CGFloat] = Array(repeating: 0.05, count: 30)
-    @State private var isAnimating = false
     @State private var pulseScale: CGFloat = 1.0
     @State private var showCancelConfirm = false
     @State private var showDurationWarning = false
-    @State private var isNotesExpanded = false
     @State private var selectedTemplate: MeetingTemplate = .general
-    @State private var selectedTab: RecordingTab = .recording
     @State private var notepadContent: String = ""
+    @State private var meetingTitle: String = ""
 
-    enum RecordingTab: String, CaseIterable {
-        case recording = "Recording"
-        case notepad = "Notepad"
-    }
-
-    // Ambient blob animation state
-    @State private var blob1Offset: CGSize = CGSize(width: -80, height: -120)
-    @State private var blob2Offset: CGSize = CGSize(width: 100, height: 60)
-    @State private var blob3Offset: CGSize = CGSize(width: -40, height: 150)
-
+    @FocusState private var isTitleFocused: Bool
     @FocusState private var isNotesFocused: Bool
 
     let onStop: (Meeting?) -> Void
     let onCancel: () -> Void
     let onMinimize: () -> Void
 
-    private let barCount = 30
+    private let barCount = 20
 
     var body: some View {
         ZStack {
-            // Background
             MMColors.background.ignoresSafeArea()
 
-            // Ambient light blobs
-            ambientBlobs
-
             VStack(spacing: 0) {
-                // Top bar
+                // Top bar — minimal
                 topBar
                     .padding(.top, 8)
 
-                Spacer(minLength: 8)
+                // Full-page notepad
+                notepadArea
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
 
-                // Client badge
-                if let client = detectedClient {
-                    MMBadge(text: client, variant: .client("6C5CE7"))
-                        .padding(.bottom, 16)
-                }
+                Spacer(minLength: 0)
 
-                // Recording indicator
-                recordingIndicator
-                    .padding(.bottom, 16)
-
-                // Timer
-                Text(formattedTime)
-                    .font(MMTypography.monoLarge)
-                    .foregroundColor(MMColors.textPrimary)
-                    .padding(.bottom, 8)
-                    .accessibilityLabel("Recording duration: \(accessibleDuration)")
-                    .accessibilityAddTraits(.updatesFrequently)
-
-                // Remaining time warning (shows after 2 hours)
-                if audioService.duration >= 7200 {
-                    remainingTimeIndicator
-                        .padding(.bottom, 8)
-                }
-
-                // Waveform
-                waveformView
-                    .frame(height: 60)
-                    .padding(.horizontal, 32)
-                    .padding(.bottom, 16)
-                    .accessibilityLabel("Audio waveform visualization")
-                    .accessibilityHidden(true)
-
-                // Live transcription (inline)
-                if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
-                    ScrollView {
-                        LiveTranscriptOverlay(transcriptionService: liveTranscription)
-                    }
-                    .frame(height: 90)
+                // Meeting type pills
+                meetingTypePills
                     .padding(.horizontal, 16)
                     .padding(.bottom, 12)
-                }
 
-                // Tab picker
-                HStack(spacing: 0) {
-                    ForEach(RecordingTab.allCases, id: \.self) { tab in
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.2)) {
-                                selectedTab = tab
-                            }
-                        } label: {
-                            VStack(spacing: 6) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: tab == .recording ? "waveform" : "note.text")
-                                        .font(.system(size: 12))
-                                    Text(tab.rawValue)
-                                        .font(MMTypography.footnoteMedium)
-                                }
-                                .foregroundColor(selectedTab == tab ? MMColors.primary : MMColors.textTertiary)
-                                .padding(.vertical, 8)
-                                .frame(maxWidth: .infinity)
-
-                                Rectangle()
-                                    .fill(selectedTab == tab ? MMColors.primary : Color.clear)
-                                    .frame(height: 2)
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
-
-                // Tab content
-                Group {
-                    if selectedTab == .recording {
-                        VStack(spacing: 16) {
-                            MeetingTemplateSelector(selectedTemplate: $selectedTemplate)
-                            notesEditor
-                        }
-                    } else {
-                        NotepadView(
-                            notepadContent: $notepadContent,
-                            templateSections: selectedTemplate.notepadSections
-                        )
-                        .frame(minHeight: 200)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 16)
-
-                // Controls
-                controlButtons
-                    .padding(.bottom, 40)
+                // Bottom recording bar
+                recordingBar
             }
-
         }
         .onAppear {
             startRecording()
-            startAmbientAnimation()
+            meetingTitle = defaultTitle
         }
         .onTapGesture {
+            isTitleFocused = false
             isNotesFocused = false
         }
         .onChange(of: audioService.audioLevel) { _, newLevel in
@@ -177,51 +82,6 @@ struct RecordingView: View {
         }
     }
 
-    // MARK: - Ambient Blobs
-
-    private var ambientBlobs: some View {
-        ZStack {
-            Circle()
-                .fill(MMColors.primary.opacity(0.08))
-                .frame(width: 200, height: 200)
-                .blur(radius: 80)
-                .offset(blob1Offset)
-
-            Circle()
-                .fill(MMColors.primary.opacity(0.06))
-                .frame(width: 160, height: 160)
-                .blur(radius: 60)
-                .offset(blob2Offset)
-
-            Circle()
-                .fill(MMColors.primary.opacity(0.05))
-                .frame(width: 180, height: 180)
-                .blur(radius: 70)
-                .offset(blob3Offset)
-        }
-    }
-
-    private func startAmbientAnimation() {
-        withAnimation(
-            .easeInOut(duration: 8)
-            .repeatForever(autoreverses: true)
-        ) {
-            blob1Offset = CGSize(width: 60, height: 80)
-        }
-        withAnimation(
-            .easeInOut(duration: 10)
-            .repeatForever(autoreverses: true)
-        ) {
-            blob2Offset = CGSize(width: -80, height: -100)
-        }
-        withAnimation(
-            .easeInOut(duration: 12)
-            .repeatForever(autoreverses: true)
-        ) {
-            blob3Offset = CGSize(width: 70, height: -60)
-        }
-    }
-
     // MARK: - Top Bar
 
     private var topBar: some View {
@@ -229,242 +89,265 @@ struct RecordingView: View {
             Button {
                 showCancelConfirm = true
             } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 16, weight: .semibold))
-                    Text("Cancel")
-                        .font(MMTypography.subheadline)
-                }
-                .foregroundColor(MMColors.textSecondary)
+                Image(systemName: "xmark")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(MMColors.textTertiary)
+                    .frame(width: 36, height: 36)
+                    .background(MMColors.cardBg)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle().stroke(MMColors.border, lineWidth: 1)
+                    )
             }
             .padding(.leading, 16)
-            .accessibilityLabel("Cancel recording")
-            .accessibilityHint("Double-tap to discard the current recording")
+
+            Spacer()
+
+            // Recording status + timer
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(audioService.isPaused ? MMColors.warning : MMColors.recording)
+                    .frame(width: 8, height: 8)
+                    .scaleEffect(pulseScale)
+                    .animation(
+                        audioService.isPaused
+                            ? .default
+                            : .easeInOut(duration: 1.0).repeatForever(autoreverses: true),
+                        value: pulseScale
+                    )
+                    .onAppear { pulseScale = 0.6 }
+
+                Text(formattedTime)
+                    .font(.system(size: 14, weight: .medium, design: .monospaced))
+                    .foregroundColor(MMColors.textPrimary)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 7)
+            .background(MMColors.cardBg)
+            .clipShape(Capsule())
+            .overlay(
+                Capsule().stroke(MMColors.border, lineWidth: 1)
+            )
 
             Spacer()
 
             Button {
-                // Minimize — don't stop recording
                 onMinimize()
             } label: {
                 Image(systemName: "chevron.down")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(MMColors.textSecondary)
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(MMColors.textTertiary)
+                    .frame(width: 36, height: 36)
+                    .background(MMColors.cardBg)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle().stroke(MMColors.border, lineWidth: 1)
+                    )
             }
             .padding(.trailing, 16)
-            .accessibilityLabel("Minimize recording")
-            .accessibilityHint("Double-tap to minimize and continue recording in background")
         }
     }
 
-    // MARK: - Recording Indicator
+    // MARK: - Full Notepad Area
 
-    private var recordingIndicator: some View {
-        HStack(spacing: 8) {
-            Circle()
-                .fill(MMColors.recording)
-                .frame(width: 10, height: 10)
-                .scaleEffect(pulseScale)
-                .animation(
-                    audioService.isPaused
-                        ? .default
-                        : .easeInOut(duration: 1.0).repeatForever(autoreverses: true),
-                    value: pulseScale
-                )
-                .onAppear {
-                    pulseScale = 0.6
-                }
+    private var notepadArea: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Meeting title
+            TextField("Meeting title...", text: $meetingTitle)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundColor(MMColors.textPrimary)
+                .focused($isTitleFocused)
+                .padding(.bottom, 20)
 
-            Text(audioService.isPaused ? "Paused" : "Recording...")
-                .font(MMTypography.footnoteMedium)
-                .foregroundColor(audioService.isPaused ? MMColors.textSecondary : MMColors.recording)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(audioService.isPaused ? "Recording paused" : "Recording in progress")
-    }
+            // Divider
+            Rectangle()
+                .fill(MMColors.border)
+                .frame(height: 1)
+                .padding(.bottom, 16)
 
-    // MARK: - Waveform
-
-    private var waveformView: some View {
-        HStack(spacing: 3) {
-            ForEach(0..<barCount, id: \.self) { index in
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(barColor(for: index))
-                    .frame(width: 4, height: max(4, waveformLevels[index] * 80))
-                    .shadow(color: MMColors.primary.opacity(0.3), radius: 4, x: 0, y: 0)
-                    .animation(.easeOut(duration: 0.1), value: waveformLevels[index])
-            }
-        }
-    }
-
-    private func barColor(for index: Int) -> Color {
-        let center = barCount / 2
-        let distance = abs(index - center)
-        let maxDistance = barCount / 2
-        let factor = 1.0 - (Double(distance) / Double(maxDistance)) * 0.5
-        return MMColors.primary.opacity(factor)
-    }
-
-    // MARK: - Notes Editor
-
-    private var notesEditor: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // Header
-            HStack {
-                Image(systemName: "note.text")
-                    .foregroundColor(MMColors.primary)
-                    .font(.system(size: 14))
-
-                Text("Meeting Notes")
-                    .font(MMTypography.footnoteMedium)
-                    .foregroundColor(MMColors.textSecondary)
-
-                Spacer()
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        isNotesExpanded.toggle()
-                    }
-                } label: {
-                    Image(systemName: isNotesExpanded ? "chevron.down" : "chevron.up")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(MMColors.textTertiary)
-                }
-            }
-
-            // Scrollable text editor
+            // Notes area — full page
             ZStack(alignment: .topLeading) {
-                // Placeholder
                 if notes.isEmpty {
-                    Text("Jot your thoughts during the meeting... AI will enhance them")
-                        .font(MMTypography.body)
-                        .foregroundColor(MMColors.textTertiary.opacity(0.6))
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 8)
-                        .allowsHitTesting(false)
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Start typing your notes...")
+                            .font(.system(size: 16))
+                            .foregroundColor(MMColors.textTertiary.opacity(0.5))
+
+                        HStack(spacing: 6) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 12))
+                                .foregroundColor(MMColors.primary.opacity(0.5))
+                            Text("AI will enhance your notes with the transcript")
+                                .font(.system(size: 13))
+                                .foregroundColor(MMColors.textTertiary.opacity(0.4))
+                        }
+                    }
+                    .padding(.top, 8)
+                    .allowsHitTesting(false)
                 }
 
                 TextEditor(text: $notes)
-                    .font(MMTypography.body)
+                    .font(.system(size: 16))
                     .foregroundColor(MMColors.textPrimary)
                     .scrollContentBackground(.hidden)
                     .tint(MMColors.primary)
                     .focused($isNotesFocused)
-                    .frame(minHeight: isNotesExpanded ? 140 : 70, maxHeight: isNotesExpanded ? 200 : 100)
-                    .accessibilityLabel("Meeting notes")
-                    .accessibilityHint("Type your notes during the meeting")
+                    .frame(maxHeight: .infinity)
             }
 
-            // AI hint
-            HStack(spacing: 4) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 10))
-                    .foregroundColor(MMColors.primary.opacity(0.7))
-
-                Text("Your notes + AI transcript = better summary")
-                    .font(MMTypography.caption2)
-                    .foregroundColor(MMColors.textTertiary)
+            // Live transcription peek
+            if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                liveTranscriptPeek
+                    .padding(.top, 8)
             }
         }
-        .padding(16)
-        .background(MMColors.cardBg)
-        .cornerRadius(16)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(
-                    isNotesFocused ? MMColors.primary.opacity(0.4) : MMColors.cardBg,
-                    lineWidth: 1
-                )
-        )
-        .animation(.easeInOut(duration: 0.2), value: isNotesFocused)
     }
 
-    // MARK: - Remaining Time Indicator
+    // MARK: - Live Transcript Peek
 
-    private var remainingTimeIndicator: some View {
-        let remaining = max(0, 10800 - audioService.duration)
-        let remainingMinutes = Int(remaining) / 60
-        let isUrgent = remaining <= 900 // 15 minutes
+    private var liveTranscriptPeek: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "waveform")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(MMColors.primary)
 
-        return HStack(spacing: 8) {
-            Image(systemName: "clock.badge.exclamationmark")
+            Text(liveTranscription.liveText.suffix(80))
                 .font(.system(size: 12))
-
-            Text("\(remainingMinutes) min remaining")
-                .font(MMTypography.caption1)
+                .foregroundColor(MMColors.textTertiary)
+                .lineLimit(1)
+                .truncationMode(.head)
         }
-        .foregroundColor(isUrgent ? MMColors.recording : MMColors.warning)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(
-            (isUrgent ? MMColors.recording : MMColors.warning)
-                .opacity(0.15)
-        )
-        .cornerRadius(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(MMColors.primaryLight.opacity(0.5))
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
-    // MARK: - Control Buttons
+    // MARK: - Meeting Type Pills
 
-    private var controlButtons: some View {
-        HStack(spacing: 40) {
-            // Pause / Resume
-            Button {
-                if audioService.isPaused {
-                    audioService.resumeRecording()
-                } else {
-                    audioService.pauseRecording()
-                }
-            } label: {
-                VStack(spacing: 8) {
-                    ZStack {
-                        Circle()
-                            .fill(MMColors.backgroundElevated)
-                            .frame(width: 52, height: 52)
-                        Circle()
-                            .stroke(MMColors.border, lineWidth: 1)
-                            .frame(width: 52, height: 52)
-
-                        Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(MMColors.textPrimary)
+    private var meetingTypePills: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(MeetingTemplate.allCases, id: \.self) { template in
+                    let isSelected = selectedTemplate == template
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            selectedTemplate = template
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: template.icon)
+                                .font(.system(size: 11, weight: .medium))
+                            Text(template.rawValue)
+                                .font(.system(size: 12, weight: .medium))
+                        }
+                        .foregroundColor(isSelected ? .white : MMColors.textSecondary)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(
+                            isSelected
+                                ? MMColors.primary
+                                : MMColors.cardBg
+                        )
+                        .clipShape(Capsule())
+                        .overlay(
+                            Capsule()
+                                .stroke(isSelected ? MMColors.primary : MMColors.border, lineWidth: 1)
+                        )
                     }
-                    Text(audioService.isPaused ? "Resume" : "Pause")
-                        .font(MMTypography.caption2)
-                        .foregroundColor(MMColors.textSecondary)
                 }
             }
-            .accessibilityLabel(audioService.isPaused ? "Resume recording" : "Pause recording")
-            .accessibilityHint("Double-tap to \(audioService.isPaused ? "resume" : "pause") the recording")
+            .padding(.horizontal, 4)
+        }
+    }
 
-            // Stop
-            Button {
-                stopAndFinish()
-            } label: {
-                VStack(spacing: 8) {
+    // MARK: - Bottom Recording Bar
+
+    private var recordingBar: some View {
+        VStack(spacing: 0) {
+            // Subtle top border
+            Rectangle()
+                .fill(MMColors.border)
+                .frame(height: 1)
+
+            HStack(spacing: 0) {
+                // Compact waveform
+                compactWaveform
+                    .frame(width: 80, height: 28)
+                    .padding(.leading, 20)
+
+                Spacer()
+
+                // Pause / Resume button
+                Button {
+                    if audioService.isPaused {
+                        audioService.resumeRecording()
+                    } else {
+                        audioService.pauseRecording()
+                    }
+                } label: {
+                    Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundColor(MMColors.textPrimary)
+                        .frame(width: 44, height: 44)
+                        .background(MMColors.cardBg)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle().stroke(MMColors.border, lineWidth: 1)
+                        )
+                }
+
+                Spacer()
+                    .frame(width: 16)
+
+                // Stop button
+                Button {
+                    stopAndFinish()
+                } label: {
                     ZStack {
-                        // Recording-red glow shadow
-                        Circle()
-                            .fill(MMColors.recording.opacity(0.25))
-                            .frame(width: 88, height: 88)
-                            .blur(radius: 12)
-
                         Circle()
                             .fill(MMColors.recording)
-                            .frame(width: 72, height: 72)
-                            .shadow(color: MMColors.recording.opacity(0.6), radius: 16, x: 0, y: 4)
-                            .shadow(color: MMColors.recording.opacity(0.3), radius: 24, x: 0, y: 8)
+                            .frame(width: 44, height: 44)
+                            .shadow(color: MMColors.recording.opacity(0.4), radius: 8, x: 0, y: 2)
 
                         RoundedRectangle(cornerRadius: 4)
                             .fill(.white)
-                            .frame(width: 22, height: 22)
+                            .frame(width: 16, height: 16)
                     }
-                    Text("Stop")
-                        .font(MMTypography.caption2)
-                        .foregroundColor(MMColors.textSecondary)
+                }
+
+                Spacer()
+
+                // Duration warning or remaining
+                if audioService.duration >= 7200 {
+                    let remaining = max(0, 10800 - audioService.duration)
+                    let remainingMinutes = Int(remaining) / 60
+                    Text("\(remainingMinutes)m left")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
+                        .padding(.trailing, 20)
+                } else {
+                    Color.clear.frame(width: 80)
+                        .padding(.trailing, 20)
                 }
             }
-            .accessibilityLabel("Stop recording")
-            .accessibilityHint("Double-tap to stop and process the recording")
+            .padding(.vertical, 14)
+            .background(MMColors.backgroundElevated)
+        }
+        .padding(.bottom, 0)
+    }
+
+    // MARK: - Compact Waveform
+
+    private var compactWaveform: some View {
+        HStack(spacing: 2) {
+            ForEach(0..<barCount, id: \.self) { index in
+                RoundedRectangle(cornerRadius: 1.5)
+                    .fill(MMColors.primary.opacity(audioService.isPaused ? 0.3 : 0.7))
+                    .frame(width: 3, height: max(3, waveformLevels[index] * 28))
+                    .animation(.easeOut(duration: 0.1), value: waveformLevels[index])
+            }
         }
     }
 
@@ -475,25 +358,21 @@ struct RecordingView: View {
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
         let seconds = totalSeconds % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        }
+        return String(format: "%02d:%02d", minutes, seconds)
     }
 
-    private var accessibleDuration: String {
-        let totalSeconds = Int(audioService.duration)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-        var parts: [String] = []
-        if hours > 0 { parts.append("\(hours) hour\(hours == 1 ? "" : "s")") }
-        if minutes > 0 { parts.append("\(minutes) minute\(minutes == 1 ? "" : "s")") }
-        parts.append("\(seconds) second\(seconds == 1 ? "" : "s")")
-        return parts.joined(separator: ", ")
+    private var defaultTitle: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d, h:mm a"
+        return formatter.string(from: Date())
     }
 
     // MARK: - Actions
 
     private func startRecording() {
-        // Check microphone permission first
         switch AVAudioSession.sharedInstance().recordPermission {
         case .granted:
             doStartRecording()
@@ -508,7 +387,6 @@ struct RecordingView: View {
                 }
             }
         case .denied:
-            // Show alert directing user to Settings
             onCancel()
         @unknown default:
             onCancel()
@@ -532,8 +410,6 @@ struct RecordingView: View {
 
     private func stopAndFinish() {
         liveTranscription.stopLiveTranscription()
-
-        // Capture duration BEFORE stopping (stopRecording resets it)
         let recordedDuration = audioService.duration
 
         guard let audioURL = audioService.stopRecording() else {
@@ -541,8 +417,8 @@ struct RecordingView: View {
             return
         }
 
-        var meeting = Meeting(
-            title: "Processing Meeting...",
+        let meeting = Meeting(
+            title: meetingTitle.isEmpty ? "Meeting \(defaultTitle)" : meetingTitle,
             date: Date(),
             duration: recordedDuration,
             audioFilePath: audioURL.path,
@@ -564,11 +440,9 @@ struct RecordingView: View {
     }
 
     private func updateWaveform(level: CGFloat) {
-        // Shift levels left and add new level at the center, mirrored
         var newLevels = waveformLevels
         let mid = barCount / 2
 
-        // Shift outer bars
         for i in 0..<mid {
             newLevels[i] = newLevels[i + 1]
         }
@@ -576,20 +450,17 @@ struct RecordingView: View {
             newLevels[i] = newLevels[i - 1]
         }
 
-        // Set center with some randomness for visual interest
         let randomVariation = CGFloat.random(in: -0.15...0.15)
         let centerLevel = min(1.0, max(0.05, level + randomVariation))
         newLevels[mid] = centerLevel
-        newLevels[mid - 1] = min(1.0, max(0.05, level + CGFloat.random(in: -0.1...0.1)))
-        newLevels[mid + 1] = min(1.0, max(0.05, level + CGFloat.random(in: -0.1...0.1)))
+        if mid > 0 {
+            newLevels[mid - 1] = min(1.0, max(0.05, level + CGFloat.random(in: -0.1...0.1)))
+        }
+        if mid + 1 < barCount {
+            newLevels[mid + 1] = min(1.0, max(0.05, level + CGFloat.random(in: -0.1...0.1)))
+        }
 
         waveformLevels = newLevels
-    }
-
-    private var formattedDateForTitle: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM d, h:mm a"
-        return formatter.string(from: Date())
     }
 }
 

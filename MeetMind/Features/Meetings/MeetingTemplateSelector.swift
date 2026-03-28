@@ -12,7 +12,7 @@ struct MeetingTemplateSelector: View {
 
                 Text("Meeting Type")
                     .font(MMTypography.caption1)
-                    .foregroundColor(.white.opacity(0.6))
+                    .foregroundColor(MMColors.textTertiary)
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -41,19 +41,19 @@ struct MeetingTemplateSelector: View {
                 Text(template.rawValue)
                     .font(MMTypography.footnoteMedium)
             }
-            .foregroundColor(isSelected ? .white : .white.opacity(0.6))
+            .foregroundColor(isSelected ? .white : MMColors.textSecondary)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
             .background(
                 isSelected
                     ? MMColors.primary
-                    : Color.white.opacity(0.05)
+                    : MMColors.cardBg
             )
             .cornerRadius(20)
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
                     .stroke(
-                        isSelected ? MMColors.primary : Color.white.opacity(0.08),
+                        isSelected ? MMColors.primary : MMColors.border,
                         lineWidth: 1
                     )
             )
@@ -68,7 +68,7 @@ struct MeetingTemplateSelector: View {
 
 #Preview {
     ZStack {
-        Color(hex: "050506").ignoresSafeArea()
+        MMColors.background.ignoresSafeArea()
 
         MeetingTemplateSelector(selectedTemplate: .constant(.general))
             .padding()
