@@ -21,6 +21,7 @@ struct Meeting: Identifiable {
     var notepadContent: String?
     var enhancedNotes: [EnhancedBlock]?
     var createdAt: Date
+    var spaceId: UUID?
 
     init(
         id: UUID = UUID(),
@@ -40,7 +41,8 @@ struct Meeting: Identifiable {
         userNotes: String? = nil,
         notepadContent: String? = nil,
         enhancedNotes: [EnhancedBlock]? = nil,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        spaceId: UUID? = nil
     ) {
         self.id = id
         self.title = title
@@ -60,7 +62,32 @@ struct Meeting: Identifiable {
         self.notepadContent = notepadContent
         self.enhancedNotes = enhancedNotes
         self.createdAt = createdAt
+        self.spaceId = spaceId
     }
+}
+
+// MARK: - Space
+
+struct Space: Identifiable, Codable, Hashable {
+    let id: UUID
+    var name: String
+    var icon: String // SF Symbol name
+    var colorHex: String
+    var meetingIds: [UUID]
+    var createdAt: Date
+    var isDefault: Bool
+
+    init(id: UUID = UUID(), name: String, icon: String = "folder.fill", colorHex: String = "6C5CE7", meetingIds: [UUID] = [], createdAt: Date = Date(), isDefault: Bool = false) {
+        self.id = id
+        self.name = name
+        self.icon = icon
+        self.colorHex = colorHex
+        self.meetingIds = meetingIds
+        self.createdAt = createdAt
+        self.isDefault = isDefault
+    }
+
+    static let defaultSpace = Space(name: "My Notes", icon: "note.text", colorHex: "6C5CE7", isDefault: true)
 }
 
 // MARK: - EnhancedBlock

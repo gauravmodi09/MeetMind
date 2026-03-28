@@ -122,6 +122,34 @@ struct LibraryView: View {
                             .buttonStyle(.plain)
                             .padding(.horizontal, 20)
 
+                            // Spaces shortcut
+                            NavigationLink {
+                                SpacesView()
+                                    .environmentObject(meetingService)
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "square.stack.3d.up.fill")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(MMColors.primary)
+                                    Text("Spaces")
+                                        .font(MMTypography.footnoteMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(12)
+                                .background(MMColors.cardBg)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(MMColors.border, lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.horizontal, 20)
+
                             if isSearchActive {
                                 // Full-text search: flat list of matching meetings
                                 searchResultsView

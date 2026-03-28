@@ -18,6 +18,8 @@
 		22FEBEA47F8F4710B4348EF0 /* CoachingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C0F8A594CE3402FA4B10718 /* CoachingView.swift */; };
 		2BD44B3F9E286CC4DB927E49 /* TodoService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94314E6E9407D130F884388B /* TodoService.swift */; };
 		2CE94C8DCA7244078496B605 /* StreakService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97AE99DC7E1745619D6748CB /* StreakService.swift */; };
+		2D0A5B3C8E4F6A7D9B1C2E3F /* SpaceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F1A2B3C4D5E6F7A8B9C0D1E /* SpaceService.swift */; };
+		2D0B6C4D9F5A7B8E0C2D3E4F /* SpacesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2B3C4D5E6F7A8B9C0D1E2F /* SpacesView.swift */; };
 		2D1783FF2F8C41A68843E854 /* MeetingInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4016B187AE4265BE39D7D2 /* MeetingInsightsView.swift */; };
 		2D2C4710B3F3A20C24AB7807 /* WatchConnectivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FD14AFFA05B11C23B5B1C4B /* WatchConnectivityService.swift */; };
 		2EF7A45DEEE34D82B201BCFB /* CalendarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E1E7478502410DB3E63E04 /* CalendarService.swift */; };
@@ -234,6 +236,7 @@
 		3B698A28C46329BC1C47C012 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		3C0F8A594CE3402FA4B10718 /* CoachingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CoachingView.swift; path = MeetMind/Features/Meetings/CoachingView.swift; sourceTree = SOURCE_ROOT; };
 		3C81A826372397B5FA1EC28A /* DocumentThumbnailCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentThumbnailCard.swift; sourceTree = "<group>"; };
+		3F1A2B3C4D5E6F7A8B9C0D1E /* SpaceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpaceService.swift; path = MeetMind/Services/SpaceService.swift; sourceTree = SOURCE_ROOT; };
 		3E4F62CF8A1F26336018727C /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		3F4DEDBEBAD4454E0CF7A83A /* MeetMindWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MeetMindWidgetExtension.entitlements; sourceTree = "<group>"; };
 		411572CD64A8B9EB2DC4A554 /* MCEmptyState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCEmptyState.swift; sourceTree = "<group>"; };
@@ -243,6 +246,7 @@
 		44714D64814D7A30D1E9F527 /* ChatSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ChatSession.swift; path = MeetMind/Models/ChatSession.swift; sourceTree = SOURCE_ROOT; };
 		460E4BAA932792C94C89CE7B /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PeopleView.swift; path = MeetMind/Features/People/PeopleView.swift; sourceTree = SOURCE_ROOT; };
 		47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingTemplateSelector.swift; path = MeetMind/Features/Meetings/MeetingTemplateSelector.swift; sourceTree = SOURCE_ROOT; };
+		4A2B3C4D5E6F7A8B9C0D1E2F /* SpacesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SpacesView.swift; path = MeetMind/Features/Spaces/SpacesView.swift; sourceTree = SOURCE_ROOT; };
 		4A289626DAAB48FAB0D22093 /* AudioHighlightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioHighlightsView.swift; path = MeetMind/Features/Meetings/Components/AudioHighlightsView.swift; sourceTree = SOURCE_ROOT; };
 		4A96CB51A32C79ED676F5A46 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		4B3F8819FB594A59BFA8A67D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -503,6 +507,7 @@
 				A0A84CF7935E0C20F06BEF7E /* MMShimmer.swift */,
 				FD0946C6947F1833325126E2 /* MMTypography.swift */,
 				B70C4D388D6806D813303B39 /* ActionItemsView.swift */,
+				4A2B3C4D5E6F7A8B9C0D1E2F /* SpacesView.swift */,
 				7AE147B29C9B3A5D47859227 /* MeetingChatView.swift */,
 				111E4237B0110D217F1E4C5A /* ClientDictionaryView.swift */,
 				52A4469F94B8A51913B3D336 /* ClientMeetingsView.swift */,
@@ -809,6 +814,7 @@
 				7D79279702C1D31D3A41ECD7 /* RegionalLanguageAI.swift */,
 				5D30839DD4F1F2AABA827930 /* SmartNudgeService.swift */,
 				90AFC1B614595991A4A0A37E /* SmartSchedulingService.swift */,
+				3F1A2B3C4D5E6F7A8B9C0D1E /* SpaceService.swift */,
 				BB4173F5BD62B9418CD1C077 /* WidgetDataService.swift */,
 				24B982F38165328DAE9727D4 /* LLM */,
 			);
@@ -1344,6 +1350,8 @@
 				BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */,
 				CC33DD44EE55FF66AA11BB22 /* ProfileSetupView.swift in Sources */,
 				D3DFD7E089CC4023BA298FDE /* NoteTemplates.swift in Sources */,
+				2D0A5B3C8E4F6A7D9B1C2E3F /* SpaceService.swift in Sources */,
+				2D0B6C4D9F5A7B8E0C2D3E4F /* SpacesView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
