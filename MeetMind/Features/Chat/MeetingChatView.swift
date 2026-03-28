@@ -155,21 +155,43 @@ struct MeetingChatView: View {
             // Model selector pill
             HStack {
                 Menu {
-                    ForEach(ChatModel.allCases) { model in
-                        Button {
-                            GroqService.shared.selectedChatModel = model
-                        } label: {
-                            HStack {
-                                Text(model.label)
-                                if GroqService.shared.selectedChatModel == model {
-                                    Image(systemName: "checkmark")
+                    Section("Groq (Fast)") {
+                        ForEach(ChatModel.allCases.filter { $0.provider == .groq }) { model in
+                            Button {
+                                GroqService.shared.selectedChatModel = model
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(model.label)
+                                        Text(model.subtitle)
+                                    }
+                                    if GroqService.shared.selectedChatModel == model {
+                                        Image(systemName: "checkmark")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Section("Gemini (Quality)") {
+                        ForEach(ChatModel.allCases.filter { $0.provider == .gemini }) { model in
+                            Button {
+                                GroqService.shared.selectedChatModel = model
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(model.label)
+                                        Text(model.subtitle)
+                                    }
+                                    if GroqService.shared.selectedChatModel == model {
+                                        Image(systemName: "checkmark")
+                                    }
                                 }
                             }
                         }
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Image(systemName: "cpu")
+                        Image(systemName: GroqService.shared.selectedChatModel.provider == .gemini ? "sparkles" : "cpu")
                             .font(.system(size: 10, weight: .medium))
                         Text(GroqService.shared.selectedChatModel.label)
                             .font(.system(size: 11, weight: .medium))

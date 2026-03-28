@@ -64,12 +64,21 @@ enum GroqError: LocalizedError {
     }
 }
 
-// MARK: - Chat Model Selection
+// MARK: - AI Provider
+
+enum AIProvider: String {
+    case groq
+    case gemini
+}
 
 enum ChatModel: String, CaseIterable, Identifiable {
+    // Groq models
     case llama70B = "llama-3.3-70b-versatile"
     case llama8B = "llama-3.1-8b-instant"
     case deepseekR1 = "deepseek-r1-distill-llama-70b"
+    // Gemini models
+    case geminiFlash = "gemini-2.5-flash"
+    case geminiPro = "gemini-2.5-pro"
 
     var id: String { rawValue }
 
@@ -78,6 +87,25 @@ enum ChatModel: String, CaseIterable, Identifiable {
         case .llama70B: return "Llama 70B"
         case .llama8B: return "Llama 8B Fast"
         case .deepseekR1: return "DeepSeek R1"
+        case .geminiFlash: return "Gemini Flash"
+        case .geminiPro: return "Gemini Pro"
+        }
+    }
+
+    var provider: AIProvider {
+        switch self {
+        case .llama70B, .llama8B, .deepseekR1: return .groq
+        case .geminiFlash, .geminiPro: return .gemini
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .llama70B: return "Fast & capable"
+        case .llama8B: return "Ultra fast"
+        case .deepseekR1: return "Deep reasoning"
+        case .geminiFlash: return "High quality, fast"
+        case .geminiPro: return "Best quality, 1M context"
         }
     }
 }
@@ -95,6 +123,7 @@ class GroqService: ObservableObject {
     private let llamaModel = "llama-3.3-70b-versatile"
 
     @Published var selectedChatModel: ChatModel = .llama70B
+    @Published var selectedSummaryModel: ChatModel = .llama70B
 
     private let session: URLSession
 
@@ -571,8 +600,6 @@ class GroqService: ObservableObject {
     // MARK: - Chat About Meetings
 
     func chatAboutMeetings(query: String, meetingContext: String) async throws -> String {
-        let key = try apiKey()
-
         let profileContext = UserProfile.load().aiContextString
         let systemPrompt = """
         \(profileContext)
@@ -588,6 +615,16 @@ class GroqService: ObservableObject {
         - Keep responses under 200 words unless detail is requested.
         """
 
+        // Route to Gemini if a Gemini model is selected
+        if selectedChatModel.provider == .gemini {
+            return try await GeminiService.shared.chatAboutMeetings(
+                query: query,
+                meetingContext: meetingContext,
+                model: selectedChatModel.rawValue
+            )
+        }
+
+        let key = try apiKey()
         let payload: [String: Any] = [
             "model": selectedChatModel.rawValue,
             "temperature": 0.3,
@@ -605,6 +642,15 @@ class GroqService: ObservableObject {
     // MARK: - Recipe Execution
 
     func executeRecipe(prompt: String, transcript: String) async throws -> String {
+        // Route to Gemini if a Gemini model is selected
+        if selectedChatModel.provider == .gemini {
+            return try await GeminiService.shared.executeRecipe(
+                prompt: prompt,
+                transcript: transcript,
+                model: selectedChatModel.rawValue
+            )
+        }
+
         let key = try apiKey()
 
         let payload: [String: Any] = [

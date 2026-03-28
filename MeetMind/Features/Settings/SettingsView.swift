@@ -3,6 +3,7 @@ import CoreData
 
 struct SettingsView: View {
     @AppStorage("groqAPIKey") private var apiKey = ""
+    @AppStorage("geminiAPIKey") private var geminiAPIKey = ""
     @AppStorage("recordingQuality") private var recordingQuality = RecordingQuality.standard.rawValue
     @AppStorage("aiPromptStyle") private var aiPromptStyle = AIPromptStyle.concise.rawValue
     @AppStorage("audioRetention") private var audioRetention = AudioRetention.fourteenDays.rawValue
@@ -18,6 +19,8 @@ struct SettingsView: View {
 
     @State private var isEditingAPIKey = false
     @State private var apiKeyDraft = ""
+    @State private var isEditingGeminiKey = false
+    @State private var geminiKeyDraft = ""
     @State private var showExportSheet = false
     @State private var showDeleteConfirmation = false
     @State private var showCleanupConfirmation = false
@@ -29,6 +32,13 @@ struct SettingsView: View {
         guard apiKey.count > 8 else { return String(repeating: "\u{2022}", count: max(apiKey.count, 8)) }
         let prefix = String(apiKey.prefix(4))
         let suffix = String(apiKey.suffix(4))
+        return "\(prefix)\(String(repeating: "\u{2022}", count: 8))\(suffix)"
+    }
+
+    private var maskedGeminiKey: String {
+        guard geminiAPIKey.count > 8 else { return String(repeating: "\u{2022}", count: max(geminiAPIKey.count, 8)) }
+        let prefix = String(geminiAPIKey.prefix(4))
+        let suffix = String(geminiAPIKey.suffix(4))
         return "\(prefix)\(String(repeating: "\u{2022}", count: 8))\(suffix)"
     }
 
@@ -123,7 +133,32 @@ struct SettingsView: View {
 
                             sectionDivider
 
-                            Text("Your key is stored locally on this device.")
+                            // Gemini API Key row
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Gemini API Key")
+                                        .font(MMTypography.bodyMedium)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Text(geminiAPIKey.isEmpty ? "Not configured" : maskedGeminiKey)
+                                        .font(MMTypography.monoSmall)
+                                        .foregroundColor(geminiAPIKey.isEmpty ? MMColors.warning : MMColors.textSecondary)
+                                }
+                                Spacer()
+                                Button {
+                                    geminiKeyDraft = geminiAPIKey
+                                    isEditingGeminiKey = true
+                                } label: {
+                                    Text("Edit")
+                                        .font(MMTypography.footnoteMedium)
+                                        .foregroundColor(MMColors.primary)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            sectionDivider
+
+                            Text("Your keys are stored locally on this device.")
                                 .font(MMTypography.caption1)
                                 .foregroundColor(MMColors.textTertiary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -786,6 +821,9 @@ struct SettingsView: View {
             .sheet(isPresented: $isEditingAPIKey) {
                 apiKeyEditor
             }
+            .sheet(isPresented: $isEditingGeminiKey) {
+                geminiKeyEditor
+            }
             .alert("Delete All Data", isPresented: $showDeleteConfirmation) {
                 Button("Delete", role: .destructive) {
                     deleteAllData()
@@ -970,6 +1008,54 @@ struct SettingsView: View {
                     Button("Save") {
                         apiKey = apiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
                         isEditingAPIKey = false
+                    }
+                    .fontWeight(.semibold)
+                }
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    // MARK: - Gemini Key Editor Sheet
+
+    private var geminiKeyEditor: some View {
+        NavigationStack {
+            VStack(spacing: 20) {
+                Text("Enter your Google Gemini API key")
+                    .font(MMTypography.headline)
+                    .foregroundColor(MMColors.textPrimary)
+
+                MMTextField(
+                    placeholder: "AIza...",
+                    text: $geminiKeyDraft,
+                    icon: "key",
+                    isSecure: true
+                )
+                .padding(.horizontal)
+
+                Button {
+                    if let url = URL(string: "https://aistudio.google.com/apikey") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    Text("Get a free API key from Google AI Studio")
+                        .font(MMTypography.footnote)
+                        .foregroundColor(MMColors.primary)
+                }
+
+                Spacer()
+            }
+            .padding(.top, 24)
+            .navigationTitle("Gemini Key")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isEditingGeminiKey = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        geminiAPIKey = geminiKeyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+                        isEditingGeminiKey = false
                     }
                     .fontWeight(.semibold)
                 }
