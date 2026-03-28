@@ -151,6 +151,42 @@ struct MeetingChatView: View {
     private var inputBar: some View {
         VStack(spacing: 0) {
             Divider()
+
+            // Model selector pill
+            HStack {
+                Menu {
+                    ForEach(ChatModel.allCases) { model in
+                        Button {
+                            GroqService.shared.selectedChatModel = model
+                        } label: {
+                            HStack {
+                                Text(model.label)
+                                if GroqService.shared.selectedChatModel == model {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "cpu")
+                            .font(.system(size: 10, weight: .medium))
+                        Text(GroqService.shared.selectedChatModel.label)
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                    .foregroundColor(MMColors.primary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(MMColors.primaryLight)
+                    .clipShape(Capsule())
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 4)
+
             HStack(spacing: 12) {
                 TextField("Ask about your meetings...", text: $viewModel.inputText, axis: .vertical)
                     .textFieldStyle(.plain)

@@ -64,6 +64,24 @@ enum GroqError: LocalizedError {
     }
 }
 
+// MARK: - Chat Model Selection
+
+enum ChatModel: String, CaseIterable, Identifiable {
+    case llama70B = "llama-3.3-70b-versatile"
+    case llama8B = "llama-3.1-8b-instant"
+    case deepseekR1 = "deepseek-r1-distill-llama-70b"
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .llama70B: return "Llama 70B"
+        case .llama8B: return "Llama 8B Fast"
+        case .deepseekR1: return "DeepSeek R1"
+        }
+    }
+}
+
 // MARK: - Service
 
 @MainActor
@@ -75,6 +93,8 @@ class GroqService: ObservableObject {
 
     private let whisperModel = "whisper-large-v3-turbo"
     private let llamaModel = "llama-3.3-70b-versatile"
+
+    @Published var selectedChatModel: ChatModel = .llama70B
 
     private let session: URLSession
 
@@ -569,7 +589,7 @@ class GroqService: ObservableObject {
         """
 
         let payload: [String: Any] = [
-            "model": llamaModel,
+            "model": selectedChatModel.rawValue,
             "temperature": 0.3,
             "max_tokens": 2000,
             "messages": [
