@@ -38,13 +38,8 @@ struct RecordingView: View {
 
     var body: some View {
         ZStack {
-            // Deep cinema gradient background
-            LinearGradient(
-                colors: [Color(hex: "050506"), Color(hex: "0A0A0F")],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            // Background
+            MMColors.background.ignoresSafeArea()
 
             // Ambient light blobs
             ambientBlobs
@@ -69,7 +64,7 @@ struct RecordingView: View {
                 // Timer
                 Text(formattedTime)
                     .font(MMTypography.monoLarge)
-                    .foregroundColor(.white)
+                    .foregroundColor(MMColors.textPrimary)
                     .padding(.bottom, 8)
                     .accessibilityLabel("Recording duration: \(accessibleDuration)")
                     .accessibilityAddTraits(.updatesFrequently)
@@ -113,7 +108,7 @@ struct RecordingView: View {
                                     Text(tab.rawValue)
                                         .font(MMTypography.footnoteMedium)
                                 }
-                                .foregroundColor(selectedTab == tab ? MMColors.primary : .white.opacity(0.4))
+                                .foregroundColor(selectedTab == tab ? MMColors.primary : MMColors.textTertiary)
                                 .padding(.vertical, 8)
                                 .frame(maxWidth: .infinity)
 
@@ -187,19 +182,19 @@ struct RecordingView: View {
     private var ambientBlobs: some View {
         ZStack {
             Circle()
-                .fill(MMColors.primary.opacity(0.05))
+                .fill(MMColors.primary.opacity(0.08))
                 .frame(width: 200, height: 200)
                 .blur(radius: 80)
                 .offset(blob1Offset)
 
             Circle()
-                .fill(MMColors.primary.opacity(0.04))
+                .fill(MMColors.primary.opacity(0.06))
                 .frame(width: 160, height: 160)
                 .blur(radius: 60)
                 .offset(blob2Offset)
 
             Circle()
-                .fill(Color(hex: "6C5CE7").opacity(0.03))
+                .fill(MMColors.primary.opacity(0.05))
                 .frame(width: 180, height: 180)
                 .blur(radius: 70)
                 .offset(blob3Offset)
@@ -240,7 +235,7 @@ struct RecordingView: View {
                     Text("Cancel")
                         .font(MMTypography.subheadline)
                 }
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(MMColors.textSecondary)
             }
             .padding(.leading, 16)
             .accessibilityLabel("Cancel recording")
@@ -254,7 +249,7 @@ struct RecordingView: View {
             } label: {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(MMColors.textSecondary)
             }
             .padding(.trailing, 16)
             .accessibilityLabel("Minimize recording")
@@ -282,7 +277,7 @@ struct RecordingView: View {
 
             Text(audioService.isPaused ? "Paused" : "Recording...")
                 .font(MMTypography.footnoteMedium)
-                .foregroundColor(audioService.isPaused ? .white.opacity(0.5) : MMColors.recording)
+                .foregroundColor(audioService.isPaused ? MMColors.textSecondary : MMColors.recording)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(audioService.isPaused ? "Recording paused" : "Recording in progress")
@@ -322,7 +317,7 @@ struct RecordingView: View {
 
                 Text("Meeting Notes")
                     .font(MMTypography.footnoteMedium)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(MMColors.textSecondary)
 
                 Spacer()
 
@@ -333,7 +328,7 @@ struct RecordingView: View {
                 } label: {
                     Image(systemName: isNotesExpanded ? "chevron.down" : "chevron.up")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.4))
+                        .foregroundColor(MMColors.textTertiary)
                 }
             }
 
@@ -343,7 +338,7 @@ struct RecordingView: View {
                 if notes.isEmpty {
                     Text("Jot your thoughts during the meeting... AI will enhance them")
                         .font(MMTypography.body)
-                        .foregroundColor(.white.opacity(0.25))
+                        .foregroundColor(MMColors.textTertiary.opacity(0.6))
                         .padding(.horizontal, 4)
                         .padding(.vertical, 8)
                         .allowsHitTesting(false)
@@ -351,7 +346,7 @@ struct RecordingView: View {
 
                 TextEditor(text: $notes)
                     .font(MMTypography.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(MMColors.textPrimary)
                     .scrollContentBackground(.hidden)
                     .tint(MMColors.primary)
                     .focused($isNotesFocused)
@@ -368,16 +363,16 @@ struct RecordingView: View {
 
                 Text("Your notes + AI transcript = better summary")
                     .font(MMTypography.caption2)
-                    .foregroundColor(.white.opacity(0.35))
+                    .foregroundColor(MMColors.textTertiary)
             }
         }
         .padding(16)
-        .background(Color.white.opacity(0.05))
+        .background(MMColors.cardBg)
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
                 .stroke(
-                    isNotesFocused ? MMColors.primary.opacity(0.4) : Color.white.opacity(0.08),
+                    isNotesFocused ? MMColors.primary.opacity(0.4) : MMColors.cardBg,
                     lineWidth: 1
                 )
         )
@@ -423,19 +418,19 @@ struct RecordingView: View {
                 VStack(spacing: 8) {
                     ZStack {
                         Circle()
-                            .fill(Color.white.opacity(0.1))
+                            .fill(MMColors.backgroundElevated)
                             .frame(width: 52, height: 52)
                         Circle()
-                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                            .stroke(MMColors.border, lineWidth: 1)
                             .frame(width: 52, height: 52)
 
                         Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
                             .font(.system(size: 20))
-                            .foregroundColor(.white)
+                            .foregroundColor(MMColors.textPrimary)
                     }
                     Text(audioService.isPaused ? "Resume" : "Pause")
                         .font(MMTypography.caption2)
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(MMColors.textSecondary)
                 }
             }
             .accessibilityLabel(audioService.isPaused ? "Resume recording" : "Pause recording")
@@ -465,7 +460,7 @@ struct RecordingView: View {
                     }
                     Text("Stop")
                         .font(MMTypography.caption2)
-                        .foregroundColor(.white.opacity(0.6))
+                        .foregroundColor(MMColors.textSecondary)
                 }
             }
             .accessibilityLabel("Stop recording")
