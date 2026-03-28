@@ -15,6 +15,8 @@ struct MeetingsView: View {
     @State private var cardsAppeared = false
     @State private var showCalendar = false
     @State private var showMeetingPrep = false
+    @State private var showSearch = false
+    @State private var showSpaces = false
 
     var body: some View {
         NavigationStack {
@@ -112,6 +114,16 @@ struct MeetingsView: View {
                     }
                 )
             }
+            .sheet(isPresented: $showSearch) {
+                NavigationStack {
+                    GlobalSearchView()
+                }
+            }
+            .sheet(isPresented: $showSpaces) {
+                NavigationStack {
+                    SpacesView()
+                }
+            }
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }
@@ -136,11 +148,176 @@ struct MeetingsView: View {
         }
     }
 
+    // MARK: - Greeting Header
+
+    private var greetingText: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour >= 5 && hour < 12 {
+            return "Good morning"
+        } else if hour >= 12 && hour < 17 {
+            return "Good afternoon"
+        } else {
+            return "Good evening"
+        }
+    }
+
+    private var todayMeetingCount: Int {
+        meetingService.meetings.filter { Calendar.current.isDateInToday($0.date) }.count
+    }
+
+    private var greetingHeader: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(greetingText)
+                .font(.system(size: 28, weight: .bold))
+                .foregroundColor(MMColors.textPrimary)
+
+            Text(todayMeetingCount > 0
+                 ? "You have \(todayMeetingCount) meeting\(todayMeetingCount == 1 ? "" : "s") today"
+                 : "No meetings yet today")
+                .font(MMTypography.subheadline)
+                .foregroundColor(MMColors.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 16)
+    }
+
+    // MARK: - Quick Action Chips
+
+    private var quickActionChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                quickChip(icon: "mic.fill", label: "Record Meeting") {
+                    let context = MeetingPrepService.shared.prepareContext(for: nil)
+                    if context.hasContext {
+                        showMeetingPrep = true
+                    } else {
+                        showRecording = true
+                    }
+                }
+
+                quickChip(icon: "checkmark.circle", label: "Voice Todo") {
+                    NotificationCenter.default.post(name: .widgetVoiceTodo, object: nil)
+                }
+
+                quickChip(icon: "magnifyingglass", label: "Search") {
+                    showSearch = true
+                }
+
+                quickChip(icon: "square.stack.3d.up", label: "Spaces") {
+                    showSpaces = true
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+
+    private func quickChip(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .medium))
+                Text(label)
+                    .font(.system(size: 10, weight: .medium))
+            }
+            .foregroundColor(MMColors.textPrimary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                Capsule()
+                    .fill(MMColors.cardBg)
+            )
+            .overlay(
+                Capsule()
+                    .stroke(MMColors.border, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Stats Row
+
+    private var totalPendingActionItems: Int {
+        meetingService.meetings
+            .flatMap { $0.briefActionItems }
+            .filter { !$0.isCompleted }
+            .count
+    }
+
+    private var recordingStreak: Int {
+        let calendar = Calendar.current
+        let meetingDates = Set(meetingService.meetings.map { calendar.startOfDay(for: $0.date) })
+        guard !meetingDates.isEmpty else { return 0 }
+
+        var streak = 0
+        var checkDate = calendar.startOfDay(for: Date())
+
+        // If no meeting today, start checking from yesterday
+        if !meetingDates.contains(checkDate) {
+            guard let yesterday = calendar.date(byAdding: .day, value: -1, to: checkDate) else { return 0 }
+            checkDate = yesterday
+        }
+
+        while meetingDates.contains(checkDate) {
+            streak += 1
+            guard let prev = calendar.date(byAdding: .day, value: -1, to: checkDate) else { break }
+            checkDate = prev
+        }
+
+        return streak
+    }
+
+    private var statsRow: some View {
+        HStack(spacing: 12) {
+            miniStatCard(value: "\(meetingService.meetings.count)", label: "Meetings", icon: "mic.fill", color: MMColors.primary)
+            miniStatCard(value: "\(totalPendingActionItems)", label: "Pending", icon: "checklist", color: MMColors.warning)
+            miniStatCard(value: "\(recordingStreak)", label: "Day Streak", icon: "flame.fill", color: MMColors.success)
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private func miniStatCard(value: String, label: String, icon: String, color: Color) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(color)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(value)
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .foregroundColor(MMColors.textPrimary)
+                Text(label)
+                    .font(MMTypography.caption2)
+                    .foregroundColor(MMColors.textTertiary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .light)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(MMColors.border.opacity(0.5), lineWidth: 1)
+        )
+    }
+
     // MARK: - Main Content
 
     private var mainContent: some View {
         ScrollView {
             VStack(spacing: 24) {
+                // Greeting Header
+                greetingHeader
+                    .padding(.top, 12)
+
+                // Quick Action Chips
+                quickActionChips
+
+                // Stats Row
+                statsRow
+
                 // Offline Queue Banner
                 OfflineQueueBanner()
                     .padding(.horizontal, 16)
@@ -148,7 +325,6 @@ struct MeetingsView: View {
                 // Today Summary Card
                 todaySummaryCard
                     .padding(.horizontal, 16)
-                    .padding(.top, 16)
 
                 // Record Button (Hero)
                 recordButton
