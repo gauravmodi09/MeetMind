@@ -365,11 +365,10 @@ class GroqService: ObservableObject {
 
         var effectivePrompt: String
         if tier.maxTokens < 4000 {
-            let profileContext = UserProfile.load().aiContextString
+            // Short/medium transcripts: use tier-specific prompt instead of custom prompt
             effectivePrompt = "\(profileContext)\n\n\(tier.promptOverride)"
-            let templateModifier2 = template.promptModifier
-            if !templateModifier2.isEmpty {
-                effectivePrompt += "\n\nAdditional context:\n\(templateModifier2)"
+            if !templateModifier.isEmpty {
+                effectivePrompt += "\n\nAdditional context:\n\(templateModifier)"
             }
         } else {
             effectivePrompt = summaryPrompt

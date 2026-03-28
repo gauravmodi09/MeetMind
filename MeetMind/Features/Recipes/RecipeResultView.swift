@@ -283,6 +283,9 @@ struct RecipeResultView: View {
                 let boldText = String(remaining[remaining.startIndex..<boldEnd.lowerBound])
                 result = result + Text(boldText).bold().foregroundColor(MMColors.textPrimary)
                 remaining = String(remaining[boldEnd.upperBound...])
+            } else {
+                // Unclosed bold marker — render ** as literal text
+                result = result + Text("**").foregroundColor(MMColors.textSecondary)
             }
         }
         if !remaining.isEmpty {
