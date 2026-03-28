@@ -41,11 +41,18 @@ final class AuthService: ObservableObject {
     func signInWithGoogle() async {
         signInError = nil
 
+        #if os(iOS)
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootViewController = windowScene.windows.first?.rootViewController else {
             signInError = "Unable to find root view controller."
             return
         }
+        #elseif os(macOS)
+        guard let window = NSApplication.shared.keyWindow else {
+            signInError = "Unable to find key window."
+            return
+        }
+        #endif
 
         guard let clientID = FirebaseApp.app()?.options.clientID else {
             signInError = "Firebase not configured. Missing GoogleService-Info.plist."
@@ -56,7 +63,11 @@ final class AuthService: ObservableObject {
         GIDSignIn.sharedInstance.configuration = config
 
         do {
+            #if os(iOS)
             let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootViewController)
+            #elseif os(macOS)
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: window)
+            #endif
             guard let idToken = result.user.idToken?.tokenString else {
                 signInError = "Missing ID token from Google."
                 return
