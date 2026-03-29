@@ -29,30 +29,35 @@ struct RecordingView: View {
         ZStack {
             MMColors.background.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                // Top bar — minimal
-                topBar
-                    .padding(.top, 8)
+            GeometryReader { geo in
+                VStack(spacing: 0) {
+                    // Top bar — minimal
+                    topBar
+                        .padding(.top, 8)
 
-                // Full-page notepad — fills all available space
-                notepadArea
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-
-                // Live transcript — pinned above controls, outside notepad
-                if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
-                    liveTranscriptPeek
+                    // Full-page notepad — takes 75% of remaining space
+                    notepadArea
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 8)
+                        .padding(.top, 8)
+                        .frame(maxHeight: geo.size.height * 0.75)
+
+                    Spacer(minLength: 0)
+
+                    // Live transcript — pinned above controls
+                    if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                        liveTranscriptPeek
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 6)
+                    }
+
+                    // Meeting type pills
+                    meetingTypePills
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 6)
+
+                    // Bottom recording bar — compact
+                    recordingBar
                 }
-
-                // Meeting type pills
-                meetingTypePills
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 10)
-
-                // Bottom recording bar
-                recordingBar
             }
         }
         .onAppear {
@@ -276,15 +281,15 @@ struct RecordingView: View {
                 .fill(MMColors.border)
                 .frame(height: 1)
 
-            VStack(spacing: 12) {
-                // Centered waveform — full width
+            VStack(spacing: 8) {
+                // Centered waveform — compact
                 compactWaveform
-                    .frame(height: 36)
+                    .frame(height: 28)
                     .padding(.horizontal, 24)
-                    .padding(.top, 14)
+                    .padding(.top, 10)
 
                 // Controls row
-                HStack(spacing: 24) {
+                HStack(spacing: 20) {
                     // Duration warning (left)
                     if audioService.duration >= 7200 {
                         let remaining = max(0, 10800 - audioService.duration)
@@ -292,9 +297,9 @@ struct RecordingView: View {
                         Text("\(remainingMinutes)m left")
                             .font(.system(size: 12, weight: .semibold))
                             .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
-                            .frame(width: 60)
+                            .frame(width: 50)
                     } else {
-                        Color.clear.frame(width: 60)
+                        Color.clear.frame(width: 50)
                     }
 
                     Spacer()
@@ -308,9 +313,9 @@ struct RecordingView: View {
                         }
                     } label: {
                         Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
-                            .font(.system(size: 22, weight: .medium))
+                            .font(.system(size: 20, weight: .medium))
                             .foregroundColor(MMColors.textPrimary)
-                            .frame(width: 54, height: 54)
+                            .frame(width: 46, height: 46)
                             .background(MMColors.cardBg)
                             .clipShape(Circle())
                             .overlay(
@@ -325,21 +330,21 @@ struct RecordingView: View {
                         ZStack {
                             Circle()
                                 .fill(MMColors.recording)
-                                .frame(width: 54, height: 54)
-                                .shadow(color: MMColors.recording.opacity(0.4), radius: 10, x: 0, y: 3)
+                                .frame(width: 46, height: 46)
+                                .shadow(color: MMColors.recording.opacity(0.4), radius: 8, x: 0, y: 2)
 
-                            RoundedRectangle(cornerRadius: 5)
+                            RoundedRectangle(cornerRadius: 4)
                                 .fill(.white)
-                                .frame(width: 20, height: 20)
+                                .frame(width: 18, height: 18)
                         }
                     }
 
                     Spacer()
 
-                    Color.clear.frame(width: 60)
+                    Color.clear.frame(width: 50)
                 }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 16)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
             }
             .background(MMColors.backgroundElevated)
         }
@@ -352,7 +357,7 @@ struct RecordingView: View {
             ForEach(0..<barCount, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
                     .fill(MMColors.primary.opacity(audioService.isPaused ? 0.25 : 0.65))
-                    .frame(maxWidth: .infinity, minHeight: 4, maxHeight: max(4, waveformLevels[index] * 36))
+                    .frame(maxWidth: .infinity, minHeight: 4, maxHeight: max(4, waveformLevels[index] * 28))
                     .animation(.easeOut(duration: 0.1), value: waveformLevels[index])
             }
         }
