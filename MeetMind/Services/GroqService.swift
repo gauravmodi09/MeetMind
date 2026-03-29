@@ -36,6 +36,7 @@ struct ParsedTodo: Codable {
     let dueDate: String?
     let priority: String?
     let assignee: String?
+    let notes: String?
 }
 
 // MARK: - Errors
@@ -122,8 +123,8 @@ class GroqService: ObservableObject {
     private let whisperModel = "whisper-large-v3-turbo"
     private let llamaModel = "llama-3.3-70b-versatile"
 
-    @Published var selectedChatModel: ChatModel = .llama70B
-    @Published var selectedSummaryModel: ChatModel = .llama70B
+    @Published var selectedChatModel: ChatModel = .geminiFlash
+    @Published var selectedSummaryModel: ChatModel = .geminiFlash
 
     private let session: URLSession
 
@@ -538,7 +539,13 @@ class GroqService: ObservableObject {
         \(calendarInfo)
 
         Parse the user's speech and return ONLY valid JSON — no markdown, no backticks, no explanation. Just the raw JSON object:
-        {"task": "clear task description", "dueDate": "YYYY-MM-DD or null", "priority": "high or medium or low or null", "assignee": "person name or null"}
+        {"task": "short summary heading (max 10 words)", "notes": "detailed breakdown of everything mentioned", "dueDate": "YYYY-MM-DD or null", "priority": "high or medium or low or null", "assignee": "person name or null"}
+
+        IMPORTANT — task vs notes:
+        - "task" = A SHORT summary heading (like a subject line). Max 10 words. This is the todo title.
+        - "notes" = ALL the details, specifics, sub-items, and context from what was said. Use bullet points (• ) to list multiple items. Include everything the user mentioned that doesn't fit in the short title.
+        - If the user mentions multiple things to do, the "task" should be the overarching theme, and "notes" should list each specific item.
+        - If the input is very short/simple (just one task), notes can be null.
 
         Date rules:
         - "tomorrow" = \(dateFormatter.string(from: Calendar.current.date(byAdding: .day, value: 1, to: Date())!))
@@ -583,7 +590,7 @@ class GroqService: ObservableObject {
         guard let jsonData = content.data(using: .utf8) else {
             // Fallback: create task from raw transcript
             print("[GroqService] Empty response, using raw transcript as task")
-            return ParsedTodo(task: transcript, dueDate: todayStr, priority: "medium", assignee: nil)
+            return ParsedTodo(task: transcript, dueDate: todayStr, priority: "medium", assignee: nil, notes: nil)
         }
 
         do {
@@ -593,7 +600,7 @@ class GroqService: ObservableObject {
         } catch {
             print("[GroqService] JSON decode failed: \(error). Falling back to raw transcript.")
             // Fallback: use the transcript as-is
-            return ParsedTodo(task: transcript, dueDate: todayStr, priority: "medium", assignee: nil)
+            return ParsedTodo(task: transcript, dueDate: todayStr, priority: "medium", assignee: nil, notes: nil)
         }
     }
 

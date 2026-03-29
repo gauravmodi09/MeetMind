@@ -16,6 +16,7 @@ struct VoiceTodoCaptureView: View {
     @State private var captureState: CaptureState = .idle
     @State private var transcribedText = ""
     @State private var parsedTask = ""
+    @State private var parsedNotes = ""
     @State private var parsedDate = Date()
     @State private var parsedPriority: TodoPriority = .medium
     @State private var audioRecorder: AVAudioRecorder?
@@ -148,13 +149,13 @@ struct VoiceTodoCaptureView: View {
 
             // Parsed fields
             VStack(spacing: 14) {
-                // Task
+                // Task heading
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("Task")
+                    Text("Summary")
                         .font(MMTypography.caption1)
                         .foregroundColor(MMColors.textTertiary)
 
-                    TextField("Task description", text: $parsedTask)
+                    TextField("Task heading", text: $parsedTask)
                         .font(MMTypography.body)
                         .padding(12)
                         .background(MMColors.cardBg)
@@ -163,6 +164,34 @@ struct VoiceTodoCaptureView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(MMColors.border, lineWidth: 1)
                         )
+                }
+
+                // Notes / details
+                if !parsedNotes.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        HStack {
+                            Text("Details")
+                                .font(MMTypography.caption1)
+                                .foregroundColor(MMColors.textTertiary)
+                            Spacer()
+                            Text("\(parsedNotes.components(separatedBy: "•").count - 1) items")
+                                .font(MMTypography.caption2)
+                                .foregroundColor(MMColors.primary)
+                        }
+
+                        TextEditor(text: $parsedNotes)
+                            .font(MMTypography.subheadline)
+                            .foregroundColor(MMColors.textSecondary)
+                            .scrollContentBackground(.hidden)
+                            .frame(minHeight: 80)
+                            .padding(12)
+                            .background(MMColors.cardBg)
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(MMColors.border, lineWidth: 1)
+                            )
+                    }
                 }
 
                 // Date
@@ -317,6 +346,10 @@ struct VoiceTodoCaptureView: View {
                         clientTag: nil,
                         source: .voice
                     )
+                    // Save notes for this todo
+                    if !parsedNotes.isEmpty, let todo = todoService.todos.last {
+                        UserDefaults.standard.set(parsedNotes, forKey: "todo_notes_\(todo.id.uuidString)")
+                    }
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.success)
                     dismiss()
@@ -412,6 +445,7 @@ struct VoiceTodoCaptureView: View {
                 let parsed = try await GroqService.shared.parseTodoFromVoice(transcript: result.text)
 
                 parsedTask = parsed.task
+                parsedNotes = parsed.notes ?? ""
 
                 if let dateString = parsed.dueDate {
                     let formatter = DateFormatter()

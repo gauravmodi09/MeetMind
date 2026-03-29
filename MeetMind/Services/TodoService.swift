@@ -62,6 +62,11 @@ class TodoService: ObservableObject {
             source: .voice
         )
         todos.append(todo)
+
+        // Save detailed notes if AI extracted them
+        if let notes = parsed.notes, !notes.isEmpty {
+            UserDefaults.standard.set(notes, forKey: "todo_notes_\(todo.id.uuidString)")
+        }
     }
 
     func createFromMeetingActions(_ actions: [ActionItem], meetingId: UUID) {

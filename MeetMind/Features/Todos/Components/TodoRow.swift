@@ -79,6 +79,19 @@ struct TodoRow: View {
 
             Spacer()
 
+            // Notes indicator
+            if hasNotes {
+                Image(systemName: "note.text")
+                    .font(.system(size: 11))
+                    .foregroundColor(MMColors.primary.opacity(0.5))
+            }
+
+            // Chevron for navigation
+            Image(systemName: "chevron.right")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(MMColors.textTertiary.opacity(0.4))
+                .padding(.trailing, 4)
+
             // Checkbox with spring animation
             Button(action: onToggle) {
                 ZStack {
@@ -178,6 +191,11 @@ struct TodoRow: View {
     }
 
     // MARK: - Helpers
+
+    private var hasNotes: Bool {
+        let notes = UserDefaults.standard.string(forKey: "todo_notes_\(todo.id.uuidString)") ?? ""
+        return !notes.isEmpty
+    }
 
     private var priorityColor: Color {
         switch todo.priority {
