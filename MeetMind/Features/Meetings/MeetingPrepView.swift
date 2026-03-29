@@ -321,5 +321,4 @@ struct MeetingPrepView: View {
         onStartRecording: {},
         onDismiss: {}
     )
-    .preferredColorScheme(.dark)
 }

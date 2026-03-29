@@ -29,35 +29,26 @@ struct RecordingView: View {
         ZStack {
             MMColors.background.ignoresSafeArea()
 
-            GeometryReader { geo in
-                VStack(spacing: 0) {
-                    // Top bar — minimal
-                    topBar
-                        .padding(.top, 8)
+            VStack(spacing: 0) {
+                // Top bar — minimal
+                topBar
+                    .padding(.top, 8)
 
-                    // Full-page notepad — takes 75% of remaining space
-                    notepadArea
+                // Full-page notepad — fills ALL remaining space
+                notepadArea
+                    .padding(.horizontal, 20)
+                    .padding(.top, 8)
+                    .layoutPriority(1)
+
+                // Live transcript — just above bottom bar
+                if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                    liveTranscriptPeek
                         .padding(.horizontal, 20)
-                        .padding(.top, 8)
-                        .frame(maxHeight: geo.size.height * 0.75)
-
-                    Spacer(minLength: 0)
-
-                    // Live transcript — pinned above controls
-                    if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
-                        liveTranscriptPeek
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 6)
-                    }
-
-                    // Meeting type pills
-                    meetingTypePills
-                        .padding(.horizontal, 16)
                         .padding(.bottom, 6)
-
-                    // Bottom recording bar — compact
-                    recordingBar
                 }
+
+                // Bottom bar: pills + waveform + controls in one compact strip
+                bottomBar
             }
         }
         .onAppear {
@@ -235,74 +226,52 @@ struct RecordingView: View {
         )
     }
 
-    // MARK: - Meeting Type Pills
+    // MARK: - Bottom Bar (Pills + Controls)
 
-    private var meetingTypePills: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(MeetingTemplate.allCases, id: \.self) { template in
-                    let isSelected = selectedTemplate == template
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            selectedTemplate = template
-                        }
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: template.icon)
-                                .font(.system(size: 11, weight: .medium))
-                            Text(template.rawValue)
-                                .font(.system(size: 12, weight: .medium))
-                        }
-                        .foregroundColor(isSelected ? .white : MMColors.textSecondary)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(
-                            isSelected
-                                ? MMColors.primary
-                                : MMColors.cardBg
-                        )
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule()
-                                .stroke(isSelected ? MMColors.primary : MMColors.border, lineWidth: 1)
-                        )
-                    }
-                }
-            }
-            .padding(.horizontal, 4)
-        }
-    }
-
-    // MARK: - Bottom Recording Bar
-
-    private var recordingBar: some View {
+    private var bottomBar: some View {
         VStack(spacing: 0) {
             Rectangle()
                 .fill(MMColors.border)
                 .frame(height: 1)
 
-            VStack(spacing: 8) {
-                // Centered waveform — compact
-                compactWaveform
-                    .frame(height: 28)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 10)
-
-                // Controls row
-                HStack(spacing: 20) {
-                    // Duration warning (left)
-                    if audioService.duration >= 7200 {
-                        let remaining = max(0, 10800 - audioService.duration)
-                        let remainingMinutes = Int(remaining) / 60
-                        Text("\(remainingMinutes)m left")
-                            .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
-                            .frame(width: 50)
-                    } else {
-                        Color.clear.frame(width: 50)
+            VStack(spacing: 10) {
+                // Meeting type pills — compact
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(MeetingTemplate.allCases, id: \.self) { template in
+                            let isSelected = selectedTemplate == template
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedTemplate = template
+                                }
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: template.icon)
+                                        .font(.system(size: 10, weight: .medium))
+                                    Text(template.rawValue)
+                                        .font(.system(size: 11, weight: .medium))
+                                }
+                                .foregroundColor(isSelected ? .white : MMColors.textSecondary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(isSelected ? MMColors.primary : MMColors.cardBg)
+                                .clipShape(Capsule())
+                                .overlay(
+                                    Capsule()
+                                        .stroke(isSelected ? MMColors.primary : MMColors.border, lineWidth: 1)
+                                )
+                            }
+                        }
                     }
+                    .padding(.horizontal, 16)
+                }
+                .padding(.top, 10)
 
-                    Spacer()
+                // Waveform + controls in one row
+                HStack(spacing: 16) {
+                    // Mini waveform
+                    compactWaveform
+                        .frame(height: 24)
 
                     // Pause / Resume
                     Button {
@@ -313,9 +282,9 @@ struct RecordingView: View {
                         }
                     } label: {
                         Image(systemName: audioService.isPaused ? "play.fill" : "pause.fill")
-                            .font(.system(size: 20, weight: .medium))
+                            .font(.system(size: 18, weight: .medium))
                             .foregroundColor(MMColors.textPrimary)
-                            .frame(width: 46, height: 46)
+                            .frame(width: 42, height: 42)
                             .background(MMColors.cardBg)
                             .clipShape(Circle())
                             .overlay(
@@ -330,21 +299,26 @@ struct RecordingView: View {
                         ZStack {
                             Circle()
                                 .fill(MMColors.recording)
-                                .frame(width: 46, height: 46)
-                                .shadow(color: MMColors.recording.opacity(0.4), radius: 8, x: 0, y: 2)
+                                .frame(width: 42, height: 42)
+                                .shadow(color: MMColors.recording.opacity(0.3), radius: 6, x: 0, y: 2)
 
                             RoundedRectangle(cornerRadius: 4)
                                 .fill(.white)
-                                .frame(width: 18, height: 18)
+                                .frame(width: 16, height: 16)
                         }
                     }
 
-                    Spacer()
-
-                    Color.clear.frame(width: 50)
+                    // Duration warning
+                    if audioService.duration >= 7200 {
+                        let remaining = max(0, 10800 - audioService.duration)
+                        let remainingMinutes = Int(remaining) / 60
+                        Text("\(remainingMinutes)m")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(remaining <= 900 ? MMColors.recording : MMColors.warning)
+                    }
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 10)
+                .padding(.bottom, 14)
             }
             .background(MMColors.backgroundElevated)
         }
@@ -357,7 +331,7 @@ struct RecordingView: View {
             ForEach(0..<barCount, id: \.self) { index in
                 RoundedRectangle(cornerRadius: 2)
                     .fill(MMColors.primary.opacity(audioService.isPaused ? 0.25 : 0.65))
-                    .frame(maxWidth: .infinity, minHeight: 4, maxHeight: max(4, waveformLevels[index] * 28))
+                    .frame(maxWidth: .infinity, minHeight: 3, maxHeight: max(3, waveformLevels[index] * 24))
                     .animation(.easeOut(duration: 0.1), value: waveformLevels[index])
             }
         }

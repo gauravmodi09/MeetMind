@@ -623,5 +623,4 @@ struct CoachingView: View {
             generatedAt: Date()
         ))
     }
-    .preferredColorScheme(.dark)
 }

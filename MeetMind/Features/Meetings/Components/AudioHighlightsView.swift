@@ -221,5 +221,4 @@ struct AudioHighlightsView: View {
             .padding()
     }
     .background(MMColors.background)
-    .preferredColorScheme(.dark)
 }

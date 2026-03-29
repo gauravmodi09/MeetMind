@@ -13,15 +13,7 @@ struct MeetMindApp: App {
     @StateObject private var authService = AuthService.shared
     @AppStorage("hasCompletedOnboarding") var hasOnboarded = false
     @AppStorage("groqAPIKey") var apiKey = ""
-    @AppStorage("appTheme") var appTheme = "system"
-
-    var colorSchemeFromSetting: ColorScheme? {
-        switch appTheme {
-        case "dark": return .dark
-        case "light": return .light
-        default: return nil
-        }
-    }
+    @AppStorage("appTheme") var appTheme = "light"
 
     init() {
         if apiKey.isEmpty {
@@ -59,7 +51,7 @@ struct MeetMindApp: App {
                         }
                 }
             }
-            .preferredColorScheme(colorSchemeFromSetting)
+            .preferredColorScheme(.light)
         }
     }
 

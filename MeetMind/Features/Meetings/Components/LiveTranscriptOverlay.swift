@@ -118,7 +118,6 @@ struct LiveTranscriptOverlay_Previews: PreviewProvider {
                 )
             }
         }
-        .preferredColorScheme(.dark)
     }
 }
 #endif

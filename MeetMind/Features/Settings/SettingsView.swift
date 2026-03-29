@@ -317,29 +317,6 @@ struct SettingsView: View {
                     }
 
                     // MARK: - Appearance
-                    settingsSection(header: "APPEARANCE") {
-                        VStack(spacing: 0) {
-                            HStack {
-                                Image(systemName: "paintbrush")
-                                    .foregroundColor(MMColors.primary)
-                                    .frame(width: 20)
-                                Text("Theme")
-                                    .font(MMTypography.body)
-                                    .foregroundColor(MMColors.textPrimary)
-                                Spacer()
-                                Picker("", selection: $appTheme) {
-                                    Text("System").tag("system")
-                                    Text("Dark").tag("dark")
-                                    Text("Light").tag("light")
-                                }
-                                .pickerStyle(.menu)
-                                .tint(MMColors.primary)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                        }
-                    }
-
                     // MARK: - Recording
                     settingsSection(header: "RECORDING") {
                         HStack {
