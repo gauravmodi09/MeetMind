@@ -268,10 +268,12 @@ struct RecordingView: View {
                 .padding(.top, 10)
 
                 // Waveform + controls in one row
-                HStack(spacing: 16) {
-                    // Mini waveform
+                HStack(spacing: 14) {
+                    // Mini waveform — limited width
                     compactWaveform
-                        .frame(height: 24)
+                        .frame(width: 120, height: 24)
+
+                    Spacer()
 
                     // Pause / Resume
                     Button {

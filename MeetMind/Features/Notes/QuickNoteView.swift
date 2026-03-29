@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 struct QuickNote: Identifiable, Codable {
     var id = UUID()
@@ -264,7 +265,17 @@ struct QuickNoteEditorView: View {
                     if dictation.state == .listening {
                         dictation.stopDictation()
                     } else {
-                        dictation.startDictation()
+                        Task {
+                            if !dictation.isAuthorized {
+                                _ = await dictation.requestAuthorization()
+                            }
+                            if dictation.isAuthorized {
+                                let session = AVAudioSession.sharedInstance()
+                                try? session.setCategory(.playAndRecord, mode: .default)
+                                try? session.setActive(true)
+                                dictation.startDictation()
+                            }
+                        }
                     }
                 } label: {
                     HStack(spacing: 6) {

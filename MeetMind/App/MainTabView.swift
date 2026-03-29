@@ -32,19 +32,19 @@ struct MainTabView: View {
                 .tag(Tab.todos)
                 .badge(todoService.pendingCount > 0 ? todoService.pendingCount : 0)
 
-            LibraryView()
-                .tabItem {
-                    Image(systemName: "folder.fill")
-                    Text("Library")
-                }
-                .tag(Tab.library)
-
             MeetingChatView()
                 .tabItem {
                     Image(systemName: "bubble.left.and.bubble.right.fill")
                     Text("Chat")
                 }
                 .tag(Tab.chat)
+
+            LibraryView()
+                .tabItem {
+                    Image(systemName: "folder.fill")
+                    Text("Library")
+                }
+                .tag(Tab.library)
 
             SettingsView()
                 .tabItem {
