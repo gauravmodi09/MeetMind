@@ -90,6 +90,14 @@ struct MeetingDetailView: View {
                         .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.15), value: sectionsAppeared)
                     }
 
+                    // Your Notes (rough notes from recording)
+                    if let userNotes = meeting.userNotes, !userNotes.isEmpty {
+                        yourNotesSection(userNotes)
+                            .opacity(sectionsAppeared ? 1 : 0)
+                            .offset(y: sectionsAppeared ? 0 : 16)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(0.18), value: sectionsAppeared)
+                    }
+
                     // Decisions
                     if !meeting.briefDecisions.isEmpty {
                         decisionsSection
@@ -688,6 +696,43 @@ struct MeetingDetailView: View {
         guard stripped.count >= 3, stripped.count <= 60 else { return false }
         let allowed = CharacterSet.uppercaseLetters.union(.whitespaces).union(CharacterSet(charactersIn: "&/-"))
         return stripped.unicodeScalars.allSatisfy { allowed.contains($0) }
+    }
+
+    // MARK: - Your Notes Section
+
+    private func yourNotesSection(_ notes: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "note.text")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(MMColors.warning)
+                Text("Your Notes")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(MMColors.textPrimary)
+                Spacer()
+                Text("During recording")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(MMColors.textTertiary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(MMColors.warning.opacity(0.1))
+                    .clipShape(Capsule())
+            }
+
+            Text(notes)
+                .font(.system(size: 14))
+                .foregroundColor(MMColors.textSecondary)
+                .lineSpacing(4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(16)
+        .background(MMColors.cardBg)
+        .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(MMColors.border, lineWidth: 1)
+        )
+        .padding(.horizontal, 16)
     }
 
     // MARK: - Decisions Section
