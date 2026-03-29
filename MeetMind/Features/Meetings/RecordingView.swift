@@ -38,7 +38,13 @@ struct RecordingView: View {
                 notepadArea
                     .padding(.horizontal, 20)
                     .padding(.top, 8)
-                    .frame(maxHeight: .infinity)
+
+                // Live transcript — pinned above controls, outside notepad
+                if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
+                    liveTranscriptPeek
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 8)
+                }
 
                 // Meeting type pills
                 meetingTypePills
@@ -156,15 +162,15 @@ struct RecordingView: View {
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(MMColors.textPrimary)
                 .focused($isTitleFocused)
-                .padding(.bottom, 20)
+                .padding(.bottom, 16)
 
             // Divider
             Rectangle()
                 .fill(MMColors.border)
                 .frame(height: 1)
-                .padding(.bottom, 16)
+                .padding(.bottom, 12)
 
-            // Notes area — full page
+            // Notes area — expands to fill all remaining space
             ZStack(alignment: .topLeading) {
                 if notes.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
@@ -191,15 +197,10 @@ struct RecordingView: View {
                     .scrollContentBackground(.hidden)
                     .tint(MMColors.primary)
                     .focused($isNotesFocused)
-                    .frame(maxHeight: .infinity)
             }
-
-            // Live transcription peek
-            if liveTranscription.isTranscribing && !liveTranscription.liveText.isEmpty {
-                liveTranscriptPeek
-                    .padding(.top, 8)
-            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(maxHeight: .infinity)
     }
 
     // MARK: - Live Transcript Peek
