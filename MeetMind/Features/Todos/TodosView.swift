@@ -8,6 +8,7 @@ struct TodosView: View {
         case today = "Today"
         case upcoming = "Upcoming"
         case all = "All"
+        case history = "History"
     }
 
     @State private var selectedTab: TodoTab = .today
@@ -46,6 +47,8 @@ struct TodosView: View {
                             clientFilter: $clientFilter,
                             priorityFilter: $priorityFilter
                         )
+                    case .history:
+                        TodoHistoryView()
                     }
                 }
                 .background(MMColors.background)
