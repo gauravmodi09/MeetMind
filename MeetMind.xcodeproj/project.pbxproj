@@ -78,6 +78,7 @@
 		AB0B4B5AADEA9A934CDD8DEB /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E434460CA6C56AF72E80EC67 /* SettingsView.swift */; };
 		AB38E920BEB0424F8DEBDBE5 /* MeetingPrepService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE9AD5F204040239A92FA85 /* MeetingPrepService.swift */; };
 		AE1E4E35B57803E9787F2B5B /* FollowUpEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9BE4AD281B5312CAEFC7E16 /* FollowUpEmailView.swift */; };
+		AE2448D68460394E9BCD73C6 /* QuickNoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD74E1A95B39488A398F965 /* QuickNoteView.swift */; };
 		AEF54DEA88F47E35FAFC2E11 /* WatchTodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D63A4383980C8F56D79117C3 /* WatchTodoView.swift */; };
 		AF7951BF1AA94AA4A40B6416 /* MeetingCoachService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0ACC24CD6541D98A782375 /* MeetingCoachService.swift */; };
 		AFB3D00027E1460080FCE215 /* UpcomingMeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3F71566024A0685D56DF1 /* UpcomingMeetingsView.swift */; };
@@ -337,6 +338,7 @@
 		AA11BB22CC33DD44EE55FF66 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		AA836C2DFF66A9A72C043D86 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		AA89A91491DD4890A971756C /* MeetMind/Features/Meetings/NoteTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetMind/Features/Meetings/NoteTemplates.swift; sourceTree = SOURCE_ROOT; };
+		AAD74E1A95B39488A398F965 /* QuickNoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = QuickNoteView.swift; path = MeetMind/Features/Notes/QuickNoteView.swift; sourceTree = SOURCE_ROOT; };
 		B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchWidgetData.swift; path = MeetMind/WatchApp/WatchWidgetData.swift; sourceTree = SOURCE_ROOT; };
 		B353E5360CE9EF2259BC5455 /* DoseReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DoseReminderAttributes.swift; sourceTree = "<group>"; };
 		B51D8F97D9C7342B90B4719D /* MCTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCTypography.swift; sourceTree = "<group>"; };
@@ -565,6 +567,7 @@
 				B6AF4F15B985172E5B9118D5 /* MeetingAppDetector.swift */,
 				DAB54B088F1EAD841EA2FA0D /* TodoHistoryView.swift */,
 				8A2840AFAF83AFAB9C7E58D1 /* TeamsIntegrationService.swift */,
+				AAD74E1A95B39488A398F965 /* QuickNoteView.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1361,6 +1364,7 @@
 				9597472FACF4D2052279F108 /* MeetingAppDetector.swift in Sources */,
 				DE324AF9B24903819BD4A177 /* TodoHistoryView.swift in Sources */,
 				A9BB4251AA66E62D91E11814 /* TeamsIntegrationService.swift in Sources */,
+				AE2448D68460394E9BCD73C6 /* QuickNoteView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

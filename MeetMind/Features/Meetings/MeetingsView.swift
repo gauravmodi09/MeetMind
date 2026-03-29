@@ -17,6 +17,7 @@ struct MeetingsView: View {
     @State private var showMeetingPrep = false
     @State private var showSearch = false
     @State private var showSpaces = false
+    @State private var showQuickNote = false
 
     var body: some View {
         NavigationStack {
@@ -124,6 +125,9 @@ struct MeetingsView: View {
                     SpacesView()
                 }
             }
+            .fullScreenCover(isPresented: $showQuickNote) {
+                QuickNoteEditorView()
+            }
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }
@@ -197,6 +201,10 @@ struct MeetingsView: View {
 
                 quickChip(icon: "checkmark.circle", label: "Voice Todo") {
                     NotificationCenter.default.post(name: .widgetVoiceTodo, object: nil)
+                }
+
+                quickChip(icon: "note.text", label: "Quick Note") {
+                    showQuickNote = true
                 }
 
                 quickChip(icon: "magnifyingglass", label: "Search") {

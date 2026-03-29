@@ -5,7 +5,7 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .meetings
 
     enum Tab: String {
-        case meetings, todos, library, chat, settings
+        case meetings, notes, todos, library, chat, settings
     }
 
     var body: some View {
@@ -16,6 +16,13 @@ struct MainTabView: View {
                     Text("Meetings")
                 }
                 .tag(Tab.meetings)
+
+            QuickNotesListView()
+                .tabItem {
+                    Image(systemName: "note.text")
+                    Text("Notes")
+                }
+                .tag(Tab.notes)
 
             TodosView()
                 .tabItem {
@@ -75,9 +82,9 @@ struct MainTabView: View {
             // Purple pill badge styling instead of default red
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
-            appearance.backgroundEffect = UIBlurEffect(style: .systemChromeMaterialDark)
-            appearance.backgroundColor = UIColor(white: 0.04, alpha: 0.6)
-            appearance.shadowColor = UIColor(white: 1.0, alpha: 0.06)
+            appearance.backgroundEffect = UIBlurEffect(style: .systemChromeMaterial)
+            appearance.backgroundColor = UIColor(white: 0.98, alpha: 0.9)
+            appearance.shadowColor = UIColor(white: 0.0, alpha: 0.06)
             appearance.shadowImage = UIImage()
 
             // Badge appearance — purple pill
