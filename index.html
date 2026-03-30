@@ -255,6 +255,12 @@
       flex-shrink: 0;
     }
 
+    /* ─── Illustration elements ──────────────────────────── */
+    .illust-elem {
+      position: absolute;
+      opacity: 0;
+    }
+
     /* ─── Responsive ─────────────────────────────────────── */
     @media (max-width: 768px) {
       .scroll-section {
@@ -295,7 +301,84 @@
 
   <!-- ─── Section 2: Pain 1 ───────────────────────────── -->
   <section id="pain1" class="scroll-section">
-    <div class="illustration-container"></div>
+    <div class="illustration-container">
+
+      <!-- 1. Speech bubble -->
+      <svg class="illust-elem" data-drift="1" width="80" height="60"
+           style="top:15%;left:10%" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="78" height="48" rx="10" ry="10"
+              fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
+        <polyline points="14,49 10,59 24,49"
+                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
+        <line x1="14" y1="16" x2="66" y2="16" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="24" x2="58" y2="24" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="14" y1="32" x2="62" y2="32" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 2. Calendar -->
+      <svg class="illust-elem" data-drift="2" width="70" height="70"
+           style="top:20%;right:15%" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="68" height="68" rx="8"
+              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <rect x="1" y="1" width="68" height="18" rx="8"
+              fill="rgba(139,58,58,0.35)" stroke="none"/>
+        <rect x="1" y="10" width="68" height="9" rx="0"
+              fill="rgba(139,58,58,0.35)" stroke="none"/>
+        <circle cx="20" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="35" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="50" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="20" cy="52" r="3" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="35" cy="52" r="3" fill="rgba(255,255,255,0.3)"/>
+      </svg>
+
+      <!-- 3. Notebook page -->
+      <svg class="illust-elem" data-drift="3" width="60" height="80"
+           style="bottom:25%;left:20%" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="58" height="78" rx="5"
+              fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
+        <line x1="10" y1="20" x2="50" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="30" x2="50" y2="30" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="40" x2="50" y2="40" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="50" x2="42" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="60" x2="46" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 4. Question mark -->
+      <svg class="illust-elem" data-drift="4" width="50" height="50"
+           style="top:60%;right:25%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <text x="50%" y="72%" text-anchor="middle" font-size="38" font-weight="900"
+              font-family="Inter,sans-serif" fill="rgba(139,58,58,0.4)">?</text>
+      </svg>
+
+      <!-- 5. Small speech bubble -->
+      <svg class="illust-elem" data-drift="5" width="65" height="50"
+           style="top:40%;left:5%" viewBox="0 0 65 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="63" height="38" rx="8"
+              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <polyline points="10,39 8,49 22,39"
+                  fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <line x1="10" y1="14" x2="54" y2="14" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="22" x2="46" y2="22" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 6. Clock -->
+      <svg class="illust-elem" data-drift="6" width="50" height="50"
+           style="bottom:15%;right:10%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="25" cy="25" r="23"
+                fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1.5"/>
+        <line x1="25" y1="25" x2="25" y2="10" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="25" y1="25" x2="36" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.6)"/>
+      </svg>
+
+      <!-- 7. Exclamation -->
+      <svg class="illust-elem" data-drift="7" width="40" height="50"
+           style="top:10%;left:45%" viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
+        <text x="50%" y="80%" text-anchor="middle" font-size="42" font-weight="900"
+              font-family="Inter,sans-serif" fill="rgba(139,58,58,0.3)">!</text>
+      </svg>
+
+    </div>
     <div class="section-text">
       <h2>You just left a 45-minute meeting.</h2>
       <p>What was decided? Who's doing what? By when? You open your notes app and stare at a half-finished sentence. The context is already fading. By tomorrow, it's gone.</p>
@@ -304,7 +387,71 @@
 
   <!-- ─── Section 3: Pain 2 ───────────────────────────── -->
   <section id="pain2" class="scroll-section">
-    <div class="illustration-container"></div>
+    <div class="illustration-container">
+
+      <!-- 1. Sticky note -->
+      <svg class="illust-elem" data-drift="1" width="70" height="70"
+           style="top:15%;left:8%" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="68" height="68" rx="4"
+              fill="rgba(255,165,2,0.12)" stroke="rgba(255,165,2,0.25)" stroke-width="1"/>
+        <line x1="10" y1="22" x2="60" y2="22" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="32" x2="52" y2="32" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="42" x2="56" y2="42" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 2. App icon -->
+      <svg class="illust-elem" data-drift="2" width="50" height="50"
+           style="top:25%;right:18%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="48" height="48" rx="12"
+              fill="rgba(108,92,231,0.2)" stroke="rgba(108,92,231,0.4)" stroke-width="1.5"/>
+        <circle cx="25" cy="25" r="10"
+                fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+        <circle cx="25" cy="25" r="3" fill="rgba(255,255,255,0.5)"/>
+      </svg>
+
+      <!-- 3. Voice waveform -->
+      <svg class="illust-elem" data-drift="3" width="90" height="40"
+           style="bottom:30%;left:15%" viewBox="0 0 90 40" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="0" width="90" height="40" rx="8"
+              fill="rgba(108,92,231,0.08)" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+        <rect x="10" y="14" width="6" height="12" rx="3" fill="rgba(108,92,231,0.5)"/>
+        <rect x="20" y="8"  width="6" height="24" rx="3" fill="rgba(108,92,231,0.6)"/>
+        <rect x="30" y="5"  width="6" height="30" rx="3" fill="rgba(108,92,231,0.7)"/>
+        <rect x="40" y="10" width="6" height="20" rx="3" fill="rgba(108,92,231,0.6)"/>
+        <rect x="50" y="16" width="6" height="8"  rx="3" fill="rgba(108,92,231,0.5)"/>
+        <rect x="60" y="6"  width="6" height="28" rx="3" fill="rgba(108,92,231,0.65)"/>
+        <rect x="70" y="12" width="6" height="16" rx="3" fill="rgba(108,92,231,0.55)"/>
+        <rect x="80" y="18" width="6" height="4"  rx="3" fill="rgba(108,92,231,0.4)"/>
+      </svg>
+
+      <!-- 4. Email envelope -->
+      <svg class="illust-elem" data-drift="4" width="60" height="45"
+           style="top:55%;right:12%" viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="58" height="43" rx="5"
+              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
+        <polyline points="1,4 30,26 59,4"
+                  fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <!-- 5. Phone silhouette -->
+      <svg class="illust-elem" data-drift="5" width="40" height="70"
+           style="top:10%;left:40%" viewBox="0 0 40 70" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="38" height="68" rx="8"
+              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
+        <rect x="13" y="5" width="14" height="3" rx="1.5"
+              fill="rgba(255,255,255,0.2)"/>
+      </svg>
+
+      <!-- 6. Hash icon -->
+      <svg class="illust-elem" data-drift="6" width="45" height="45"
+           style="bottom:20%;right:30%" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="43" height="43" rx="8"
+              fill="rgba(0,184,148,0.1)" stroke="rgba(0,184,148,0.25)" stroke-width="1"/>
+        <text x="50%" y="70%" text-anchor="middle" font-size="26" font-weight="700"
+              font-family="Inter,sans-serif" fill="rgba(0,184,148,0.6)">#</text>
+      </svg>
+
+    </div>
     <div class="section-text">
       <h2>Your action items live in 5 different apps.</h2>
       <p>Sticky notes. Slack messages. Calendar descriptions. That one email thread. A Notes app you forgot you had. Nothing is connected. Things fall through the cracks. Always.</p>
@@ -349,7 +496,72 @@
 
   <!-- ─── Section 8: Solution 4 — Organize ───────────── -->
   <section id="solution4" class="scroll-section">
-    <div class="illustration-container"></div>
+    <div class="illustration-container">
+
+      <!-- 1. Meeting card 1 (purple) -->
+      <svg class="illust-elem org-card" width="120" height="60"
+           style="top:20%;left:10%" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="118" height="58" rx="10"
+              fill="rgba(108,92,231,0.2)" stroke="rgba(108,92,231,0.45)" stroke-width="1.5"/>
+        <circle cx="16" cy="18" r="5" fill="rgba(108,92,231,0.6)"/>
+        <line x1="28" y1="14" x2="100" y2="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="28" y1="22" x2="80" y2="22" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="36" x2="110" y2="36" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="46" x2="90" y2="46" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 2. Meeting card 2 (green) -->
+      <svg class="illust-elem org-card" width="120" height="60"
+           style="top:40%;left:8%" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+        <rect x="1" y="1" width="118" height="58" rx="10"
+              fill="rgba(0,184,148,0.15)" stroke="rgba(0,184,148,0.4)" stroke-width="1.5"/>
+        <circle cx="16" cy="18" r="5" fill="rgba(0,184,148,0.55)"/>
+        <line x1="28" y1="14" x2="100" y2="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="28" y1="22" x2="76" y2="22" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="10" y1="36" x2="110" y2="36" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="10" y1="46" x2="85" y2="46" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 3. Folder 1 (purple) — Acme Corp -->
+      <svg class="illust-elem org-folder" width="100" height="80"
+           style="top:20%;right:12%" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4,20 L4,76 Q4,79 7,79 L93,79 Q96,79 96,76 L96,24 Q96,21 93,21 L48,21 L40,13 Q38,11 35,11 L7,11 Q4,11 4,14 Z"
+              fill="rgba(108,92,231,0.18)" stroke="rgba(108,92,231,0.4)" stroke-width="1.5"/>
+        <text x="50%" y="58%" text-anchor="middle" font-size="11" font-weight="600"
+              font-family="Inter,sans-serif" fill="rgba(255,255,255,0.5)">Acme Corp</text>
+      </svg>
+
+      <!-- 4. Folder 2 (green) — StartupX -->
+      <svg class="illust-elem org-folder" width="100" height="80"
+           style="top:50%;right:10%" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4,20 L4,76 Q4,79 7,79 L93,79 Q96,79 96,76 L96,24 Q96,21 93,21 L48,21 L40,13 Q38,11 35,11 L7,11 Q4,11 4,14 Z"
+              fill="rgba(0,184,148,0.15)" stroke="rgba(0,184,148,0.38)" stroke-width="1.5"/>
+        <text x="50%" y="58%" text-anchor="middle" font-size="11" font-weight="600"
+              font-family="Inter,sans-serif" fill="rgba(255,255,255,0.5)">StartupX</text>
+      </svg>
+
+      <!-- 5. Person node -->
+      <svg class="illust-elem" width="50" height="50"
+           style="bottom:15%;left:35%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="25" cy="16" r="9"
+                fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+        <path d="M8,46 Q8,30 25,30 Q42,30 42,46"
+              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <!-- 6. Connection lines (full container) -->
+      <svg class="illust-elem" width="100%" height="100%"
+           style="top:0;left:0;opacity:1" viewBox="0 0 100 100" preserveAspectRatio="none"
+           xmlns="http://www.w3.org/2000/svg">
+        <line class="conn-line" x1="22" y1="25" x2="82" y2="25"
+              stroke="rgba(108,92,231,0.35)" stroke-width="0.4"
+              stroke-dasharray="3 3" stroke-linecap="round"/>
+        <line class="conn-line" x1="20" y1="45" x2="84" y2="56"
+              stroke="rgba(0,184,148,0.3)" stroke-width="0.4"
+              stroke-dasharray="3 3" stroke-linecap="round"/>
+      </svg>
+
+    </div>
     <div class="section-text">
       <h2>Your meetings organize themselves.</h2>
       <p>Clients, companies, and projects — MeetMind groups every meeting automatically. Your entire relationship history with anyone, right where you need it. Never dig through emails again.</p>
@@ -618,6 +830,98 @@
         end: 'center 60%',
         scrub: true,
       },
+    });
+
+    // ── Illustration Animations ────────────────────────────
+
+    // Pain 1: drift elements in on scroll
+    document.querySelectorAll('#pain1 .illust-elem').forEach((el) => {
+      const drift = parseInt(el.getAttribute('data-drift') || '1', 10);
+      const sign  = drift % 2 === 0 ? 1 : -1;
+      const xDrift = sign * (drift * 8);
+      const yDrift = (drift % 3 === 0 ? -1 : 1) * (drift * 6);
+      gsap.fromTo(el,
+        { opacity: 0, x: xDrift, y: yDrift },
+        {
+          opacity: 0.8,
+          x: 0,
+          y: 0,
+          scrollTrigger: {
+            trigger: '#pain1',
+            start: 'top 80%',
+            end: 'bottom 20%',
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    // Pain 2: staggered pop-in
+    document.querySelectorAll('#pain2 .illust-elem').forEach((el, i) => {
+      const rot = (i % 2 === 0 ? 1 : -1) * (8 + i * 4);
+      gsap.fromTo(el,
+        { opacity: 0, scale: 0.5, rotation: rot },
+        {
+          opacity: 0.7,
+          scale: 1,
+          rotation: 0,
+          scrollTrigger: {
+            trigger: '#pain2',
+            start: `top ${80 - i * 5}%`,
+            end: `bottom ${30 - i * 2}%`,
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    // Org cards: slide in from left
+    gsap.utils.toArray('.org-card').forEach((el) => {
+      gsap.fromTo(el,
+        { x: -50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          scrollTrigger: {
+            trigger: '#solution4',
+            start: 'top 80%',
+            end: 'center 40%',
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    // Org folders: slide in from right
+    gsap.utils.toArray('.org-folder').forEach((el) => {
+      gsap.fromTo(el,
+        { x: 50, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          scrollTrigger: {
+            trigger: '#solution4',
+            start: 'top 80%',
+            end: 'center 40%',
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    // Connection lines: draw on scroll
+    document.querySelectorAll('.conn-line').forEach((line) => {
+      const length = line.getTotalLength();
+      gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
+      gsap.to(line, {
+        strokeDashoffset: 0,
+        scrollTrigger: {
+          trigger: '#solution4',
+          start: 'center 60%',
+          end: 'bottom 30%',
+          scrub: true,
+        },
+      });
     });
 
     // ── Waitlist Form Handler ──────────────────────────────
