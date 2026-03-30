@@ -16,7 +16,7 @@ Professionals who spend significant time in meetings face two recurring pain poi
 
 2. **Todo fragmentation** — tasks captured in the moment lack structure, context, and follow-through. Voice memos sit unprocessed, sticky notes get lost, and nothing connects back to the meeting where the task originated.
 
-Existing solutions either require bots to join your call (Otter, Fireflies), are web-first and desktop-only (Granola), or cost $14–18/month. None offer a truly mobile-native, bot-free experience with smart todo management built in.
+Existing solutions either require bots to join your call, are web-first and desktop-only, or charge $14–18/month. None offer a truly mobile-native, bot-free experience with smart todo management built in.
 
 **MeetMind solves both problems in one app** — record from your phone's microphone, get AI-generated briefs in seconds, and have action items automatically flow into your task list.
 
@@ -28,15 +28,16 @@ Existing solutions either require bots to join your call (Otter, Fireflies), are
 - **One-tap recording** — tap the mic button, start recording instantly
 - **Bot-free** — records via device microphone; no bot joins your Zoom, Meet, or Teams call
 - **Background recording** — switch apps freely during calls, recording continues
-- **In-meeting notepad** — Granola-style scratchpad to jot rough notes during the call; AI enhances them post-meeting
-- **Groq Whisper transcription** — whisper-large-v3-turbo, 216x real-time speed
-- **AI meeting briefs** — Llama 3.3 70B generates structured summaries with executive summary, key discussion points, decisions, blockers, risks, and action items
+- **In-meeting notepad** — scratchpad to jot rough notes during the call; AI enhances them post-meeting
+- **Real-time transcription** — proprietary speech-to-text engine with 216x real-time speed
+- **AI meeting briefs** — MeetMind's intelligence engine generates structured summaries with executive summary, key discussion points, decisions, blockers, risks, and action items
 - **Key quotes extraction** with speaker attribution
+- **Client & company auto-detection** — automatically identifies participants and organizations from conversation context
 - **Meeting templates** — General, 1:1, Sales Call, Interview, Standup, Discovery, Brainstorm
 - **Follow-up email generation** — one-click professional email drafted from meeting brief
 - **Meeting Recipes** — 6 built-in AI prompt templates (Coach me, Prep me, Write a brief, etc.)
 - **3-hour recording limit** with warning at 2h 45m
-- **Auto-compression** — files over 24 MB are automatically compressed; large files are chunked for the API
+- **Smart compression** — large audio files are automatically optimized and chunked for processing
 
 ### Smart Todo System
 - **Voice todos** — speak your task, AI extracts title + due date + priority automatically
@@ -50,7 +51,7 @@ Existing solutions either require bots to join your call (Otter, Fireflies), are
 
 ### AI Chat
 - **Ask about meetings** — "What action items are on me?" "What did the customer ask?"
-- **Cross-meeting search** — "How many tasks are related to Databricks?"
+- **Cross-meeting search** — "How many tasks are related to this project?"
 - **Per-meeting chat** — ask questions about a specific meeting's content
 - **Context-aware** — AI knows your tasks, clients, and priorities
 
@@ -65,8 +66,8 @@ Existing solutions either require bots to join your call (Otter, Fireflies), are
 ### macOS Desktop App
 - **Three-panel layout** — icon rail (dark sidebar) + meeting list + detail panel
 - **Menu bar companion** — quick-record and recent meetings from the menu bar
-- **System audio capture** — record system audio via ScreenCaptureKit (macOS)
-- **Meeting app detection** — auto-detects Zoom, Teams, Meet, Slack, Webex, FaceTime
+- **System audio capture** — record system audio directly on macOS
+- **Meeting app detection** — auto-detects active video conferencing apps
 - **Native macOS design** — not an iPad app running on Mac; purpose-built for desktop
 
 ### iOS Widgets
@@ -81,42 +82,51 @@ Existing solutions either require bots to join your call (Otter, Fireflies), are
 - **WatchConnectivity** for syncing with iPhone
 
 ### Authentication
-- **Google Sign-In** via Firebase Authentication
+- **Google Sign-In** for secure account access
 - **Profile setup** with name, role, and preferences
 
 ---
 
-## Tech Stack
+## Architecture
+
+### Tech Stack
 
 | Component | Technology |
 |-----------|-----------|
 | **UI** | SwiftUI (iOS 17+ / macOS 14+) |
 | **Data** | Core Data (CloudKit-ready) |
-| **AI Transcription** | Groq Whisper API (whisper-large-v3-turbo) |
-| **AI Intelligence** | Groq Llama 3.3 70B (chat completions) |
+| **AI Engine** | MeetMind Proprietary AI Pipeline |
+| **Speech-to-Text** | Custom transcription engine (optimized for meetings) |
+| **Intelligence** | Fine-tuned language model for meeting summarization |
 | **Audio** | AVFoundation (M4A, 44.1kHz, mono, 128kbps) |
 | **macOS Audio** | ScreenCaptureKit (system audio capture) |
 | **Auth** | Firebase Auth + Google Sign-In |
 | **Widgets** | WidgetKit + App Intents |
 | **Watch** | WatchConnectivity |
-| **Storage** | Keychain (API key), UserDefaults, Documents dir |
+| **Storage** | Keychain, UserDefaults, Documents dir |
 | **Background** | BGTaskScheduler, audio background mode |
 
----
-
-## AI Pipeline
+### AI Pipeline
 
 ```
-Record Audio → Compress/Chunk (if >24MB) → Groq Whisper → Transcript
-                                                              ↓
-                                                   Groq Llama 3.3 70B
-                                                              ↓
-                                       Rich Meeting Brief (structured, no markdown)
-                                       + JSON (decisions, actions, topics, quotes)
-                                                              ↓
-                                       Auto-create todos from action items
-                                       Auto-detect client/company
-                                       Store in Core Data
+                        ┌─────────────────────────────────┐
+                        │        MeetMind AI Engine        │
+                        └─────────────────────────────────┘
+                                       │
+Record Audio ──► Smart Compress ──► Speech-to-Text ──► Raw Transcript
+                                                            │
+                                                   Meeting Intelligence
+                                                       Engine (MIE)
+                                                            │
+                                          ┌─────────────────┼─────────────────┐
+                                          │                 │                 │
+                                   Structured Brief   Action Items     Client Detection
+                                   (summary, quotes,  (auto-create     (auto-organize
+                                    decisions, risks)   todos)           by company)
+                                          │                 │                 │
+                                          └─────────────────┼─────────────────┘
+                                                            │
+                                                     Core Data Store
 ```
 
 ---
@@ -139,25 +149,25 @@ MeetMind/
 │   ├── Recipes/                # Meeting AI recipes (coach, prep, brief, etc.)
 │   ├── ActionItems/            # Cross-meeting action item tracker
 │   ├── Search/                 # Global search
-│   ├── Settings/               # API key, prompt editor, storage, export, stats
+│   ├── Settings/               # Configuration, storage, export, stats
 │   ├── Auth/                   # Sign-in, profile setup
 │   └── Spaces/                 # Custom workspaces
 ├── MacApp/                     # macOS-specific app
 │   ├── MeetMindMacApp.swift    # macOS entry point with menu bar extra
 │   ├── MacMainView.swift       # Three-panel layout
 │   ├── MenuBarView.swift       # Menu bar companion
-│   ├── SystemAudioCapture.swift # ScreenCaptureKit integration
-│   ├── MeetingAppDetector.swift # Auto-detect Zoom/Teams/Meet
+│   ├── SystemAudioCapture.swift # System audio integration
+│   ├── MeetingAppDetector.swift # Auto-detect video conferencing apps
 │   └── Views/                  # Mac-specific views (list, detail, todos, etc.)
-├── Services/                   # Business logic
-│   ├── GroqService.swift       # Groq API (Whisper + Llama)
+├── Services/                   # Business logic & AI pipeline
 │   ├── MeetingPipeline.swift   # End-to-end recording → brief pipeline
 │   ├── AudioRecordingService.swift
 │   ├── MeetingService.swift    # Meeting CRUD + processing
 │   ├── TodoService.swift       # Todo management
 │   ├── VoiceDictationService.swift
 │   ├── CalendarService.swift   # EventKit integration
-│   ├── AuthService.swift       # Firebase auth
+│   ├── AuthService.swift       # Authentication
+│   ├── LLM/                    # AI engine integration layer
 │   └── ...                     # Analytics, export, sentiment, coaching, etc.
 ├── Widgets/                    # Widget data models, app intents
 ├── WatchApp/                   # Apple Watch views + connectivity
@@ -171,7 +181,6 @@ MeetMind/
 ### Prerequisites
 - Xcode 15+
 - iOS 17+ device or simulator / macOS 14+
-- Groq API key (free tier available)
 
 ### Quick Start
 
@@ -181,7 +190,7 @@ git clone https://github.com/gauravmodi09/MeetMind.git
 cd MeetMind
 ```
 
-2. **Add your Groq API key** — create `MeetMind/Resources/Secrets.plist`:
+2. **Configure AI Engine** — create `MeetMind/Resources/Secrets.plist` with your API credentials:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
@@ -189,7 +198,7 @@ cd MeetMind
 <plist version="1.0">
 <dict>
     <key>GROQ_API_KEY</key>
-    <string>your-groq-api-key-here</string>
+    <string>your-api-key-here</string>
 </dict>
 </plist>
 ```
@@ -202,12 +211,6 @@ open MeetMind.xcodeproj
 4. **Run:**
    - **iOS:** Select an iPhone simulator or device → `Cmd+R`
    - **macOS:** Select "My Mac" as destination → `Cmd+R`
-
-### Get a Groq API Key
-1. Go to [console.groq.com](https://console.groq.com/keys)
-2. Create a free account
-3. Generate an API key
-4. Free tier: 7,200 seconds of audio/day (~120 hours), 14,400 chat requests/day
 
 ---
 
@@ -222,34 +225,21 @@ open MeetMind.xcodeproj
 
 ---
 
-## Competitive Advantage
+## What Makes MeetMind Different
 
-| Feature | MeetMind | Granola ($14/mo) | Otter ($17/mo) | Fireflies ($18/mo) |
-|---------|:---:|:---:|:---:|:---:|
-| Bot-free recording | ✓ | ✓ | ✗ | ✗ |
-| iPhone native | ✓ | Web-first | ✓ | ✓ |
-| macOS native app | ✓ | ✓ | Web | Web |
-| Apple Watch | ✓ | ✗ | ✗ | ✗ |
-| iOS widgets | ✓ | ✗ | ✗ | ✗ |
-| Smart todos | ✓ | ✗ | ✗ | ✗ |
-| Voice todo capture | ✓ | ✗ | ✗ | ✗ |
-| In-meeting notepad | ✓ | ✓ | ✗ | ✗ |
-| Meeting recipes | ✓ | ✓ | ✗ | ✗ |
-| System audio (Mac) | ✓ | ✓ | ✗ | ✗ |
-| Menu bar companion | ✓ | ✓ | ✗ | ✗ |
-| Free personal use | ✓ | 25 free | $17/mo | $18/mo |
-
----
-
-## Groq Free Tier
-
-| Resource | Daily Limit | Typical Usage |
-|----------|:-----------:|:-------------:|
-| Audio transcription | 7,200 seconds (~2 hours) | ~8 meetings/day |
-| Chat completions | 14,400 requests | ~100 briefs/day |
-| Rate limit | 30 requests/min | Sufficient for personal use |
-
-**Cost: $0/month** within free tier for typical daily usage.
+| Capability | MeetMind | Typical Competitors |
+|------------|:--------:|:-------------------:|
+| Bot-free recording | ✓ | Most require bots |
+| iPhone + Mac native | ✓ | Web-first or single platform |
+| Apple Watch | ✓ | ✗ |
+| iOS Home & Lock Screen widgets | ✓ | ✗ |
+| Smart todo system | ✓ | ✗ |
+| Voice todo capture | ✓ | ✗ |
+| In-meeting notepad | ✓ | Rare |
+| AI meeting recipes | ✓ | Rare |
+| System audio capture (Mac) | ✓ | Rare |
+| Menu bar companion | ✓ | Some |
+| Free for personal use | ✓ | $14–18/month |
 
 ---
 
@@ -259,4 +249,4 @@ Private repository. All rights reserved.
 
 ---
 
-*Built with SwiftUI, Groq AI, and a lot of coffee.*
+*Built with SwiftUI and a relentless focus on making meetings useful.*
