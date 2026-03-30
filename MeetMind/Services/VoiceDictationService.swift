@@ -14,13 +14,7 @@ class VoiceDictationService: ObservableObject {
     @Published var currentText: String = ""
     @Published var isAuthorized: Bool = false
 
-    private var audioEngine = AVAudioEngine()
-
-    // iOS 26+ SpeechAnalyzer
-    private var speechAnalyzer: Any? // Type-erased to avoid @available on stored property
-    private var analyzerTask: Task<Void, Never>?
-
-    // iOS 17-25 fallback
+    private var audioEngine: AVAudioEngine?
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -41,6 +35,37 @@ class VoiceDictationService: ObservableObject {
         return isAuthorized
     }
 
+    // MARK: - One-shot Start
+
+    /// Authorize speech + mic, configure audio session, then start dictation.
+    func requestAndStart() async {
+        guard state == .idle else { return }
+
+        // 1. Speech recognition authorization
+        if !isAuthorized {
+            _ = await requestAuthorization()
+        }
+        guard isAuthorized else {
+            print("[VoiceDictation] Speech recognition not authorized")
+            return
+        }
+
+        // 2. Microphone permission
+        let micStatus = AVAudioApplication.shared.recordPermission
+        if micStatus == .undetermined {
+            let granted = await AVAudioApplication.requestRecordPermission()
+            guard granted else {
+                print("[VoiceDictation] Microphone permission denied")
+                return
+            }
+        } else if micStatus == .denied {
+            print("[VoiceDictation] Microphone permission denied")
+            return
+        }
+
+        startDictation()
+    }
+
     // MARK: - Start Dictation
 
     func startDictation() {
@@ -48,93 +73,50 @@ class VoiceDictationService: ObservableObject {
 
         currentText = ""
 
-        if #available(iOS 26.0, *) {
-            startSpeechAnalyzer()
-        } else {
-            startSFSpeechRecognizer()
+        // Configure audio session
+        #if os(iOS)
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothA2DP])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print("[VoiceDictation] Failed to configure audio session: \(error)")
+            return
         }
+        #endif
+
+        startSFSpeechRecognizer()
     }
 
     // MARK: - Stop Dictation
 
     func stopDictation() {
+        guard state != .idle else { return }
         state = .finishing
 
-        if audioEngine.isRunning {
-            audioEngine.stop()
-            audioEngine.inputNode.removeTap(onBus: 0)
+        // Stop engine first
+        if let engine = audioEngine, engine.isRunning {
+            engine.stop()
+            engine.inputNode.removeTap(onBus: 0)
         }
+        audioEngine = nil
 
-        if #available(iOS 26.0, *) {
-            analyzerTask?.cancel()
-            analyzerTask = nil
-            speechAnalyzer = nil
-        } else {
-            recognitionRequest?.endAudio()
-            recognitionRequest = nil
-            recognitionTask?.cancel()
-            recognitionTask = nil
-            speechRecognizer = nil
-        }
+        // End recognition
+        recognitionRequest?.endAudio()
+        recognitionRequest = nil
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        speechRecognizer = nil
+
+        // Deactivate audio session
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
 
         state = .idle
     }
 
-    // MARK: - iOS 26+ SpeechAnalyzer
-
-    @available(iOS 26.0, *)
-    private func startSpeechAnalyzer() {
-        let transcriber = DictationTranscriber(
-            locale: .current,
-            preset: .progressiveShortDictation
-        )
-
-        do {
-            let inputNode = audioEngine.inputNode
-            let recordingFormat = inputNode.outputFormat(forBus: 0)
-            inputNode.removeTap(onBus: 0)
-
-            // Create async stream of AnalyzerInput from audio engine
-            let (stream, continuation) = AsyncStream<AnalyzerInput>.makeStream()
-
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
-                let input = AnalyzerInput(buffer: buffer)
-                continuation.yield(input)
-            }
-
-            let analyzer = SpeechAnalyzer(
-                inputSequence: stream,
-                modules: [transcriber]
-            )
-
-            speechAnalyzer = analyzer
-            audioEngine.prepare()
-            try audioEngine.start()
-            state = .listening
-
-            // Consume results
-            analyzerTask = Task {
-                do {
-                    for try await result in transcriber.results {
-                        let text = String(result.text.characters)
-                        self.currentText = text
-                    }
-                } catch {
-                    if !Task.isCancelled {
-                        print("[VoiceDictation] SpeechAnalyzer error: \(error)")
-                    }
-                }
-                self.state = .idle
-            }
-
-            print("[VoiceDictation] Started SpeechAnalyzer dictation")
-        } catch {
-            print("[VoiceDictation] Failed to start SpeechAnalyzer: \(error)")
-            state = .idle
-        }
-    }
-
-    // MARK: - iOS 17-25 SFSpeechRecognizer Fallback
+    // MARK: - SFSpeechRecognizer (all iOS versions)
 
     private func startSFSpeechRecognizer() {
         let recognizer = SFSpeechRecognizer(locale: .current)
@@ -144,15 +126,47 @@ class VoiceDictationService: ObservableObject {
         }
 
         speechRecognizer = recognizer
+
         let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-
         if recognizer.supportsOnDeviceRecognition {
             request.requiresOnDeviceRecognition = true
         }
-
         recognitionRequest = request
 
+        // Create a fresh audio engine
+        let engine = AVAudioEngine()
+        audioEngine = engine
+
+        // Set up audio engine BEFORE starting recognition
+        let inputNode = engine.inputNode
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+
+        // Validate format
+        guard recordingFormat.channelCount > 0, recordingFormat.sampleRate > 0 else {
+            print("[VoiceDictation] Invalid audio format: ch=\(recordingFormat.channelCount) sr=\(recordingFormat.sampleRate)")
+            recognitionRequest = nil
+            return
+        }
+
+        // Install tap — capture `request` directly to avoid @MainActor crossing
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
+            request.append(buffer)
+        }
+
+        engine.prepare()
+
+        do {
+            try engine.start()
+        } catch {
+            print("[VoiceDictation] Failed to start audio engine: \(error)")
+            inputNode.removeTap(onBus: 0)
+            audioEngine = nil
+            recognitionRequest = nil
+            return
+        }
+
+        // Start recognition task AFTER engine is running
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
             Task { @MainActor [weak self] in
                 guard let self else { return }
@@ -167,22 +181,7 @@ class VoiceDictationService: ObservableObject {
             }
         }
 
-        do {
-            let inputNode = audioEngine.inputNode
-            let recordingFormat = inputNode.outputFormat(forBus: 0)
-            inputNode.removeTap(onBus: 0)
-
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
-                self?.recognitionRequest?.append(buffer)
-            }
-
-            audioEngine.prepare()
-            try audioEngine.start()
-            state = .listening
-            print("[VoiceDictation] Started SFSpeechRecognizer fallback")
-        } catch {
-            print("[VoiceDictation] Failed to start audio engine: \(error)")
-            stopDictation()
-        }
+        state = .listening
+        print("[VoiceDictation] Dictation started successfully")
     }
 }

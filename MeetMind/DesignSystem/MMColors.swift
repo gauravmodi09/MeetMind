@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct MMColors {
     // MARK: - Brand

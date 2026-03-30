@@ -76,6 +76,7 @@ struct QuickNoteEditorView: View {
 
     @State private var note: QuickNote
     @State private var isNew: Bool
+    @State private var contentBeforeDictation: String = ""
     @FocusState private var isContentFocused: Bool
 
     init(note: QuickNote? = nil) {
@@ -87,60 +88,10 @@ struct QuickNoteEditorView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Top bar
-            HStack {
-                Button {
-                    saveAndDismiss()
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .medium))
-                        Image(systemName: "house")
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                    .foregroundColor(MMColors.textTertiary)
-                    .padding(8)
-                    .background(MMColors.cardBg)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(MMColors.border, lineWidth: 1)
-                    )
-                }
-
-                Spacer()
-
-                // More options
-                Menu {
-                    Button(role: .destructive) {
-                        if !isNew {
-                            noteService.delete(note)
-                        }
-                        dismiss()
-                    } label: {
-                        Label("Delete Note", systemImage: "trash")
-                    }
-
-                    Button {
-                        UIPasteboard.general.string = note.content
-                    } label: {
-                        Label("Copy Text", systemImage: "doc.on.doc")
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(MMColors.textTertiary)
-                        .frame(width: 32, height: 32)
-                        .background(MMColors.cardBg)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(MMColors.border, lineWidth: 1)
-                        )
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
+            topBar
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
             // Note content area — fills remaining space
             ScrollView {
@@ -184,7 +135,12 @@ struct QuickNoteEditorView: View {
                         .fill(MMColors.border)
                         .frame(height: 1)
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 12)
+                        .padding(.bottom, 4)
+
+                    // Formatting toolbar
+                    formattingToolbar
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 8)
 
                     // Content editor
                     ZStack(alignment: .topLeading) {
@@ -210,7 +166,7 @@ struct QuickNoteEditorView: View {
             }
             .layoutPriority(1)
 
-            // Bottom bar — Granola-style
+            // Bottom bar
             bottomBar
         }
         .background(MMColors.background)
@@ -221,7 +177,21 @@ struct QuickNoteEditorView: View {
         }
         .onChange(of: dictation.currentText) { _, newText in
             if dictation.state == .listening && !newText.isEmpty {
-                note.content = newText
+                // APPEND dictated text to what was there before dictation started
+                if contentBeforeDictation.isEmpty {
+                    note.content = newText
+                } else {
+                    note.content = contentBeforeDictation + "\n" + newText
+                }
+            }
+        }
+        .onChange(of: dictation.state) { _, newState in
+            if newState == .listening {
+                // Save existing content before dictation starts
+                contentBeforeDictation = note.content
+            } else if newState == .idle {
+                // Dictation ended — reset prefix so next session appends fresh
+                contentBeforeDictation = note.content
             }
         }
         .task {
@@ -229,7 +199,136 @@ struct QuickNoteEditorView: View {
                 _ = await dictation.requestAuthorization()
             }
         }
+#if os(iOS)
         .navigationBarHidden(true)
+#endif
+    }
+
+    // MARK: - Top Bar
+
+    private var topBar: some View {
+        HStack {
+            Button {
+                saveAndDismiss()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .medium))
+                    Image(systemName: "house")
+                        .font(.system(size: 14, weight: .medium))
+                }
+                .foregroundColor(MMColors.textTertiary)
+                .padding(8)
+                .background(MMColors.cardBg)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(MMColors.border, lineWidth: 1)
+                )
+            }
+
+            Spacer()
+
+            // Word count
+            if !note.content.isEmpty {
+                let words = note.content.split(separator: " ").count
+                Text("\(words) words")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundColor(MMColors.textTertiary)
+            }
+
+            // More options
+            Menu {
+                Button(role: .destructive) {
+                    if !isNew {
+                        noteService.delete(note)
+                    }
+                    dismiss()
+                } label: {
+                    Label("Delete Note", systemImage: "trash")
+                }
+
+                Button {
+#if os(iOS)
+                    UIPasteboard.general.string = note.content
+#else
+                    NSPasteboard.general.clearContents()
+                    NSPasteboard.general.setString(note.content, forType: .string)
+#endif
+                } label: {
+                    Label("Copy Text", systemImage: "doc.on.doc")
+                }
+
+                Button {
+                    insertTimestamp()
+                } label: {
+                    Label("Insert Timestamp", systemImage: "clock")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(MMColors.textTertiary)
+                    .frame(width: 32, height: 32)
+                    .background(MMColors.cardBg)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(MMColors.border, lineWidth: 1)
+                    )
+            }
+        }
+    }
+
+    // MARK: - Formatting Toolbar
+
+    private var formattingToolbar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                formatButton(icon: "list.bullet", label: "Bullet") {
+                    insertText("\n\u{2022} ")
+                }
+                formatButton(icon: "number", label: "Heading") {
+                    insertText("\n## ")
+                }
+                formatButton(icon: "bold", label: "Bold") {
+                    wrapSelection(with: "**")
+                }
+                formatButton(icon: "highlighter", label: "Highlight") {
+                    insertText("\n\u{1F7E1} ")
+                }
+                formatButton(icon: "arrow.right", label: "Action") {
+                    insertText("\n\u{27A1}\u{FE0F} ACTION: ")
+                }
+                formatButton(icon: "questionmark.diamond", label: "Question") {
+                    insertText("\n\u{2753} ")
+                }
+                formatButton(icon: "checkmark.square", label: "Checkbox") {
+                    insertText("\n\u{2610} ")
+                }
+                formatButton(icon: "minus", label: "Divider") {
+                    insertText("\n---\n")
+                }
+            }
+        }
+    }
+
+    private func formatButton(icon: String, label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 2) {
+                Image(systemName: icon)
+                    .font(.system(size: 13, weight: .medium))
+                Text(label)
+                    .font(.system(size: 9, weight: .medium))
+            }
+            .foregroundColor(MMColors.textSecondary)
+            .frame(width: 48, height: 38)
+            .background(MMColors.cardBg)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(MMColors.border, lineWidth: 1)
+            )
+        }
     }
 
     // MARK: - Tag Pill
@@ -266,15 +365,7 @@ struct QuickNoteEditorView: View {
                         dictation.stopDictation()
                     } else {
                         Task {
-                            if !dictation.isAuthorized {
-                                _ = await dictation.requestAuthorization()
-                            }
-                            if dictation.isAuthorized {
-                                let session = AVAudioSession.sharedInstance()
-                                try? session.setCategory(.playAndRecord, mode: .default)
-                                try? session.setActive(true)
-                                dictation.startDictation()
-                            }
+                            await dictation.requestAndStart()
                         }
                     }
                 } label: {
@@ -334,7 +425,31 @@ struct QuickNoteEditorView: View {
         }
     }
 
+    // MARK: - Helpers
+
+    private func insertText(_ text: String) {
+        note.content += text
+        isContentFocused = true
+    }
+
+    private func wrapSelection(with marker: String) {
+        // For plain TextEditor, just insert markers at cursor (append)
+        note.content += " \(marker)text\(marker) "
+        isContentFocused = true
+    }
+
+    private func insertTimestamp() {
+        let f = DateFormatter()
+        f.dateFormat = "h:mm a"
+        note.content += "\n[\(f.string(from: Date()))] "
+        isContentFocused = true
+    }
+
     private func saveAndDismiss() {
+        if dictation.state == .listening {
+            dictation.stopDictation()
+        }
+
         // Auto-title if empty
         if note.title.isEmpty {
             let f = DateFormatter()
@@ -369,7 +484,13 @@ struct QuickNotesListView: View {
             }
             .navigationTitle("Notes")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+#if os(iOS)
+                    return .navigationBarTrailing
+#else
+                    return .automatic
+#endif
+                }()) {
                     Button {
                         showNewNote = true
                     } label: {
@@ -379,12 +500,21 @@ struct QuickNotesListView: View {
                     }
                 }
             }
+#if os(iOS)
             .fullScreenCover(isPresented: $showNewNote) {
                 QuickNoteEditorView()
             }
             .fullScreenCover(item: $selectedNote) { note in
                 QuickNoteEditorView(note: note)
             }
+#else
+            .sheet(isPresented: $showNewNote) {
+                QuickNoteEditorView()
+            }
+            .sheet(item: $selectedNote) { note in
+                QuickNoteEditorView(note: note)
+            }
+#endif
         }
     }
 

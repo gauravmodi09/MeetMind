@@ -33,7 +33,9 @@ struct MMButton: View {
 
     var body: some View {
         Button {
+            #if os(iOS)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            #endif
             action()
         } label: {
             HStack(spacing: 8) {

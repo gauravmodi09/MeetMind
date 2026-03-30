@@ -29,7 +29,12 @@ struct ClientMeetingsView: View {
                                     meeting: meeting,
                                     onCopy: {
                                         let brief = MeetingBriefFormatter.format(meeting: meeting)
+                                        #if os(iOS)
                                         UIPasteboard.general.string = brief
+                                        #else
+                                        NSPasteboard.general.clearContents()
+                                        NSPasteboard.general.setString(brief, forType: .string)
+                                        #endif
                                     },
                                     onChangeClient: { newClient in
                                         meetingService.updateMeetingClient(meeting, newClient: newClient)
@@ -45,10 +50,18 @@ struct ClientMeetingsView: View {
                 }
             }
         }
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: {
+                #if os(iOS)
+                return .navigationBarLeading
+                #else
+                return .automatic
+                #endif
+            }()) {
                 Button {
                     dismiss()
                 } label: {

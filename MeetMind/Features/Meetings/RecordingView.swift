@@ -361,12 +361,13 @@ struct RecordingView: View {
     // MARK: - Actions
 
     private func startRecording() {
-        switch AVAudioSession.sharedInstance().recordPermission {
+        switch AVAudioApplication.shared.recordPermission {
         case .granted:
             doStartRecording()
         case .undetermined:
-            AVAudioSession.sharedInstance().requestRecordPermission { granted in
-                DispatchQueue.main.async {
+            Task {
+                let granted = await AVAudioApplication.requestRecordPermission()
+                await MainActor.run {
                     if granted {
                         doStartRecording()
                     } else {

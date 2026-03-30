@@ -25,7 +25,13 @@ struct PeopleView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarTrailing
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     if !viewModel.people.isEmpty {
                         Button {
                             viewModel.extractPeople(from: meetingService.meetings)
@@ -210,7 +216,9 @@ struct PersonDetailView: View {
             }
         }
         .navigationTitle(person.name)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 

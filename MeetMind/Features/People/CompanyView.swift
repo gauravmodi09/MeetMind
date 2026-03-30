@@ -223,7 +223,9 @@ struct CompanyDetailView: View {
             }
         }
         .navigationTitle(company.name)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     private func statBadge(value: String, label: String) -> some View {

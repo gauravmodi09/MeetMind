@@ -56,7 +56,13 @@ struct RecipesView: View {
             .background(MMColors.background)
             .navigationTitle("Recipes")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarTrailing
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button {
                         showCreateRecipe = true
                     } label: {
@@ -185,9 +191,17 @@ struct MeetingPickerForRecipe: View {
                 }
             }
             .navigationTitle("Apply Recipe")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarLeading
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button("Cancel") { dismiss() }
                 }
             }
@@ -253,12 +267,26 @@ struct CreateRecipeView: View {
                 }
             }
             .navigationTitle("Create Recipe")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarLeading
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button("Cancel") { dismiss() }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarTrailing
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button("Save") {
                         let recipe = MeetingRecipe(
                             name: name,

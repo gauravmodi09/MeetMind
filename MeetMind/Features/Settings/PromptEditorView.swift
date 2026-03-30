@@ -26,7 +26,11 @@ struct PromptEditorView: View {
                 .font(.system(.body, design: .monospaced))
                 .padding(8)
                 .scrollContentBackground(.hidden)
+                #if os(iOS)
                 .background(Color(.systemGroupedBackground))
+                #else
+                .background(Color(nsColor: .controlBackgroundColor))
+                #endif
 
             Divider()
 
@@ -58,7 +62,9 @@ struct PromptEditorView: View {
             .padding()
         }
         .navigationTitle("AI Prompt")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .onAppear {
             editablePrompt = savedPrompt.isEmpty ? PromptPresets.defaultPrompt : savedPrompt
         }

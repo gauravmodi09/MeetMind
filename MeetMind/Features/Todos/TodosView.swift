@@ -58,7 +58,13 @@ struct TodosView: View {
             }
             .navigationTitle("Todos")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarTrailing
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     HStack(spacing: 4) {
                         if todoService.pendingCount > 0 {
                             Text("\(todoService.pendingCount)")
@@ -218,12 +224,12 @@ struct TodosView: View {
             // Timer
             Text(voiceFormattedDuration)
                 .font(MMTypography.monoMedium)
-                .foregroundColor(.white)
+                .foregroundColor(MMColors.textPrimary)
                 .fixedSize()
 
             Text("Listening...")
                 .font(MMTypography.footnoteMedium)
-                .foregroundColor(.white.opacity(0.6))
+                .foregroundColor(MMColors.recording)
                 .lineLimit(1)
 
             Spacer(minLength: 4)
@@ -253,7 +259,7 @@ struct TodosView: View {
             } label: {
                 Image(systemName: "xmark")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(MMColors.textTertiary)
             }
         }
     }
@@ -267,7 +273,7 @@ struct TodosView: View {
 
             Text("Processing your voice...")
                 .font(MMTypography.footnoteMedium)
-                .foregroundColor(.white.opacity(0.7))
+                .foregroundColor(MMColors.textSecondary)
 
             Spacer()
         }
@@ -276,6 +282,7 @@ struct TodosView: View {
     // MARK: - Inline Voice Recording Logic
 
     private func startInlineRecording() {
+        #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(.playAndRecord, mode: .default)
@@ -283,6 +290,7 @@ struct TodosView: View {
         } catch {
             return
         }
+        #endif
 
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("voice_todo_\(UUID().uuidString).m4a")
         let settings: [String: Any] = [
@@ -299,7 +307,9 @@ struct TodosView: View {
             voicePulse = true
             voiceDuration = 0
 
+            #if os(iOS)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            #endif
 
             voiceTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
                 Task { @MainActor in
@@ -321,7 +331,9 @@ struct TodosView: View {
         isVoiceRecording = false
         isVoiceProcessing = true
 
+        #if os(iOS)
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        #endif
 
         Task {
             guard let fileURL = url else {
@@ -350,8 +362,15 @@ struct TodosView: View {
                     source: .voice
                 )
 
+                // Save detailed notes if AI extracted them
+                if let notes = parsed.notes, !notes.isEmpty, let todo = todoService.todos.last {
+                    UserDefaults.standard.set(notes, forKey: "todo_notes_\(todo.id.uuidString)")
+                }
+
                 print("[VoiceTodo] Task created: \(parsed.task)")
+                #if os(iOS)
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
+                #endif
             } catch {
                 print("[VoiceTodo] ERROR: \(error)")
                 showVoiceCapture = true
@@ -384,6 +403,7 @@ struct TodosView: View {
 struct UpcomingView: View {
     @EnvironmentObject var todoService: TodoService
     @State private var selectedDay: Date = Calendar.current.startOfDay(for: Date())
+    @State private var selectedTodoId: UUID?
 
     private let calendar = Calendar.current
 
@@ -436,25 +456,25 @@ struct UpcomingView: View {
                             .listRowSeparator(.hidden)
                         } else {
                             ForEach(dayTodos) { todo in
-                                NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
-                                    TodoRow(
-                                        todo: todo,
-                                        onToggle: {
-                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                todoService.toggleComplete(todo)
-                                            }
-                                        },
-                                        onReschedule: { date in
-                                            todoService.reschedule(todo, to: date)
-                                        },
-                                        onDelete: {
-                                            withAnimation {
-                                                todoService.deleteTodo(todo)
-                                            }
+                                TodoRow(
+                                    todo: todo,
+                                    onToggle: {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            todoService.toggleComplete(todo)
                                         }
-                                    )
-                                }
-                                .buttonStyle(.plain)
+                                    },
+                                    onReschedule: { date in
+                                        todoService.reschedule(todo, to: date)
+                                    },
+                                    onDelete: {
+                                        withAnimation {
+                                            todoService.deleteTodo(todo)
+                                        }
+                                    },
+                                    onTap: {
+                                        selectedTodoId = todo.id
+                                    }
+                                )
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                             }
@@ -482,6 +502,15 @@ struct UpcomingView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
+            .navigationDestination(isPresented: Binding(
+                get: { selectedTodoId != nil },
+                set: { if !$0 { selectedTodoId = nil } }
+            )) {
+                if let todoId = selectedTodoId {
+                    TodoDetailView(todoId: todoId)
+                        .environmentObject(todoService)
+                }
+            }
             .refreshable {
                 todoService.loadTodos()
             }
@@ -573,6 +602,7 @@ struct AllTodosView: View {
     @Binding var priorityFilter: TodoPriority?
     @State private var sortOption: TodoSortOption = .priority
     @State private var showCompleted = false
+    @State private var selectedTodoId: UUID?
 
     private var filtered: [TodoItem] {
         todoService.allTodos(clientFilter: clientFilter, priorityFilter: priorityFilter)
@@ -681,7 +711,36 @@ struct AllTodosView: View {
                     if !pendingTodos.isEmpty {
                         Section {
                             ForEach(pendingTodos) { todo in
-                                NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
+                                TodoRow(
+                                    todo: todo,
+                                    onToggle: {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            todoService.toggleComplete(todo)
+                                        }
+                                    },
+                                    onReschedule: { date in
+                                        todoService.reschedule(todo, to: date)
+                                    },
+                                    onDelete: {
+                                        withAnimation {
+                                            todoService.deleteTodo(todo)
+                                        }
+                                    },
+                                    onTap: {
+                                        selectedTodoId = todo.id
+                                    }
+                                )
+                                .listRowInsets(EdgeInsets())
+                                .listRowSeparator(.hidden)
+                            }
+                        }
+                    }
+
+                    // Completed section (collapsible)
+                    if !completedTodos.isEmpty {
+                        Section {
+                            if showCompleted {
+                                ForEach(completedTodos) { todo in
                                     TodoRow(
                                         todo: todo,
                                         onToggle: {
@@ -696,40 +755,11 @@ struct AllTodosView: View {
                                             withAnimation {
                                                 todoService.deleteTodo(todo)
                                             }
+                                        },
+                                        onTap: {
+                                            selectedTodoId = todo.id
                                         }
                                     )
-                                }
-                                .buttonStyle(.plain)
-                                .listRowInsets(EdgeInsets())
-                                .listRowSeparator(.hidden)
-                            }
-                        }
-                    }
-
-                    // Completed section (collapsible)
-                    if !completedTodos.isEmpty {
-                        Section {
-                            if showCompleted {
-                                ForEach(completedTodos) { todo in
-                                    NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
-                                        TodoRow(
-                                            todo: todo,
-                                            onToggle: {
-                                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                                    todoService.toggleComplete(todo)
-                                                }
-                                            },
-                                            onReschedule: { date in
-                                                todoService.reschedule(todo, to: date)
-                                            },
-                                            onDelete: {
-                                                withAnimation {
-                                                    todoService.deleteTodo(todo)
-                                                }
-                                            }
-                                        )
-                                    }
-                                    .buttonStyle(.plain)
                                     .listRowInsets(EdgeInsets())
                                     .listRowSeparator(.hidden)
                                 }
@@ -767,6 +797,15 @@ struct AllTodosView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
+                .navigationDestination(isPresented: Binding(
+                    get: { selectedTodoId != nil },
+                    set: { if !$0 { selectedTodoId = nil } }
+                )) {
+                    if let todoId = selectedTodoId {
+                        TodoDetailView(todoId: todoId)
+                            .environmentObject(todoService)
+                    }
+                }
             }
         }
     }

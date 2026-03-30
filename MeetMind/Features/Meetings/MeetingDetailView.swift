@@ -186,7 +186,7 @@ struct MeetingDetailView: View {
                                 MMButton("Send to Teams", icon: "paperplane.fill", style: .secondary) {
                                     Task {
                                         let items = meeting.briefActionItems.map { "\($0.text) (\($0.owner))" }
-                                        await TeamsIntegrationService.shared.sendToTeams(
+                                        _ = await TeamsIntegrationService.shared.sendToTeams(
                                             title: meeting.title,
                                             summary: meeting.briefSummary ?? "",
                                             actionItems: items,
@@ -233,10 +233,18 @@ struct MeetingDetailView: View {
             }
         }
         .background(MMColors.background.ignoresSafeArea())
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: {
+                #if os(iOS)
+                return .navigationBarLeading
+                #else
+                return .automatic
+                #endif
+            }()) {
                 Button {
                     dismiss()
                 } label: {
@@ -250,10 +258,12 @@ struct MeetingDetailView: View {
                 }
             }
         }
+        #if os(iOS)
         .sheet(isPresented: $showShareSheet) {
             ShareSheet(items: shareItems)
                 .presentationDetents([.medium, .large])
         }
+        #endif
         .sheet(isPresented: $showMeetingChat) {
             MeetingChatSheet(meeting: meeting)
                 .presentationDetents([.large])
@@ -1075,7 +1085,12 @@ struct MeetingDetailView: View {
 
     private func copyBrief() {
         let brief = MeetingBriefFormatter.format(meeting: meeting)
+        #if os(iOS)
         UIPasteboard.general.string = brief
+        #else
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(brief, forType: .string)
+        #endif
         copiedBrief = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             copiedBrief = false
@@ -1092,7 +1107,11 @@ struct MeetingDetailView: View {
         body = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         if let url = URL(string: "mailto:?subject=\(encodedSubject)&body=\(body)") {
+            #if os(iOS)
             UIApplication.shared.open(url)
+            #else
+            NSWorkspace.shared.open(url)
+            #endif
         }
     }
 
@@ -1121,13 +1140,19 @@ struct MeetingDetailView: View {
             text += "\n"
         }
 
+        #if os(iOS)
         UIPasteboard.general.string = text
+        #else
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(text, forType: .string)
+        #endif
         copiedNotion = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             copiedNotion = false
         }
     }
 
+    #if os(iOS)
     private var shareItems: [Any] {
         var text = "\u{1F4CB} \(meeting.title)\n"
         text += "\u{1F4C5} \(formattedDate) \u{00B7} \(formattedDuration)\n\n"
@@ -1161,6 +1186,7 @@ struct MeetingDetailView: View {
         )
         return [textFileItem]
     }
+    #endif
 }
 
 // MARK: - Transcript Text View

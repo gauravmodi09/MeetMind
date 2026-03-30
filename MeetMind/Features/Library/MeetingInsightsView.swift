@@ -32,7 +32,9 @@ struct MeetingInsightsView: View {
             }
         }
         .navigationTitle("Meeting Intelligence")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .onAppear {
             withAnimation(.easeOut(duration: 0.6)) {
                 appeared = true

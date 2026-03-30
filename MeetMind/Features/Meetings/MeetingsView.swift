@@ -59,7 +59,9 @@ struct MeetingsView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 2) {
@@ -72,6 +74,7 @@ struct MeetingsView: View {
                     }
                 }
             }
+            #if os(iOS)
             .fullScreenCover(isPresented: $showRecording) {
                 RecordingView(
                     onStop: { meeting in
@@ -101,6 +104,37 @@ struct MeetingsView: View {
                 )
                 .environmentObject(meetingService)
             }
+            #else
+            .sheet(isPresented: $showRecording) {
+                RecordingView(
+                    onStop: { meeting in
+                        showRecording = false
+                        if let meeting {
+                            processingMeeting = meeting
+                            showProcessing = true
+                            Task {
+                                await meetingService.stopRecording()
+                                await MainActor.run {
+                                    showProcessing = false
+                                    processingMeeting = nil
+                                    if let completed = meetingService.meetings.first(where: { $0.status == .complete }) {
+                                        selectedMeeting = completed
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    onCancel: {
+                        showRecording = false
+                        meetingService.cancelRecording()
+                    },
+                    onMinimize: {
+                        showRecording = false
+                    }
+                )
+                .environmentObject(meetingService)
+            }
+            #endif
             .sheet(isPresented: $showMeetingPrep) {
                 MeetingPrepView(
                     clientName: nil,
@@ -125,9 +159,15 @@ struct MeetingsView: View {
                     SpacesView()
                 }
             }
+            #if os(iOS)
             .fullScreenCover(isPresented: $showQuickNote) {
                 QuickNoteEditorView()
             }
+            #else
+            .sheet(isPresented: $showQuickNote) {
+                QuickNoteEditorView()
+            }
+            #endif
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }
@@ -140,8 +180,10 @@ struct MeetingsView: View {
                 Button("Cancel", role: .cancel) { meetingToDelete = nil }
                 Button("Delete", role: .destructive) {
                     if let meeting = meetingToDelete {
+                        #if os(iOS)
                         let generator = UINotificationFeedbackGenerator()
                         generator.notificationOccurred(.warning)
+                        #endif
                         meetingService.deleteMeeting(meeting)
                         meetingToDelete = nil
                     }
@@ -705,12 +747,19 @@ struct MeetingsView: View {
 
     private func copyBrief(for meeting: Meeting) {
         let brief = MeetingBriefFormatter.format(meeting: meeting)
+        #if os(iOS)
         UIPasteboard.general.string = brief
+        #else
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(brief, forType: .string)
+        #endif
         copiedMeetingId = meeting.id
 
         // Haptic feedback
+        #if os(iOS)
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        #endif
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             if copiedMeetingId == meeting.id {

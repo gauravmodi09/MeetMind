@@ -105,10 +105,98 @@ struct SettingsView: View {
                         }
                     }
 
-                    // MARK: - AI Configuration
-                    settingsSection(header: "AI CONFIGURATION") {
+                    // MARK: - Library
+                    settingsSection(header: "LIBRARY") {
+                        NavigationLink {
+                            LibraryView()
+                        } label: {
+                            HStack(spacing: 12) {
+                                ZStack {
+                                    Circle()
+                                        .fill(MMColors.info.opacity(0.12))
+                                        .frame(width: 36, height: 36)
+                                    Image(systemName: "folder.fill")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(MMColors.info)
+                                }
+
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Meeting Library")
+                                        .font(.system(size: 15, weight: .medium))
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Text("Browse all meetings, briefs & transcripts")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(MMColors.textTertiary)
+                            }
+                            .padding(14)
+                        }
+                    }
+
+                    // MARK: - Stats & Activity
+                    settingsSection(header: "STATS & ACTIVITY") {
                         VStack(spacing: 0) {
-                            // API Key row
+                            NavigationLink {
+                                StatsView()
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "flame.fill")
+                                        .foregroundColor(MMColors.warning)
+                                        .frame(width: 20)
+                                    Text("Productivity Stats & Streaks")
+                                        .font(MMTypography.body)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                            }
+
+                            sectionDivider
+
+                            let eventCounts = analytics.getAllEventCounts().filter { $0.count > 0 }
+                            if eventCounts.isEmpty {
+                                Text("No activity yet")
+                                    .font(MMTypography.footnote)
+                                    .foregroundColor(MMColors.textSecondary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 14)
+                            } else {
+                                ForEach(Array(eventCounts.enumerated()), id: \.element.event) { index, item in
+                                    HStack {
+                                        Text(item.event.displayName)
+                                            .font(MMTypography.body)
+                                            .foregroundColor(MMColors.textPrimary)
+                                        Spacer()
+                                        Text("\(item.count)")
+                                            .font(MMTypography.body)
+                                            .foregroundColor(MMColors.textSecondary)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 14)
+
+                                    if index < eventCounts.count - 1 {
+                                        sectionDivider
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // MARK: - AI & Processing
+                    settingsSection(header: "AI & PROCESSING") {
+                        VStack(spacing: 0) {
+                            // Groq API Key
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Groq API Key")
@@ -133,7 +221,7 @@ struct SettingsView: View {
 
                             sectionDivider
 
-                            // Gemini API Key row
+                            // Gemini API Key
                             HStack {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("Gemini API Key")
@@ -164,181 +252,10 @@ struct SettingsView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 10)
-                        }
-                    }
-
-                    // MARK: - Calendar Integration
-                    settingsSection(header: "CALENDAR INTEGRATION") {
-                        VStack(spacing: 0) {
-                            // Google Calendar
-                            Button {
-                                // Open iPhone Settings to add Google account
-                                if let url = URL(string: UIApplication.openSettingsURLString) {
-                                    UIApplication.shared.open(url)
-                                }
-                            } label: {
-                                HStack(spacing: 12) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.blue.opacity(0.12))
-                                            .frame(width: 36, height: 36)
-                                        Image(systemName: "g.circle.fill")
-                                            .font(.system(size: 20))
-                                            .foregroundColor(.blue)
-                                    }
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Google Calendar")
-                                            .font(MMTypography.bodyMedium)
-                                            .foregroundColor(MMColors.textPrimary)
-                                        Text("Add Google account in iPhone Settings to sync")
-                                            .font(MMTypography.caption1)
-                                            .foregroundColor(MMColors.textSecondary)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "arrow.up.right")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(MMColors.textTertiary)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-                            }
 
                             sectionDivider
 
-                            // Outlook Calendar
-                            Button {
-                                if let url = URL(string: UIApplication.openSettingsURLString) {
-                                    UIApplication.shared.open(url)
-                                }
-                            } label: {
-                                HStack(spacing: 12) {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.orange.opacity(0.12))
-                                            .frame(width: 36, height: 36)
-                                        Image(systemName: "envelope.fill")
-                                            .font(.system(size: 16))
-                                            .foregroundColor(.orange)
-                                    }
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("Outlook Calendar")
-                                            .font(MMTypography.bodyMedium)
-                                            .foregroundColor(MMColors.textPrimary)
-                                        Text("Add Microsoft account in iPhone Settings to sync")
-                                            .font(MMTypography.caption1)
-                                            .foregroundColor(MMColors.textSecondary)
-                                    }
-                                    Spacer()
-                                    Image(systemName: "arrow.up.right")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(MMColors.textTertiary)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-                            }
-
-                            sectionDivider
-
-                            // Calendar permission status
-                            HStack(spacing: 12) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(MMColors.success.opacity(0.12))
-                                        .frame(width: 36, height: 36)
-                                    Image(systemName: "calendar.badge.checkmark")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(MMColors.success)
-                                }
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Calendar Access")
-                                        .font(MMTypography.bodyMedium)
-                                        .foregroundColor(MMColors.textPrimary)
-                                    Text("MeetMind reads your calendar to show upcoming meetings")
-                                        .font(MMTypography.caption1)
-                                        .foregroundColor(MMColors.textSecondary)
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-                        }
-                    }
-
-                    // MARK: - Integrations
-                    settingsSection(header: "INTEGRATIONS") {
-                        VStack(spacing: 0) {
-                            // Teams Integration
-                            HStack(spacing: 12) {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color(red: 0.45, green: 0.34, blue: 0.86).opacity(0.12))
-                                        .frame(width: 36, height: 36)
-                                    Image(systemName: "bubble.left.and.text.bubble.right")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(Color(red: 0.45, green: 0.34, blue: 0.86))
-                                }
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Microsoft Teams")
-                                        .font(MMTypography.bodyMedium)
-                                        .foregroundColor(MMColors.textPrimary)
-                                    if teamsWebhookURL.isEmpty {
-                                        Text("Add webhook URL to send notes to Teams")
-                                            .font(MMTypography.caption1)
-                                            .foregroundColor(MMColors.textSecondary)
-                                    } else {
-                                        Text("Connected")
-                                            .font(MMTypography.caption1)
-                                            .foregroundColor(MMColors.success)
-                                    }
-                                }
-                                Spacer()
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 12)
-
-                            sectionDivider
-
-                            TextField("Teams Webhook URL", text: $teamsWebhookURL)
-                                .font(MMTypography.footnote)
-                                .foregroundColor(MMColors.textPrimary)
-                                .textContentType(.URL)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 12)
-
-                            Text("Paste your Microsoft Teams Incoming Webhook URL to send meeting notes directly to a channel.")
-                                .font(MMTypography.caption1)
-                                .foregroundColor(MMColors.textTertiary)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                        }
-                    }
-
-                    // MARK: - Appearance
-                    // MARK: - Recording
-                    settingsSection(header: "RECORDING") {
-                        HStack {
-                            Text("Quality")
-                                .font(MMTypography.body)
-                                .foregroundColor(MMColors.textPrimary)
-                            Spacer()
-                            Picker("Quality", selection: $recordingQuality) {
-                                ForEach(RecordingQuality.allCases) { quality in
-                                    Text(quality.rawValue).tag(quality.rawValue)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(MMColors.primary)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 14)
-                    }
-
-                    // MARK: - AI Summaries
-                    settingsSection(header: "AI SUMMARIES") {
-                        VStack(spacing: 0) {
+                            // Prompt Style
                             HStack {
                                 Text("Prompt Style")
                                     .font(MMTypography.body)
@@ -375,12 +292,51 @@ struct SettingsView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
                             }
+
+                            sectionDivider
+
+                            NavigationLink {
+                                ClientDictionaryView()
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "person.2")
+                                        .foregroundColor(MMColors.primary)
+                                        .frame(width: 20)
+                                    Text("Client Dictionary")
+                                        .font(MMTypography.body)
+                                        .foregroundColor(MMColors.textPrimary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(MMColors.textTertiary)
+                                }
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 14)
+                            }
                         }
                     }
 
-                    // MARK: - Storage
-                    settingsSection(header: "STORAGE") {
+                    // MARK: - Recording & Storage
+                    settingsSection(header: "RECORDING & STORAGE") {
                         VStack(spacing: 0) {
+                            HStack {
+                                Text("Recording Quality")
+                                    .font(MMTypography.body)
+                                    .foregroundColor(MMColors.textPrimary)
+                                Spacer()
+                                Picker("Quality", selection: $recordingQuality) {
+                                    ForEach(RecordingQuality.allCases) { quality in
+                                        Text(quality.rawValue).tag(quality.rawValue)
+                                    }
+                                }
+                                .pickerStyle(.menu)
+                                .tint(MMColors.primary)
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            sectionDivider
+
                             HStack {
                                 Text("Audio Disk Usage")
                                     .font(MMTypography.body)
@@ -516,30 +472,21 @@ struct SettingsView: View {
                         }
                     }
 
-                    // MARK: - Clients
-                    settingsSection(header: "CLIENTS") {
-                        NavigationLink {
-                            ClientDictionaryView()
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "person.2")
-                                    .foregroundColor(MMColors.primary)
-                                    .frame(width: 20)
-                                Text("Client Dictionary")
-                                    .font(MMTypography.body)
-                                    .foregroundColor(MMColors.textPrimary)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(MMColors.textTertiary)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
+                    // MARK: - Calendars & Integrations
+                    settingsSection(header: "CALENDARS & INTEGRATIONS") {
+                        VStack(spacing: 0) {
+                            calendarButtons
+                            sectionDivider
+                            calendarAccessRow
+                            sectionDivider
+                            teamsIntegrationRow
+                            sectionDivider
+                            teamsWebhookField
                         }
                     }
 
-                    // MARK: - iCloud
-                    settingsSection(header: "ICLOUD") {
+                    // MARK: - Sync & Data
+                    settingsSection(header: "SYNC & DATA") {
                         VStack(spacing: 0) {
                             Toggle(isOn: Binding(
                                 get: { iCloudSyncEnabled },
@@ -565,12 +512,9 @@ struct SettingsView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 10)
-                        }
-                    }
 
-                    // MARK: - Data
-                    settingsSection(header: "DATA") {
-                        VStack(spacing: 0) {
+                            sectionDivider
+
                             Button {
                                 exportData()
                             } label: {
@@ -586,8 +530,6 @@ struct SettingsView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.vertical, 14)
                             }
-
-                            sectionDivider
                         }
                     }
 
@@ -619,60 +561,6 @@ struct SettingsView: View {
                             )
                     )
                     .padding(.horizontal, 16)
-
-                    // MARK: - Usage Stats
-                    settingsSection(header: "USAGE STATS") {
-                        VStack(spacing: 0) {
-                            let eventCounts = analytics.getAllEventCounts().filter { $0.count > 0 }
-                            if eventCounts.isEmpty {
-                                Text("No activity yet")
-                                    .font(MMTypography.footnote)
-                                    .foregroundColor(MMColors.textSecondary)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 14)
-                            } else {
-                                ForEach(Array(eventCounts.enumerated()), id: \.element.event) { index, item in
-                                    HStack {
-                                        Text(item.event.displayName)
-                                            .font(MMTypography.body)
-                                            .foregroundColor(MMColors.textPrimary)
-                                        Spacer()
-                                        Text("\(item.count)")
-                                            .font(MMTypography.body)
-                                            .foregroundColor(MMColors.textSecondary)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 14)
-
-                                    if index < eventCounts.count - 1 {
-                                        sectionDivider
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // MARK: - Your Stats
-                    settingsSection(header: "YOUR STATS") {
-                        NavigationLink {
-                            StatsView()
-                        } label: {
-                            HStack {
-                                Image(systemName: "flame.fill")
-                                    .foregroundColor(MMColors.warning)
-                                Text("Productivity Stats & Streaks")
-                                    .font(MMTypography.body)
-                                    .foregroundColor(MMColors.textPrimary)
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(MMColors.textTertiary)
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 14)
-                        }
-                    }
 
                     // MARK: - Features
                     settingsSection(header: "FEATURES") {
@@ -834,11 +722,13 @@ struct SettingsView: View {
             } message: {
                 Text("You'll need to sign in again to sync your data across devices.")
             }
+            #if os(iOS)
             .sheet(isPresented: $showExportSheet) {
                 if !exportURLs.isEmpty {
                     ShareSheet(items: exportURLs)
                 }
             }
+            #endif
             .onAppear {
                 storageService.calculateDiskUsage()
             }
@@ -867,6 +757,155 @@ struct SettingsView: View {
                 )
         }
         .padding(.horizontal, 16)
+    }
+
+    // MARK: - Calendar & Integration Helpers
+
+    @ViewBuilder
+    private var calendarButtons: some View {
+        Button {
+            #if os(iOS)
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+            #endif
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.blue.opacity(0.12))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "g.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.blue)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Google Calendar")
+                        .font(MMTypography.bodyMedium)
+                        .foregroundColor(MMColors.textPrimary)
+                    Text("Add Google account in iPhone Settings to sync")
+                        .font(MMTypography.caption1)
+                        .foregroundColor(MMColors.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(MMColors.textTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+
+        sectionDivider
+
+        Button {
+            #if os(iOS)
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url)
+            }
+            #endif
+        } label: {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.orange.opacity(0.12))
+                        .frame(width: 36, height: 36)
+                    Image(systemName: "envelope.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.orange)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Outlook Calendar")
+                        .font(MMTypography.bodyMedium)
+                        .foregroundColor(MMColors.textPrimary)
+                    Text("Add Microsoft account in iPhone Settings to sync")
+                        .font(MMTypography.caption1)
+                        .foregroundColor(MMColors.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "arrow.up.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(MMColors.textTertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+        }
+    }
+
+    private var calendarAccessRow: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(MMColors.success.opacity(0.12))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "calendar.badge.checkmark")
+                    .font(.system(size: 16))
+                    .foregroundColor(MMColors.success)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Calendar Access")
+                    .font(MMTypography.bodyMedium)
+                    .foregroundColor(MMColors.textPrimary)
+                Text("MeetMind reads your calendar to show upcoming meetings")
+                    .font(MMTypography.caption1)
+                    .foregroundColor(MMColors.textSecondary)
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    @ViewBuilder
+    private var teamsIntegrationRow: some View {
+        HStack(spacing: 12) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(red: 0.45, green: 0.34, blue: 0.86).opacity(0.12))
+                    .frame(width: 36, height: 36)
+                Image(systemName: "bubble.left.and.text.bubble.right")
+                    .font(.system(size: 16))
+                    .foregroundColor(Color(red: 0.45, green: 0.34, blue: 0.86))
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Microsoft Teams")
+                    .font(MMTypography.bodyMedium)
+                    .foregroundColor(MMColors.textPrimary)
+                if teamsWebhookURL.isEmpty {
+                    Text("Add webhook URL to send notes to Teams")
+                        .font(MMTypography.caption1)
+                        .foregroundColor(MMColors.textSecondary)
+                } else {
+                    Text("Connected")
+                        .font(MMTypography.caption1)
+                        .foregroundColor(MMColors.success)
+                }
+            }
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+    }
+
+    @ViewBuilder
+    private var teamsWebhookField: some View {
+        TextField("Teams Webhook URL", text: $teamsWebhookURL)
+            .font(MMTypography.footnote)
+            .foregroundColor(MMColors.textPrimary)
+            .textContentType(.URL)
+            #if os(iOS)
+            .autocapitalization(.none)
+            #endif
+            .disableAutocorrection(true)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+        Text("Paste your Microsoft Teams Incoming Webhook URL to send meeting notes directly to a channel.")
+            .font(MMTypography.caption1)
+            .foregroundColor(MMColors.textTertiary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
     }
 
     // MARK: - Section Divider
@@ -964,7 +1003,11 @@ struct SettingsView: View {
 
                 Button {
                     if let url = URL(string: "https://console.groq.com/keys") {
+                        #if os(iOS)
                         UIApplication.shared.open(url)
+                        #else
+                        NSWorkspace.shared.open(url)
+                        #endif
                     }
                 } label: {
                     Text("Get a free API key from Groq")
@@ -976,7 +1019,9 @@ struct SettingsView: View {
             }
             .padding(.top, 24)
             .navigationTitle("API Key")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { isEditingAPIKey = false }
@@ -1012,7 +1057,11 @@ struct SettingsView: View {
 
                 Button {
                     if let url = URL(string: "https://aistudio.google.com/apikey") {
+                        #if os(iOS)
                         UIApplication.shared.open(url)
+                        #else
+                        NSWorkspace.shared.open(url)
+                        #endif
                     }
                 } label: {
                     Text("Get a free API key from Google AI Studio")
@@ -1024,7 +1073,9 @@ struct SettingsView: View {
             }
             .padding(.top, 24)
             .navigationTitle("Gemini Key")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { isEditingGeminiKey = false }

@@ -22,7 +22,13 @@ struct SpacesView: View {
             }
             .navigationTitle("Spaces")
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: {
+#if os(iOS)
+                    return .navigationBarTrailing
+#else
+                    return .automatic
+#endif
+                }()) {
                     Button {
                         showCreateSheet = true
                     } label: {
@@ -210,7 +216,9 @@ struct CreateSpaceSheet: View {
                 }
             }
             .navigationTitle("New Space")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

@@ -17,17 +17,37 @@ struct WatchWidgetProvider: TimelineProvider {
     }
 
     func getSnapshot(in context: Context, completion: @escaping (WatchWidgetEntry) -> Void) {
-        completion(WatchWidgetEntry(date: Date(), meetingCount: 0, pendingTodos: 0))
+        completion(loadEntry())
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WatchWidgetEntry>) -> Void) {
-        let entry = WatchWidgetEntry(date: Date(), meetingCount: 0, pendingTodos: 0)
+        let entry = loadEntry()
         let next = Calendar.current.date(byAdding: .minute, value: 15, to: Date())!
         completion(Timeline(entries: [entry], policy: .after(next)))
     }
+
+    private func loadEntry() -> WatchWidgetEntry {
+        guard let defaults = UserDefaults(suiteName: "group.com.meetmind.shared"),
+              let data = defaults.data(forKey: "widgetData"),
+              let decoded = try? JSONDecoder().decode(SharedWidgetData.self, from: data)
+        else {
+            return WatchWidgetEntry(date: Date(), meetingCount: 0, pendingTodos: 0)
+        }
+        return WatchWidgetEntry(
+            date: Date(),
+            meetingCount: decoded.meetingCount,
+            pendingTodos: decoded.pendingTodoCount
+        )
+    }
 }
 
-// MARK: - Record Complication (Circular)
+// Minimal decode-only struct matching MeetMindWidgetData from main app
+private struct SharedWidgetData: Decodable {
+    let meetingCount: Int
+    let pendingTodoCount: Int
+}
+
+// MARK: - Record Complication (Circular / Corner)
 
 struct RecordComplication: Widget {
     let kind = "MeetMindWatchRecord"
@@ -41,9 +61,10 @@ struct RecordComplication: Widget {
                     .foregroundColor(.purple)
             }
             .containerBackground(.fill.tertiary, for: .widget)
+            .widgetURL(URL(string: "meetmind://record"))
         }
         .configurationDisplayName("Record Meeting")
-        .description("Tap to start recording.")
+        .description("One tap to start recording.")
         .supportedFamilies([.accessoryCircular, .accessoryCorner])
     }
 }
@@ -63,7 +84,7 @@ struct SummaryComplication: Widget {
                     Text("MeetMind")
                         .font(.system(size: 11, weight: .bold))
                 }
-                HStack(spacing: 10) {
+                HStack(spacing: 12) {
                     HStack(spacing: 3) {
                         Image(systemName: "waveform")
                             .font(.system(size: 9))
@@ -84,6 +105,7 @@ struct SummaryComplication: Widget {
                     .foregroundColor(.secondary)
             }
             .containerBackground(.fill.tertiary, for: .widget)
+            .widgetURL(URL(string: "meetmind://record"))
         }
         .configurationDisplayName("MeetMind Today")
         .description("Meetings and tasks at a glance.")
@@ -103,9 +125,10 @@ struct InlineComplication: Widget {
                 Text("\(entry.pendingTodos) tasks")
             }
             .containerBackground(.fill.tertiary, for: .widget)
+            .widgetURL(URL(string: "meetmind://todos"))
         }
         .configurationDisplayName("Pending Tasks")
-        .description("Quick task count.")
+        .description("See your pending task count.")
         .supportedFamilies([.accessoryInline])
     }
 }

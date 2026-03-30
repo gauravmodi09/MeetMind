@@ -235,9 +235,11 @@ struct UpcomingMeetingsView: View {
                 .frame(maxWidth: 240)
 
             Button {
+                #if os(iOS)
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
+                #endif
             } label: {
                 Text("Open Settings")
                     .font(MMTypography.caption1Medium)

@@ -135,6 +135,9 @@
 		E063F844738C4A7AA2A38414 /* MacLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */; };
 		480F48092F6447CF8D0121DE /* MacChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6001C1705F44D139299B24E /* MacChatView.swift */; };
 		4FD74B190DC54494932750E3 /* MacSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */; };
+		805D15D334284F71AE64C58B /* MeetMindMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E4C63BDADC409697C4C0F5 /* MeetMindMacApp.swift */; };
+		5A42AF212B5E4488A7532A14 /* MacMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0519E0D22A432C96F2EFBA /* MacMainView.swift */; };
+		75D539142EC746CBAA4C9751 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68DD4B53E21E4752B5704DE6 /* MenuBarView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -419,6 +422,9 @@
 		42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacLibraryView.swift; path = MeetMind/MacApp/Views/MacLibraryView.swift; sourceTree = SOURCE_ROOT; };
 		D6001C1705F44D139299B24E /* MacChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacChatView.swift; path = MeetMind/MacApp/Views/MacChatView.swift; sourceTree = SOURCE_ROOT; };
 		E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacSettingsView.swift; path = MeetMind/MacApp/Views/MacSettingsView.swift; sourceTree = SOURCE_ROOT; };
+		19E4C63BDADC409697C4C0F5 /* MeetMindMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetMindMacApp.swift; path = MeetMind/MacApp/MeetMindMacApp.swift; sourceTree = SOURCE_ROOT; };
+		8A0519E0D22A432C96F2EFBA /* MacMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacMainView.swift; path = MeetMind/MacApp/MacMainView.swift; sourceTree = SOURCE_ROOT; };
+		68DD4B53E21E4752B5704DE6 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuBarView.swift; path = MeetMind/MacApp/MenuBarView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -581,6 +587,9 @@
 				C502A7F52F6BA5970041A292 /* Frameworks */,
 				89C943A4A84DB59CCAC02384 /* AppIconDesign.swift */,
 				C5ED84772F6C4BD2000F59F9 /* Recovered References */,
+				19E4C63BDADC409697C4C0F5 /* MeetMindMacApp.swift */,
+				8A0519E0D22A432C96F2EFBA /* MacMainView.swift */,
+				68DD4B53E21E4752B5704DE6 /* MenuBarView.swift */,
 				B69243548B9A71FEF149CF88 /* SystemAudioCapture.swift */,
 				B6AF4F15B985172E5B9118D5 /* MeetingAppDetector.swift */,
 				DAB54B088F1EAD841EA2FA0D /* TodoHistoryView.swift */,
@@ -1411,6 +1420,9 @@
 				A9BB4251AA66E62D91E11814 /* TeamsIntegrationService.swift in Sources */,
 				AE2448D68460394E9BCD73C6 /* QuickNoteView.swift in Sources */,
 				FCED236B1C67493AB3C9C36E /* MacIconRail.swift in Sources */,
+				75D539142EC746CBAA4C9751 /* MenuBarView.swift in Sources */,
+				5A42AF212B5E4488A7532A14 /* MacMainView.swift in Sources */,
+				805D15D334284F71AE64C58B /* MeetMindMacApp.swift in Sources */,
 				2916EAFB6EFE4386AF2C1CA8 /* MacMeetingListPanel.swift in Sources */,
 				867D8DC6A1F644B7A85E456B /* MacMeetingDetail.swift in Sources */,
 				861739D46F464C27A2AD2737 /* MacRecordingView.swift in Sources */,

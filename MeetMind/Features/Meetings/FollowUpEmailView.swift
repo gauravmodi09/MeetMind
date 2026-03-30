@@ -24,9 +24,17 @@ struct FollowUpEmailView: View {
                 }
             }
             .navigationTitle("Follow-up Email")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarLeading
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button("Cancel") {
                         dismiss()
                     }
@@ -34,7 +42,13 @@ struct FollowUpEmailView: View {
                 }
 
                 if !isLoading && errorMessage == nil {
-                    ToolbarItem(placement: .navigationBarTrailing) {
+                    ToolbarItem(placement: {
+                        #if os(iOS)
+                        return .navigationBarTrailing
+                        #else
+                        return .automatic
+                        #endif
+                    }()) {
                         Menu {
                             Button {
                                 copyEmail()
@@ -54,10 +68,12 @@ struct FollowUpEmailView: View {
                     }
                 }
             }
+            #if os(iOS)
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: [emailText])
                     .presentationDetents([.medium, .large])
             }
+            #endif
             .task {
                 await generateEmail()
             }
@@ -189,7 +205,12 @@ struct FollowUpEmailView: View {
     }
 
     private func copyEmail() {
+        #if os(iOS)
         UIPasteboard.general.string = emailText
+        #else
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(emailText, forType: .string)
+        #endif
         copiedEmail = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             copiedEmail = false

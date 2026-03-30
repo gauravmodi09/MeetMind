@@ -49,13 +49,14 @@ class AudioRecordingService: ObservableObject {
         // Check available disk space before starting
         try checkDiskSpace()
 
+        #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         // .voiceChat mode enables iOS built-in echo cancellation (AEC) and
         // automatic gain control (AGC) — critical for recording near a laptop speaker.
         // .allowBluetooth lets AirPods/headsets work; we avoid .defaultToSpeaker
         // so the phone doesn't create a feedback loop with its own speaker.
         // .mixWithOthers is required for background audio recording to continue when app is minimized.
-        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetooth, .mixWithOthers])
+        try session.setCategory(.playAndRecord, mode: .voiceChat, options: [.allowBluetoothA2DP, .mixWithOthers])
         try session.setActive(true, options: [])
 
         // Start a background task so iOS doesn't suspend us while recording
@@ -68,6 +69,7 @@ class AudioRecordingService: ObservableObject {
             try? builtIn.setPreferredDataSource(bottomMic)
             try? session.setPreferredInput(builtIn)
         }
+        #endif
 
         let fileURL = makeRecordingURL()
         currentFileURL = fileURL
@@ -145,7 +147,9 @@ class AudioRecordingService: ObservableObject {
         endBackgroundRecordingTask()
 
         // Deactivate audio session
+        #if os(iOS)
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
 
         return url
     }
@@ -198,7 +202,8 @@ class AudioRecordingService: ObservableObject {
         guard fileSize > groqFileSizeLimit else { return [url] }
 
         let asset = AVURLAsset(url: url)
-        let totalDuration = CMTimeGetSeconds(asset.duration)
+        let durationValue = try await asset.load(.duration)
+        let totalDuration = CMTimeGetSeconds(durationValue)
 
         // Estimate chunk duration based on file size ratio
         // Target 20 MB per chunk to leave headroom
@@ -307,6 +312,7 @@ class AudioRecordingService: ObservableObject {
     // MARK: - Interruption Handling
 
     private func setupInterruptionHandling() {
+        #if os(iOS)
         NotificationCenter.default.addObserver(
             forName: AVAudioSession.interruptionNotification,
             object: nil,
@@ -316,8 +322,10 @@ class AudioRecordingService: ObservableObject {
                 self?.handleInterruption(notification)
             }
         }
+        #endif
     }
 
+    #if os(iOS)
     private func handleInterruption(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
@@ -341,6 +349,7 @@ class AudioRecordingService: ObservableObject {
             break
         }
     }
+    #endif
 
     // MARK: - Background Recording
 

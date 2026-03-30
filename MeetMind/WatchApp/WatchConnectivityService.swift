@@ -1,3 +1,4 @@
+#if os(iOS)
 import Foundation
 import WatchConnectivity
 import Combine
@@ -231,6 +232,11 @@ extension WatchConnectivityService: WCSessionDelegate {
     // MARK: - Receiving Messages (Todo Updates, etc.)
 
     func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        if let command = message["command"] as? String {
+            handleWatchCommand(command, session: session, replyHandler: nil)
+            return
+        }
+
         if message[WatchMessageKey.todoUpdate] as? Bool == true {
             handleTodoUpdate(message)
         }
@@ -240,6 +246,18 @@ extension WatchConnectivityService: WCSessionDelegate {
         }
     }
 
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any], replyHandler: @escaping ([String: Any]) -> Void) {
+        if let command = message["command"] as? String {
+            handleWatchCommand(command, session: session, replyHandler: replyHandler)
+            return
+        }
+
+        if message[WatchMessageKey.todoUpdate] as? Bool == true {
+            handleTodoUpdate(message)
+        }
+        replyHandler([:])
+    }
+
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String: Any] = [:]) {
         if userInfo[WatchMessageKey.todoUpdate] as? Bool == true {
             handleTodoUpdate(userInfo)
@@ -247,6 +265,36 @@ extension WatchConnectivityService: WCSessionDelegate {
 
         if let widgetDataBytes = userInfo[WatchMessageKey.widgetData] as? Data {
             handleWidgetData(widgetDataBytes)
+        }
+    }
+
+    // MARK: - Watch Command Handling
+
+    private func handleWatchCommand(_ command: String, session: WCSession, replyHandler: (([String: Any]) -> Void)?) {
+        DispatchQueue.main.async {
+            switch command {
+            case "startRecording":
+                NotificationCenter.default.post(name: .widgetStartRecording, object: nil)
+                print("[WatchConnectivity] Received startRecording command from Watch")
+
+            case "stopRecording":
+                NotificationCenter.default.post(name: Notification.Name("watchStopRecording"), object: nil)
+                print("[WatchConnectivity] Received stopRecording command from Watch")
+
+            case "sync":
+                let isRecording = AudioRecordingService.shared.isRecording
+                let response: [String: Any] = [
+                    "meetingCount": 0,
+                    "pendingTodos": 0,
+                    "isRecording": isRecording
+                ]
+                replyHandler?(response)
+                return
+
+            default:
+                print("[WatchConnectivity] Unknown command: \(command)")
+            }
+            replyHandler?([:])
         }
     }
 
@@ -281,3 +329,4 @@ extension WatchConnectivityService: WCSessionDelegate {
         }
     }
 }
+#endif

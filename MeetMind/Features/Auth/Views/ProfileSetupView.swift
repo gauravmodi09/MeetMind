@@ -33,7 +33,11 @@ struct ProfileSetupView: View {
                     toolsStep.tag(2)
                     apiKeyStep.tag(3)
                 }
+#if os(iOS)
                 .tabViewStyle(.page(indexDisplayMode: .never))
+#else
+                .tabViewStyle(.automatic)
+#endif
                 .animation(.easeInOut(duration: 0.3), value: currentStep)
             }
         }
@@ -355,7 +359,11 @@ struct ProfileSetupView: View {
                 if apiKey.isEmpty {
                     MMButton("Get a free API key", icon: "safari", style: .ghost) {
                         if let url = URL(string: "https://console.groq.com/keys") {
+#if os(iOS)
                             UIApplication.shared.open(url)
+#else
+                            NSWorkspace.shared.open(url)
+#endif
                         }
                     }
 
@@ -372,11 +380,14 @@ struct ProfileSetupView: View {
     }
 
     private func requestMicPermission() {
-        AVAudioSession.sharedInstance().requestRecordPermission { granted in
-            Task { @MainActor in
+        Task {
+            let granted = await AVAudioApplication.requestRecordPermission()
+            await MainActor.run {
                 micPermissionGranted = granted
-                if granted {
-                    try? await Task.sleep(for: .seconds(0.8))
+            }
+            if granted {
+                try? await Task.sleep(for: .seconds(0.8))
+                await MainActor.run {
                     currentStep = 1
                 }
             }

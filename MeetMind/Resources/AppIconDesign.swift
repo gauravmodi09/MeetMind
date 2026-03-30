@@ -198,6 +198,7 @@ struct AppIconGenerator {
         let renderer = ImageRenderer(content: AppIconView().frame(width: 1024, height: 1024))
         renderer.scale = 1.0
 
+        #if os(iOS)
         if let image = renderer.uiImage,
            let data = image.pngData() {
             let docsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -205,6 +206,7 @@ struct AppIconGenerator {
             try? data.write(to: fileURL)
             print("[AppIcon] Saved to: \(fileURL.path)")
         }
+        #endif
     }
 }
 

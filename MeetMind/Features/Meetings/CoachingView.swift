@@ -34,7 +34,9 @@ struct CoachingView: View {
         }
         .background(MMColors.background.ignoresSafeArea())
         .navigationTitle("Meeting Coach")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 
     // MARK: - Selected Speaker

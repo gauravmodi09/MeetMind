@@ -249,8 +249,10 @@ struct TextTodoEntryView: View {
                             recurrence: selectedRecurrence
                         )
 
+                        #if os(iOS)
                         let generator = UINotificationFeedbackGenerator()
                         generator.notificationOccurred(.success)
+                        #endif
                         dismiss()
                     }
                     .opacity(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1.0)
@@ -259,7 +261,9 @@ struct TextTodoEntryView: View {
             }
             .background(MMColors.background)
             .navigationTitle("New Task")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

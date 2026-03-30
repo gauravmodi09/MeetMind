@@ -34,7 +34,9 @@ struct MeetingChatView: View {
                 }
             }
             .navigationTitle("Chat")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .onAppear {
                 viewModel.meetingService = meetingService
                 viewModel.todoService = todoService
@@ -129,14 +131,14 @@ struct MeetingChatView: View {
                 }
                 .padding(16)
             }
-            .onChange(of: viewModel.messages.count) { _ in
+            .onChange(of: viewModel.messages.count) { _, _ in
                 withAnimation {
                     if let last = viewModel.messages.last {
                         proxy.scrollTo(last.id, anchor: .bottom)
                     }
                 }
             }
-            .onChange(of: viewModel.isLoading) { loading in
+            .onChange(of: viewModel.isLoading) { _, loading in
                 if loading {
                     withAnimation {
                         proxy.scrollTo("loading", anchor: .bottom)

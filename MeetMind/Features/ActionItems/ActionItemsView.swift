@@ -62,7 +62,9 @@ struct ActionItemsView: View {
                 }
             }
             .navigationTitle("Action Items")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
+            #endif
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }

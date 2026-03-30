@@ -40,7 +40,7 @@ struct LiveTranscriptOverlay: View {
                                 .id("transcriptEnd")
                         }
                         .frame(maxHeight: 72)
-                        .onChange(of: transcriptionService.liveText) { _ in
+                        .onChange(of: transcriptionService.liveText) { _, _ in
                             withAnimation(.easeOut(duration: 0.2)) {
                                 proxy.scrollTo("transcriptEnd", anchor: .bottom)
                             }

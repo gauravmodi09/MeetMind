@@ -1,3 +1,6 @@
+import Foundation
+
+#if os(iOS)
 import SwiftUI
 import FirebaseCore
 
@@ -27,6 +30,9 @@ struct MeetMindApp: App {
         }
 
         BackgroundTaskService.shared.registerBackgroundTasks()
+
+        // Activate Watch Connectivity for Apple Watch communication
+        WatchConnectivityService.shared.activate()
     }
 
     var body: some Scene {
@@ -84,6 +90,8 @@ struct MeetMindApp: App {
         }
     }
 }
+
+#endif
 
 extension Notification.Name {
     static let widgetStartRecording = Notification.Name("widgetStartRecording")

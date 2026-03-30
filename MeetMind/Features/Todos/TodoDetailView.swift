@@ -20,7 +20,9 @@ struct TodoDetailView: View {
                     HStack(alignment: .top, spacing: 12) {
                         Button {
                             todoService.toggleComplete(todo)
+                            #if os(iOS)
                             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            #endif
                         } label: {
                             Image(systemName: todo.isCompleted ? "checkmark.circle.fill" : "circle")
                                 .font(.system(size: 24))
@@ -186,7 +188,9 @@ struct TodoDetailView: View {
             .padding(.bottom, 40)
         }
         .background(MMColors.background)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .onAppear {
             // Load saved notes
             notes = UserDefaults.standard.string(forKey: "todo_notes_\(todoId.uuidString)") ?? ""

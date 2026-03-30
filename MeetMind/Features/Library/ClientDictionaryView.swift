@@ -54,9 +54,17 @@ struct ClientDictionaryView: View {
             }
         }
         .navigationTitle("Client Dictionary")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: {
+                #if os(iOS)
+                return .navigationBarTrailing
+                #else
+                return .automatic
+                #endif
+            }()) {
                 Button {
                     newClientName = ""
                     showAddClient = true

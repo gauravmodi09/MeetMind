@@ -155,7 +155,9 @@ struct CreateNoteTemplateSheet: View {
                 }
             }
             .navigationTitle("New Template")
+#if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+#endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }

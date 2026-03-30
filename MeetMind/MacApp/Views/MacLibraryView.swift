@@ -26,17 +26,8 @@ struct MacLibraryView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("By Meeting Type")
                             .font(.system(size: 14, weight: .semibold))
-                        ForEach(templateCounts, id: \.template) { item in
-                            HStack {
-                                Text(item.template.displayName)
-                                    .font(.system(size: 13))
-                                Spacer()
-                                Text("\(item.count)")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .foregroundColor(MMColors.primary)
-                            }
-                            .padding(10)
-                            .background(RoundedRectangle(cornerRadius: 8).fill(Color(red: 0.98, green: 0.98, blue: 0.98)))
+                        ForEach(templateCounts) { item in
+                            templateRow(item: item)
                         }
                     }
                 }
@@ -58,6 +49,19 @@ struct MacLibraryView: View {
         .frame(maxWidth: .infinity)
         .padding(16)
         .background(RoundedRectangle(cornerRadius: 12).fill(Color.white).shadow(color: .black.opacity(0.05), radius: 4, y: 2))
+    }
+
+    private func templateRow(item: TemplateCount) -> some View {
+        HStack {
+            Text(item.template.rawValue)
+                .font(.system(size: 13))
+            Spacer()
+            Text("\(item.count)")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(MMColors.primary)
+        }
+        .padding(10)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color(red: 0.98, green: 0.98, blue: 0.98)))
     }
 
     private var totalActionItems: Int {

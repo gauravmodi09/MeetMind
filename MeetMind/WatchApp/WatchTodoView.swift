@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 
 // MARK: - Watch-Style Todo View (MM-050)
@@ -92,9 +93,13 @@ struct WatchTodoView: View {
     // MARK: - Actions
 
     private func completeTodo(_ todo: TodoItem) {
-        // Haptic feedback (UIImpactFeedbackGenerator on iOS, WKInterfaceDevice.current().play(.success) on watchOS)
+        // Haptic feedback
+        #if os(iOS)
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        #elseif os(watchOS)
+        WKInterfaceDevice.current().play(.success)
+        #endif
 
         // Mark complete locally
         if let index = todoService.todos.firstIndex(where: { $0.id == todo.id }) {
@@ -190,3 +195,4 @@ private struct WatchTodoPreviewFrame<Content: View>: View {
     .padding()
     .background(Color.black)
 }
+#endif

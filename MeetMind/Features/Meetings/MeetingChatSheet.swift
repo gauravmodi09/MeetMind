@@ -90,7 +90,9 @@ struct MeetingChatSheet: View {
             }
             .background(MMColors.background)
             .navigationTitle("Ask about this meeting")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Done") { dismiss() }

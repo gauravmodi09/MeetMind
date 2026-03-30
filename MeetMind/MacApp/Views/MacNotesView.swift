@@ -18,26 +18,31 @@ struct MacNotesView: View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 8) {
                     ForEach(meetingsWithNotes) { meeting in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(meeting.title)
-                                .font(.system(size: 14, weight: .semibold))
-                            Text(meeting.userNotes ?? meeting.notepadContent ?? "")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                                .lineLimit(3)
-                            Text(meeting.date.formatted(date: .abbreviated, time: .shortened))
-                                .font(.system(size: 10))
-                                .foregroundColor(.tertiary)
-                        }
-                        .padding(14)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(RoundedRectangle(cornerRadius: 10).fill(Color(red: 0.98, green: 0.98, blue: 0.98)))
+                        noteRow(meeting: meeting)
                     }
                 }
                 .padding(24)
             }
         }
         .background(Color.white)
+    }
+
+    private func noteRow(meeting: Meeting) -> some View {
+        let noteText = meeting.userNotes ?? meeting.notepadContent ?? ""
+        return VStack(alignment: .leading, spacing: 6) {
+            Text(meeting.title)
+                .font(.system(size: 14, weight: .semibold))
+            Text(noteText)
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+                .lineLimit(3)
+            Text(meeting.date.formatted(date: .abbreviated, time: .shortened))
+                .font(.system(size: 10))
+                .foregroundColor(.gray)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color(red: 0.98, green: 0.98, blue: 0.98)))
     }
 
     private var meetingsWithNotes: [Meeting] {

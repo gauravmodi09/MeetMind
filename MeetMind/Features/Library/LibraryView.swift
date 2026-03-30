@@ -171,9 +171,17 @@ struct LibraryView: View {
                 }
             }
             .navigationTitle("Library")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.large)
+            #endif
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: {
+                    #if os(iOS)
+                    return .navigationBarTrailing
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button {
                         showGlobalSearch = true
                     } label: {
@@ -201,10 +209,17 @@ struct LibraryView: View {
             .navigationDestination(item: $selectedMeeting) { meeting in
                 MeetingDetailView(meeting: meeting)
             }
+            #if os(iOS)
             .fullScreenCover(isPresented: $showGlobalSearch) {
                 GlobalSearchView()
                     .environmentObject(meetingService)
             }
+            #else
+            .sheet(isPresented: $showGlobalSearch) {
+                GlobalSearchView()
+                    .environmentObject(meetingService)
+            }
+            #endif
         }
     }
 

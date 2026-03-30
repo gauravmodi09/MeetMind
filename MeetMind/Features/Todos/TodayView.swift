@@ -4,6 +4,7 @@ struct TodayView: View {
     @EnvironmentObject var todoService: TodoService
 
     @State private var showCompleted = false
+    @State private var selectedTodoId: UUID?
 
     var body: some View {
         let todayItems = todoService.todayTodos()
@@ -23,7 +24,6 @@ struct TodayView: View {
                     if !pending.isEmpty {
                         Section {
                             ForEach(pending) { todo in
-                                NavigationLink(destination: TodoDetailView(todoId: todo.id).environmentObject(todoService)) {
                                 TodoRow(
                                     todo: todo,
                                     onToggle: {
@@ -39,10 +39,11 @@ struct TodayView: View {
                                         withAnimation {
                                             todoService.deleteTodo(todo)
                                         }
+                                    },
+                                    onTap: {
+                                        selectedTodoId = todo.id
                                     }
                                 )
-                                }
-                                .buttonStyle(.plain)
                                 .listRowInsets(EdgeInsets())
                                 .listRowSeparator(.hidden)
                             }
@@ -122,6 +123,15 @@ struct TodayView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
+                .navigationDestination(isPresented: Binding(
+                    get: { selectedTodoId != nil },
+                    set: { if !$0 { selectedTodoId = nil } }
+                )) {
+                    if let todoId = selectedTodoId {
+                        TodoDetailView(todoId: todoId)
+                            .environmentObject(todoService)
+                    }
+                }
             }
         }
     }
@@ -133,8 +143,10 @@ struct TodayView: View {
     }
 
     private func triggerHaptic() {
+        #if os(iOS)
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
+        #endif
     }
 }
 

@@ -1,3 +1,4 @@
+#if os(iOS)
 import BackgroundTasks
 import Foundation
 
@@ -146,3 +147,4 @@ class BackgroundTaskService {
 extension Notification.Name {
     static let backgroundProcessingCompleted = Notification.Name("backgroundProcessingCompleted")
 }
+#endif

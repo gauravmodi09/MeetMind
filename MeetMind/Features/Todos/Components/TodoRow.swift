@@ -5,6 +5,7 @@ struct TodoRow: View {
     let onToggle: () -> Void
     let onReschedule: (Date) -> Void
     let onDelete: () -> Void
+    var onTap: (() -> Void)? = nil
 
     @State private var showDatePicker = false
     @State private var rescheduleDate = Date()
@@ -124,6 +125,10 @@ struct TodoRow: View {
         )
         .padding(.horizontal, 12)
         .padding(.vertical, 3)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onTap?()
+        }
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isPressed)
         .onLongPressGesture(minimumDuration: .infinity, pressing: { pressing in
@@ -166,7 +171,9 @@ struct TodoRow: View {
                 .datePickerStyle(.graphical)
                 .padding()
                 .navigationTitle("Reschedule")
+                #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
+                #endif
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") { showDatePicker = false }

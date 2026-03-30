@@ -1,3 +1,4 @@
+#if os(iOS)
 import SwiftUI
 import UIKit
 
@@ -75,3 +76,4 @@ class MeetingBriefTextFileItem: NSObject, UIActivityItemSource {
         return tempURL
     }
 }
+#endif

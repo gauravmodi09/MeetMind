@@ -5,7 +5,7 @@ struct MainTabView: View {
     @State private var selectedTab: Tab = .meetings
 
     enum Tab: String {
-        case meetings, notes, todos, library, chat, settings
+        case meetings, notes, todos, chat, settings
     }
 
     var body: some View {
@@ -39,13 +39,6 @@ struct MainTabView: View {
                 }
                 .tag(Tab.chat)
 
-            LibraryView()
-                .tabItem {
-                    Image(systemName: "folder.fill")
-                    Text("Library")
-                }
-                .tag(Tab.library)
-
             SettingsView()
                 .tabItem {
                     Image(systemName: "gearshape.fill")
@@ -54,8 +47,10 @@ struct MainTabView: View {
                 .tag(Tab.settings)
         }
         .tint(MMColors.primary)
+        #if os(iOS)
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        #endif
         .onReceive(NotificationCenter.default.publisher(for: .widgetStartRecording)) { _ in
             selectedTab = .meetings
             // Post to MeetingsView to auto-start recording
@@ -79,6 +74,7 @@ struct MainTabView: View {
             selectedTab = .todos
         }
         .onAppear {
+            #if os(iOS)
             // Purple pill badge styling instead of default red
             let appearance = UITabBarAppearance()
             appearance.configureWithDefaultBackground()
@@ -106,6 +102,7 @@ struct MainTabView: View {
 
             UITabBar.appearance().standardAppearance = appearance
             UITabBar.appearance().scrollEdgeAppearance = appearance
+            #endif
         }
     }
 }

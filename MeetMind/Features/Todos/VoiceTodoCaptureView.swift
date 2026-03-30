@@ -54,7 +54,9 @@ struct VoiceTodoCaptureView: View {
             .padding(24)
             .background(MMColors.background)
             .navigationTitle("Voice Todo")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -350,8 +352,10 @@ struct VoiceTodoCaptureView: View {
                     if !parsedNotes.isEmpty, let todo = todoService.todos.last {
                         UserDefaults.standard.set(parsedNotes, forKey: "todo_notes_\(todo.id.uuidString)")
                     }
+                    #if os(iOS)
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.success)
+                    #endif
                     dismiss()
                 }
 
@@ -370,6 +374,7 @@ struct VoiceTodoCaptureView: View {
     // MARK: - Recording Logic
 
     private func startRecording() {
+        #if os(iOS)
         let session = AVAudioSession.sharedInstance()
         do {
             try session.setCategory(.playAndRecord, mode: .default)
@@ -416,6 +421,7 @@ struct VoiceTodoCaptureView: View {
         } catch {
             captureState = .error("Recording failed: \(error.localizedDescription)")
         }
+        #endif
     }
 
     private func stopRecording() {

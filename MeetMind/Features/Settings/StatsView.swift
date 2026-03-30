@@ -24,7 +24,9 @@ struct StatsView: View {
         }
         .background(MMColors.background.ignoresSafeArea())
         .navigationTitle("Your Stats")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
     }
 
     // MARK: - Streak Header

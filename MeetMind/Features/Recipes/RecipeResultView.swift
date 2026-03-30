@@ -23,13 +23,27 @@ struct RecipeResultView: View {
                 }
             }
             .navigationTitle(recipe.name)
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: {
+                    #if os(iOS)
+                    return .navigationBarLeading
+                    #else
+                    return .automatic
+                    #endif
+                }()) {
                     Button("Done") { dismiss() }
                 }
                 if !isLoading && error == nil {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    ToolbarItemGroup(placement: {
+                        #if os(iOS)
+                        return .navigationBarTrailing
+                        #else
+                        return .automatic
+                        #endif
+                    }()) {
                         Button {
                             copyResult()
                         } label: {
@@ -43,9 +57,11 @@ struct RecipeResultView: View {
                     }
                 }
             }
+            #if os(iOS)
             .sheet(isPresented: $showShareSheet) {
                 ShareSheet(items: [result])
             }
+            #endif
         }
         .task {
             await executeRecipe()
@@ -218,8 +234,11 @@ struct RecipeResultView: View {
                     Spacer()
 
                     Button {
-                        #if canImport(UIKit)
+                        #if os(iOS)
                         UIPasteboard.general.string = "\(title)\n\n\(section.content)"
+                        #elseif os(macOS)
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString("\(title)\n\n\(section.content)", forType: .string)
                         #endif
                     } label: {
                         Image(systemName: "doc.on.doc")
