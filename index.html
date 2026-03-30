@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MeetMind — Your Meetings, Remembered</title>
   <meta name="description" content="MeetMind records, transcribes, and summarizes your meetings with AI. One tap. No bots. Action items become todos automatically." />
+  <meta property="og:title" content="MeetMind — Your Meetings, Remembered">
+  <meta property="og:description" content="AI-powered meeting intelligence. Record, transcribe, summarize. No bots. One tap.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://gauravmodi09.github.io/MeetMind/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MeetMind — Your Meetings, Remembered">
+  <meta name="twitter:description" content="AI-powered meeting intelligence. Record, transcribe, summarize. No bots. One tap.">
+  <meta name="theme-color" content="#6C5CE7">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
@@ -261,6 +269,387 @@
       opacity: 0;
     }
 
+    /* ─── Solution layout ────────────────────────────────── */
+    .solution-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .solution-layout .section-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .solution-layout .device-container {
+      flex-shrink: 0;
+      min-height: auto;
+      margin-top: 0;
+      width: auto;
+    }
+
+    /* ─── CSS Phone ───────────────────────────────────────── */
+    .css-phone {
+      width: 220px;
+      height: 440px;
+      background: #0f0f1a;
+      border-radius: 32px;
+      border: 3px solid rgba(255, 255, 255, 0.12);
+      padding: 12px;
+      box-shadow:
+        0 0 40px rgba(108, 92, 231, 0.35),
+        0 0 80px rgba(108, 92, 231, 0.15),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 20px;
+      background: #000;
+      border-radius: 10px;
+      z-index: 10;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #13131f 0%, #0d0d18 100%);
+      border-radius: 22px;
+      padding: 32px 12px 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ─── Screen: Recording ───────────────────────────────── */
+    .screen-recording {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      gap: 16px;
+    }
+
+    .rec-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #FF4757, #c0392b);
+      box-shadow: 0 0 20px rgba(255, 71, 87, 0.6), 0 0 40px rgba(255, 71, 87, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rec-circle::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .rec-timer {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 2px;
+    }
+
+    .rec-wave {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 3px;
+      height: 32px;
+    }
+
+    .rec-wave span {
+      display: block;
+      width: 3px;
+      background: linear-gradient(180deg, #6C5CE7, #a29bfe);
+      border-radius: 2px;
+      transform-origin: center;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    .rec-wave span:nth-child(1) { height: 10px; animation-delay: 0s; }
+    .rec-wave span:nth-child(2) { height: 18px; animation-delay: 0.1s; }
+    .rec-wave span:nth-child(3) { height: 28px; animation-delay: 0.2s; }
+    .rec-wave span:nth-child(4) { height: 22px; animation-delay: 0.3s; }
+    .rec-wave span:nth-child(5) { height: 30px; animation-delay: 0.4s; }
+    .rec-wave span:nth-child(6) { height: 20px; animation-delay: 0.5s; }
+    .rec-wave span:nth-child(7) { height: 14px; animation-delay: 0.6s; }
+    .rec-wave span:nth-child(8) { height: 8px;  animation-delay: 0.7s; }
+
+    @keyframes wave {
+      0%, 100% { transform: scaleY(1); }
+      50%       { transform: scaleY(1.8); }
+    }
+
+    /* ─── Screen: Brief ───────────────────────────────────── */
+    .screen-brief {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      padding-top: 8px;
+    }
+
+    .brief-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 8px 10px;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .brief-label {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 5px;
+    }
+
+    .brief-line {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      margin-bottom: 4px;
+    }
+
+    /* ─── Screen: Todo ────────────────────────────────────── */
+    .screen-todo {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      padding-top: 8px;
+    }
+
+    .todo-voice {
+      background: rgba(108, 92, 231, 0.2);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .todo-voice .mic-emoji {
+      font-size: 14px;
+    }
+
+    .todo-voice .voice-bars {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .todo-voice .voice-bars span {
+      display: block;
+      width: 2px;
+      background: rgba(108, 92, 231, 0.8);
+      border-radius: 1px;
+    }
+
+    .todo-card {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      padding: 10px;
+      border-left: 3px solid #6C5CE7;
+    }
+
+    .todo-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .todo-meta {
+      display: flex;
+      flex-direction: row;
+      gap: 4px;
+    }
+
+    .todo-badge {
+      font-size: 8px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .todo-date {
+      background: rgba(0, 184, 148, 0.2);
+      color: #00b894;
+    }
+
+    .todo-priority {
+      background: rgba(255, 71, 87, 0.2);
+      color: #FF4757;
+    }
+
+    /* ─── CSS MacBook ─────────────────────────────────────── */
+    .css-macbook {
+      width: 320px;
+      height: 200px;
+      background: #1a1a2e;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(108, 92, 231, 0.2);
+    }
+
+    .mac-screen {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    .mac-sidebar {
+      width: 40px;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .mac-sidebar .mac-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      background: rgba(108, 92, 231, 0.3);
+    }
+
+    .mac-sidebar .mac-icon:first-child {
+      background: rgba(108, 92, 231, 0.6);
+    }
+
+    .mac-list {
+      width: 90px;
+      background: rgba(255, 255, 255, 0.03);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      flex-direction: column;
+      padding: 8px 6px;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .mac-list-item {
+      padding: 5px 6px;
+      border-radius: 5px;
+      font-size: 7px;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.3;
+    }
+
+    .mac-list-item.active {
+      background: rgba(108, 92, 231, 0.25);
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .mac-detail {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mac-detail-heading {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 2px;
+      width: 70%;
+    }
+
+    .mac-detail-line {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 2px;
+    }
+
+    /* ─── CSS Watch ───────────────────────────────────────── */
+    .css-watch {
+      width: 80px;
+      height: 96px;
+      background: #0f0f1a;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 20px rgba(108, 92, 231, 0.25);
+      overflow: hidden;
+    }
+
+    .watch-screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #13131f, #0d0d18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .watch-timer {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 1px;
+    }
+
+    .watch-wave {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .watch-wave span {
+      display: block;
+      width: 3px;
+      background: linear-gradient(180deg, #6C5CE7, #a29bfe);
+      border-radius: 1px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    /* ─── Multi-device ────────────────────────────────────── */
+    .multi-device {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
     /* ─── Responsive ─────────────────────────────────────── */
     @media (max-width: 768px) {
       .scroll-section {
@@ -279,6 +668,39 @@
         width: 280px;
         height: 280px;
       }
+
+      .solution-layout {
+        flex-direction: column;
+        gap: 32px;
+        text-align: center;
+      }
+
+      .solution-layout .section-text {
+        text-align: center;
+      }
+
+      .multi-device {
+        gap: 16px;
+      }
+
+      .css-macbook {
+        width: 260px;
+        height: 165px;
+      }
+
+      .css-phone {
+        width: 180px;
+        height: 360px;
+      }
+
+      .css-watch {
+        width: 64px;
+        height: 78px;
+      }
+    }
+
+    .illust-elem, .css-phone, .css-macbook, .css-watch {
+        will-change: transform, opacity;
     }
   </style>
 </head>
@@ -469,29 +891,101 @@
 
   <!-- ─── Section 5: Solution 1 — Record ─────────────── -->
   <section id="solution1" class="scroll-section">
-    <div class="section-text">
-      <h2>Tap. Record.</h2>
-      <p>No bots join your call. No permissions to juggle. Just open MeetMind, tap record, and talk. It runs quietly in the background while you stay present in the conversation.</p>
+    <div class="solution-layout">
+      <div class="section-text">
+        <h2>Tap. Record.</h2>
+        <p>No bots join your call. No permissions to juggle. Just open MeetMind, tap record, and talk. It runs quietly in the background while you stay present in the conversation.</p>
+      </div>
+      <div class="device-container">
+        <div class="css-phone" id="phone1">
+          <div class="phone-notch"></div>
+          <div class="phone-screen screen-recording">
+            <div class="rec-circle"></div>
+            <div class="rec-timer">12:34</div>
+            <div class="rec-wave">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="device-container"></div>
   </section>
 
   <!-- ─── Section 6: Solution 2 — AI Brief ───────────── -->
   <section id="solution2" class="scroll-section">
-    <div class="section-text">
-      <h2>AI reads your entire meeting.</h2>
-      <p>And gives you a structured brief the moment it ends. Key decisions. Open questions. Who said what. A full transcript you can search. Everything you need, nothing you don't.</p>
+    <div class="solution-layout">
+      <div class="device-container">
+        <div class="css-phone" id="phone2">
+          <div class="phone-notch"></div>
+          <div class="phone-screen screen-brief">
+            <div class="brief-card">
+              <div class="brief-label" style="color:#6C5CE7">Summary</div>
+              <div class="brief-line" style="width:90%"></div>
+              <div class="brief-line" style="width:70%"></div>
+            </div>
+            <div class="brief-card">
+              <div class="brief-label" style="color:#00b894">Decisions</div>
+              <div class="brief-line" style="width:80%"></div>
+              <div class="brief-line" style="width:55%"></div>
+            </div>
+            <div class="brief-card">
+              <div class="brief-label" style="color:#FF4757">Action Items</div>
+              <div class="brief-line" style="width:85%"></div>
+              <div class="brief-line" style="width:65%"></div>
+            </div>
+            <div class="brief-card">
+              <div class="brief-label" style="color:#FFA502">Key Quotes</div>
+              <div class="brief-line" style="width:75%"></div>
+              <div class="brief-line" style="width:50%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-text">
+        <h2>AI reads your entire meeting.</h2>
+        <p>And gives you a structured brief the moment it ends. Key decisions. Open questions. Who said what. A full transcript you can search. Everything you need, nothing you don't.</p>
+      </div>
     </div>
-    <div class="device-container"></div>
   </section>
 
   <!-- ─── Section 7: Solution 3 — Todos ──────────────── -->
   <section id="solution3" class="scroll-section">
-    <div class="section-text">
-      <h2>Say it. MeetMind creates it.</h2>
-      <p>"Send the proposal by Friday." "Follow up with Jake next week." MeetMind catches every commitment made in your meeting and turns them into real, trackable todos — automatically.</p>
+    <div class="solution-layout">
+      <div class="section-text">
+        <h2>Say it. MeetMind creates it.</h2>
+        <p>"Send the proposal by Friday." "Follow up with Jake next week." MeetMind catches every commitment made in your meeting and turns them into real, trackable todos — automatically.</p>
+      </div>
+      <div class="device-container">
+        <div class="css-phone" id="phone3">
+          <div class="phone-notch"></div>
+          <div class="phone-screen screen-todo">
+            <div class="todo-voice">
+              <span class="mic-emoji">🎙️</span>
+              <div class="voice-bars">
+                <span style="height:6px"></span>
+                <span style="height:12px"></span>
+                <span style="height:18px"></span>
+                <span style="height:10px"></span>
+                <span style="height:20px"></span>
+                <span style="height:14px"></span>
+                <span style="height:8px"></span>
+                <span style="height:16px"></span>
+                <span style="height:10px"></span>
+                <span style="height:6px"></span>
+              </div>
+            </div>
+            <div class="todo-card">
+              <div class="todo-title">Send the proposal to Acme Corp</div>
+              <div class="todo-meta">
+                <span class="todo-badge todo-date">Friday</span>
+                <span class="todo-badge todo-priority">High</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="device-container"></div>
   </section>
 
   <!-- ─── Section 8: Solution 4 — Organize ───────────── -->
@@ -570,11 +1064,57 @@
 
   <!-- ─── Section 9: Solution 5 — Multi-platform ─────── -->
   <section id="solution5" class="scroll-section">
-    <div class="section-text">
-      <h2>iPhone. Mac. Apple Watch.</h2>
-      <p>Your meetings follow you everywhere. Start a recording on your Watch. Review the summary on your Mac. Check your todos on iPhone. One app, every Apple device.</p>
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:900px;margin:0 auto;">
+      <div class="section-text" style="text-align:center;margin-bottom:48px;">
+        <h2>iPhone. Mac. Apple Watch.</h2>
+        <p>Your meetings follow you everywhere. Start a recording on your Watch. Review the summary on your Mac. Check your todos on iPhone. One app, every Apple device.</p>
+      </div>
+      <div class="multi-device" id="multiDeviceGroup">
+        <div class="css-macbook">
+          <div class="mac-screen">
+            <div class="mac-sidebar">
+              <div class="mac-icon"></div>
+              <div class="mac-icon"></div>
+              <div class="mac-icon"></div>
+            </div>
+            <div class="mac-list">
+              <div class="mac-list-item">Q1 Planning</div>
+              <div class="mac-list-item active">Acme Corp</div>
+              <div class="mac-list-item">Design Review</div>
+              <div class="mac-list-item">Team Sync</div>
+            </div>
+            <div class="mac-detail">
+              <div class="mac-detail-heading"></div>
+              <div class="mac-detail-line" style="width:90%"></div>
+              <div class="mac-detail-line" style="width:75%"></div>
+              <div class="mac-detail-line" style="width:82%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="css-phone" style="width:160px;height:320px;">
+          <div class="phone-notch"></div>
+          <div class="phone-screen screen-recording">
+            <div class="rec-circle" style="width:44px;height:44px;"></div>
+            <div class="rec-timer" style="font-size:18px;">08:21</div>
+            <div class="rec-wave">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+        <div class="css-watch">
+          <div class="watch-screen">
+            <div class="watch-timer">03:45</div>
+            <div class="watch-wave">
+              <span style="height:6px"></span>
+              <span style="height:10px"></span>
+              <span style="height:14px"></span>
+              <span style="height:8px"></span>
+              <span style="height:5px"></span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="device-container"></div>
   </section>
 
   <!-- ─── Section 10: CTA ─────────────────────────────── -->
@@ -924,6 +1464,101 @@
       });
     });
 
+    // ── Device Animations ──────────────────────────────────
+
+    // Phone 1: enter from below with rotateY
+    gsap.from('#phone1', {
+      y: 100,
+      opacity: 0,
+      rotateY: -15,
+      scrollTrigger: {
+        trigger: '#solution1',
+        start: 'top 80%',
+        end: 'top 20%',
+        scrub: true,
+      },
+    });
+    gsap.to('#phone1', {
+      rotateY: 10,
+      scrollTrigger: {
+        trigger: '#solution1',
+        start: 'top 20%',
+        end: 'bottom top',
+        scrub: true,
+      },
+    });
+
+    // Phone 2: enter from left, brief cards staggered
+    gsap.from('#phone2', {
+      x: -80,
+      opacity: 0,
+      scrollTrigger: {
+        trigger: '#solution2',
+        start: 'top 80%',
+        end: 'top 20%',
+        scrub: true,
+      },
+    });
+    document.querySelectorAll('#phone2 .brief-card').forEach((card, i) => {
+      gsap.to(card, {
+        opacity: 1,
+        y: 0,
+        scrollTrigger: {
+          trigger: '#solution2',
+          start: `top ${75 - i * 10}%`,
+          end: `top ${45 - i * 10}%`,
+          scrub: true,
+        },
+      });
+    });
+
+    // Phone 3: enter from below with rotateY
+    gsap.from('#phone3', {
+      y: 80,
+      opacity: 0,
+      rotateY: 15,
+      scrollTrigger: {
+        trigger: '#solution3',
+        start: 'top 80%',
+        end: 'top 20%',
+        scrub: true,
+      },
+    });
+
+    // Multi-device: staggered entrances
+    gsap.from('#multiDeviceGroup .css-macbook', {
+      x: -100,
+      opacity: 0,
+      rotateY: -10,
+      scrollTrigger: {
+        trigger: '#solution5',
+        start: 'top 80%',
+        end: 'top 30%',
+        scrub: true,
+      },
+    });
+    gsap.from('#multiDeviceGroup .css-phone', {
+      y: 80,
+      opacity: 0,
+      scrollTrigger: {
+        trigger: '#solution5',
+        start: 'top 70%',
+        end: 'top 20%',
+        scrub: true,
+      },
+    });
+    gsap.from('#multiDeviceGroup .css-watch', {
+      x: 100,
+      opacity: 0,
+      rotateY: 10,
+      scrollTrigger: {
+        trigger: '#solution5',
+        start: 'top 60%',
+        end: 'top 10%',
+        scrub: true,
+      },
+    });
+
     // ── Waitlist Form Handler ──────────────────────────────
     const form      = document.getElementById('waitlistForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -956,6 +1591,20 @@
         submitBtn.disabled = false;
       }
     });
+
+    // Performance: pause wave animations when off-screen
+    const waveElements = document.querySelectorAll('.rec-wave span');
+    const waveObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            waveElements.forEach(span => {
+                span.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
+            });
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.screen-recording').forEach(el => waveObserver.observe(el));
   </script>
+<footer style="text-align:center;padding:32px;color:rgba(255,255,255,0.3);font-size:12px">
+    <p>MeetMind — Built with SwiftUI for Apple platforms</p>
+</footer>
 </body>
 </html>
