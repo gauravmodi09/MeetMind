@@ -300,54 +300,59 @@
       overflow: hidden;
     }
 
+    /* Pivot text — centered, shown before phone */
     .pivot-text {
       opacity: 0; text-align: center; max-width: 680px;
-      padding: 0 24px; z-index: 2;
+      padding: 0 24px; z-index: 5;
+      position: absolute;
     }
     .pivot-text em {
       font-family: var(--font-display);
       font-style: italic; color: var(--teal);
     }
 
-    /* Product copy - appears beside phone */
-    .product-copy {
-      position: absolute;
+    /* 3-column product layout: copy | phone | copy */
+    .product-layout {
+      position: absolute; inset: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0 clamp(20px, 4vw, 60px);
+      gap: 0;
+      opacity: 0;
       z-index: 3;
-      max-width: 320px;
+    }
+
+    .product-copy {
       opacity: 0;
     }
     .product-copy-left {
-      left: clamp(20px, 5vw, 80px);
-      top: 50%;
-      transform: translateY(-50%);
       text-align: left;
+      padding-right: clamp(16px, 3vw, 40px);
+      justify-self: end;
+      max-width: 340px;
     }
     .product-copy-right {
-      right: clamp(20px, 5vw, 80px);
-      top: 50%;
-      transform: translateY(-50%);
-      text-align: right;
+      text-align: left;
+      padding-left: clamp(16px, 3vw, 40px);
+      justify-self: start;
+      max-width: 340px;
     }
     .product-copy h3 {
       font-family: var(--font-display);
-      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
       margin-bottom: 0.8rem; line-height: 1.15;
     }
     .product-copy p {
-      font-size: 0.88rem; color: var(--grey);
-      line-height: 1.6; margin-bottom: 0.6rem;
+      font-size: 0.85rem; color: var(--grey);
+      line-height: 1.6; margin-bottom: 0.5rem;
     }
 
-    /* 3D Phone */
+    /* 3D Phone — center column */
     .phone-stage {
       perspective: 1200px;
-      position: absolute;
-      top: 0; bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: clamp(220px, 24vw, 300px);
       display: flex; justify-content: center; align-items: center;
-      opacity: 0; z-index: 2;
+      z-index: 2;
     }
 
     .phone {
@@ -583,28 +588,30 @@
     }
 
     /* ── Responsive ── */
-    @media (max-width: 1024px) {
-      .product-copy {
-        max-width: 260px;
-      }
-      .product-copy h3 { font-size: 1.2rem; }
-      .product-copy p { font-size: 0.8rem; }
+    @media (max-width: 1100px) {
+      .product-copy { max-width: 260px; }
+      .product-copy h3 { font-size: 1.1rem; }
+      .product-copy p { font-size: 0.78rem; }
     }
 
     @media (max-width: 860px) {
+      .product-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        justify-items: center;
+        gap: 2rem;
+        padding: 5vh 24px;
+      }
       .product-copy-left, .product-copy-right {
-        position: absolute;
-        left: 50% !important; right: auto !important;
-        transform: translateX(-50%) !important;
-        top: auto !important; bottom: 8vh;
-        text-align: center !important;
-        max-width: 340px;
+        text-align: center;
+        max-width: 400px;
+        padding: 0;
+        justify-self: center;
       }
-      .product-copy-right { bottom: 5vh; }
-      .phone-stage {
-        top: 5vh; bottom: auto;
-        height: 60vh;
-      }
+      /* On mobile, hide one copy at a time — only show active */
+      .product-copy-right { order: 3; }
+      .phone-stage { order: 1; }
+      .product-copy-left { order: 2; }
     }
 
     @media (max-width: 768px) {
@@ -754,22 +761,17 @@
           What if <em>one tap</em><br/>could capture everything?
         </p>
 
-        <!-- Product copy - left side -->
-        <div class="product-copy product-copy-left" id="copyLeft">
-          <h3>Tap. Record.<br/>No bots ever.</h3>
-          <p>No bot joins your Zoom, Meet, or Teams call. Just your microphone and MeetMind's AI — recording in the background while you focus on what matters.</p>
-          <p style="color:var(--teal);font-size:0.85rem">Background recording &middot; 3hr limit &middot; Real-time transcription</p>
-        </div>
+        <!-- 3-column grid: copy | phone | copy -->
+        <div class="product-layout" id="productLayout">
+          <!-- Left copy -->
+          <div class="product-copy product-copy-left" id="copyLeft">
+            <h3>Tap. Record.<br/>No bots ever.</h3>
+            <p>No bot joins your Zoom, Meet, or Teams call. Just your microphone and MeetMind's AI — recording in the background while you focus on what matters.</p>
+            <p style="color:var(--teal);font-size:0.82rem">Background recording &middot; 3hr limit &middot; Real-time transcription</p>
+          </div>
 
-        <!-- Product copy - right side -->
-        <div class="product-copy product-copy-right" id="copyRight">
-          <h3>AI reads your meeting.<br/>You get the brief.</h3>
-          <p>Summary, decisions, action items, key quotes, participant detection — structured and organized in seconds. Then smart todos flow into your task list automatically.</p>
-          <p style="color:var(--amber);font-size:0.85rem">6 meeting templates &middot; Follow-up emails &middot; AI chat</p>
-        </div>
-
-        <!-- 3D Phone -->
-        <div class="phone-stage" id="phoneStage">
+          <!-- Phone (center column) -->
+          <div class="phone-stage" id="phoneStage">
           <div class="phone" id="phone3d">
             <div class="phone-notch"></div>
             <div class="phone-screen">
@@ -810,7 +812,14 @@
               </div>
             </div>
           </div>
-        </div>
+
+          <!-- Right copy -->
+          <div class="product-copy product-copy-right" id="copyRight">
+            <h3>AI reads your meeting.<br/>You get the brief.</h3>
+            <p>Summary, decisions, action items, key quotes, participant detection — structured and organized in seconds. Smart todos flow into your task list automatically.</p>
+            <p style="color:var(--amber);font-size:0.82rem">6 meeting templates &middot; Follow-up emails &middot; AI chat</p>
+          </div>
+        </div><!-- /product-layout -->
       </div>
     </section>
 
@@ -1252,7 +1261,7 @@ gsap.to('.pivot-text', {
   scrollTrigger: { trigger: '#shift', start: '20% top', end: '28% top', scrub: 1 }
 });
 
-gsap.to('#phoneStage', {
+gsap.to('#productLayout', {
   opacity: 1,
   scrollTrigger: { trigger: '#shift', start: '25% top', end: '33% top', scrub: 1 }
 });
