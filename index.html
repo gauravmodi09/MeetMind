@@ -18,36 +18,34 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
 
   <style>
-    /* ─── Reset ─────────────────────────────────────────── */
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ─── Base ───────────────────────────────────────────── */
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: auto; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       color: #fff;
       overflow-x: hidden;
-      background: #1a1a3e;
+      background: #0a0a0f;
     }
 
-    /* ─── Gradient background overlay ───────────────────── */
-    .gradient-bg {
+    /* ─── Three.js Canvas ─────────────────────────────── */
+    #three-canvas {
       position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: linear-gradient(135deg, var(--grad-1, #1a1a3e), var(--grad-2, #2d1b69));
-      transition: background 0.1s linear;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    /* ─── Scroll sections ────────────────────────────────── */
-    .scroll-section {
+    /* ─── Content Layer ───────────────────────────────── */
+    .content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── Sections ────────────────────────────────────── */
+    .section {
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -56,930 +54,611 @@
       position: relative;
     }
 
-    /* ─── Section text ───────────────────────────────────── */
-    .section-text {
+    .section-inner {
       max-width: 720px;
+      width: 100%;
       text-align: center;
     }
 
-    .section-text h2 {
-      font-size: clamp(32px, 5vw, 56px);
+    /* ─── Typography ──────────────────────────────────── */
+    h1, h2 {
+      font-size: clamp(36px, 6vw, 72px);
       font-weight: 900;
-      line-height: 1.1;
-      letter-spacing: -1.5px;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
       margin-bottom: 24px;
     }
 
-    .section-text p {
+    .section p, .section .body-text {
       font-size: clamp(16px, 2vw, 20px);
-      color: rgba(255, 255, 255, 0.7);
+      color: rgba(255,255,255,0.65);
       line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto;
     }
 
-    /* ─── Hero ───────────────────────────────────────────── */
-    #hero {
-      flex-direction: column;
-      text-align: center;
-    }
-
-    #hero h1 {
-      font-size: clamp(40px, 7vw, 80px);
-      font-weight: 900;
-      letter-spacing: -3px;
-      line-height: 1.05;
-      margin-bottom: 28px;
-    }
-
-    #hero p {
-      font-size: clamp(16px, 2vw, 20px);
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 60px;
-    }
-
-    .scroll-arrow {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255, 255, 255, 0.5);
+    .scroll-cue {
       font-size: 13px;
-      letter-spacing: 1px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 48px;
+      letter-spacing: 0.15em;
       text-transform: uppercase;
     }
 
-    .scroll-arrow svg {
+    .scroll-cue .arrow {
+      display: block;
+      margin-top: 8px;
       animation: bounce 2s ease-in-out infinite;
     }
 
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(10px); }
+      50% { transform: translateY(8px); }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .scroll-arrow svg {
-        animation: none;
-      }
+    /* ─── Hero ─────────────────────────────────────────── */
+    .hero-section {
+      min-height: 100vh;
     }
 
-    /* ─── Illustration container ─────────────────────────── */
-    .illustration-container {
+    .hero-section h1 {
+      font-size: clamp(40px, 7vw, 80px);
+      background: linear-gradient(135deg, #fff 30%, rgba(108,92,231,0.8));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-section .subline {
+      font-size: clamp(17px, 2.2vw, 22px);
+      color: rgba(255,255,255,0.5);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ─── Pivot Section ───────────────────────────────── */
+    .pivot-section {
+      min-height: 200vh;
+    }
+
+    .pivot-line {
+      opacity: 0;
+      font-size: clamp(28px, 5vw, 56px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 32px;
+    }
+
+    .pivot-brand {
+      opacity: 0;
+      font-size: clamp(48px, 8vw, 96px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #6C5CE7, #a855f7, #6C5CE7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 0 40px rgba(108,92,231,0.5));
+    }
+
+    /* ─── Floating Words (pain section) ───────────────── */
+    .floating-words {
       position: absolute;
       inset: 0;
       pointer-events: none;
       overflow: hidden;
     }
 
-    /* ─── Pivot glow ─────────────────────────────────────── */
-    #pivot {
-      flex-direction: column;
-    }
-
-    .pivot-glow {
-      width: 400px;
-      height: 400px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(108, 92, 231, 0.3), transparent 70%);
-      opacity: 0;
+    .floating-word {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
+      font-size: clamp(12px, 1.5vw, 16px);
+      color: rgba(255,255,255,0.12);
+      font-weight: 600;
+      white-space: nowrap;
     }
 
-    /* ─── Device container ───────────────────────────────── */
-    .device-container {
+    /* ─── Phone Canvas ────────────────────────────────── */
+    .phone-container {
+      width: 220px;
+      height: 440px;
+      margin: 40px auto 0;
+      position: relative;
+      opacity: 0;
+      transform: translateY(60px);
+    }
+
+    .phone-frame {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(145deg, #1a1a2e, #16162a);
+      border-radius: 32px;
+      border: 2px solid rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.05),
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 80px rgba(108,92,231,0.15);
+    }
+
+    .phone-notch {
+      width: 100px;
+      height: 28px;
+      background: #0a0a0f;
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .phone-screen {
+      position: absolute;
+      top: 28px; left: 10px; right: 10px; bottom: 10px;
+      background: #0d0d1a;
+      border-radius: 0 0 22px 22px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 16px;
+    }
+
+    /* ─── Record Button ───────────────────────────────── */
+    .record-ui { text-align: center; }
+
+    .record-btn {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: #e74c3c;
+      margin: 0 auto 16px;
+      position: relative;
+      animation: pulse-record 2s ease-in-out infinite;
+    }
+
+    .record-btn::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(231,76,60,0.3);
+      animation: pulse-ring 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-record {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(231,76,60,0.4); }
+      50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(231,76,60,0.6); }
+    }
+
+    @keyframes pulse-ring {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.3; }
+    }
+
+    .record-timer {
+      font-size: 18px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .record-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    /* ─── Waveform ─────────────────────────────────────── */
+    .waveform {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 400px;
+      gap: 3px;
+      height: 40px;
+      margin-top: 20px;
+    }
+
+    .waveform .bar {
+      width: 3px;
+      background: rgba(108,92,231,0.6);
+      border-radius: 2px;
+      animation: wave 1.2s ease-in-out infinite;
+    }
+
+    @keyframes wave {
+      0%, 100% { height: 8px; }
+      50% { height: 32px; }
+    }
+
+    /* ─── Brief Cards ─────────────────────────────────── */
+    .brief-ui {
       width: 100%;
+    }
+
+    .brief-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      text-align: left;
+      border-left: 3px solid;
+    }
+
+    .brief-card.summary { border-color: #6C5CE7; }
+    .brief-card.decisions { border-color: #00b894; }
+    .brief-card.actions { border-color: #fdcb6e; }
+
+    .brief-card .card-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 4px;
+    }
+
+    .brief-card .card-text {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    /* ─── Todo Card ────────────────────────────────────── */
+    .todo-ui { width: 100%; }
+
+    .voice-bar {
+      height: 4px;
+      background: linear-gradient(90deg, #6C5CE7, #a855f7, #6C5CE7);
+      border-radius: 2px;
+      margin-bottom: 16px;
+      animation: voice-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes voice-pulse {
+      0%, 100% { opacity: 0.4; transform: scaleX(0.7); }
+      50% { opacity: 1; transform: scaleX(1); }
+    }
+
+    .todo-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: left;
+    }
+
+    .todo-card .todo-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 8px;
+    }
+
+    .todo-card .todo-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .todo-card .tag {
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(108,92,231,0.2);
+      color: rgba(255,255,255,0.6);
+    }
+
+    .todo-card .tag.due { background: rgba(253,203,110,0.2); }
+    .todo-card .tag.priority { background: rgba(231,76,60,0.2); }
+
+    /* ─── Organization Nodes ──────────────────────────── */
+    .org-nodes {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 40px auto 0;
+      opacity: 0;
+    }
+
+    .org-node {
+      position: absolute;
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      border: 1.5px solid rgba(255,255,255,0.1);
+    }
+
+    .org-node.center {
+      width: 72px; height: 72px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(108,92,231,0.3);
+      border-color: rgba(108,92,231,0.5);
+      font-size: 10px;
+    }
+
+    .org-line {
+      position: absolute;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(108,92,231,0.4), rgba(108,92,231,0.1));
+      transform-origin: left center;
+    }
+
+    /* ─── Device Silhouettes ──────────────────────────── */
+    .devices {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
       margin-top: 48px;
+      opacity: 0;
     }
 
-    /* ─── CTA section ────────────────────────────────────── */
-    #cta {
-      flex-direction: column;
-    }
-
-    .cta-content {
+    .device {
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      width: 100%;
-      max-width: 720px;
-    }
-
-    .cta-content h2 {
-      font-size: clamp(32px, 5vw, 56px);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      margin-bottom: 16px;
-    }
-
-    .cta-content > p {
-      font-size: clamp(16px, 2vw, 20px);
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 40px;
-    }
-
-    /* ─── Waitlist form ──────────────────────────────────── */
-    .waitlist-form {
-      display: flex;
-      flex-direction: row;
       gap: 12px;
-      width: 100%;
-      max-width: 520px;
-      margin-bottom: 24px;
     }
 
-    .waitlist-form input[type="email"] {
+    .device-shape {
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .device-shape.phone-shape { width: 48px; height: 88px; border-radius: 14px; }
+    .device-shape.mac-shape { width: 120px; height: 80px; border-radius: 8px; }
+    .device-shape.mac-shape::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      width: 60px; height: 8px;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+    }
+    .device-shape.watch-shape { width: 44px; height: 52px; border-radius: 14px; }
+
+    .device-shape .screen-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(108,92,231,0.5);
+      animation: pulse-record 3s ease-in-out infinite;
+    }
+
+    .device-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      font-weight: 600;
+    }
+
+    /* ─── CTA Section ─────────────────────────────────── */
+    .cta-section {
+      min-height: 100vh;
+    }
+
+    .countdown-text {
+      font-size: clamp(20px, 3vw, 32px);
+      color: rgba(255,255,255,0.4);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .countdown-relief {
+      font-size: clamp(18px, 2.5vw, 26px);
+      color: rgba(255,255,255,0.6);
+      font-weight: 500;
+      font-style: italic;
+      margin-bottom: 48px;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 12px;
+      max-width: 420px;
+      margin: 0 auto 32px;
+    }
+
+    .cta-form input {
       flex: 1;
       padding: 16px 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       color: #fff;
-      font-size: 15px;
+      font-size: 16px;
       font-family: inherit;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.3s;
     }
 
-    .waitlist-form input[type="email"]::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
+    .cta-form input::placeholder { color: rgba(255,255,255,0.25); }
+    .cta-form input:focus { border-color: rgba(108,92,231,0.5); }
 
-    .waitlist-form input[type="email"]:focus {
-      border-color: rgba(108, 92, 231, 0.8);
-    }
-
-    .waitlist-form button[type="submit"] {
+    .cta-form button {
       padding: 16px 28px;
-      background: #6C5CE7;
-      color: #fff;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6C5CE7, #a855f7);
+      color: #fff;
       font-size: 15px;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       white-space: nowrap;
-      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
 
-    .waitlist-form button[type="submit"]:hover {
-      background: #5a4dd4;
+    .cta-form button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(108, 92, 231, 0.5);
+      box-shadow: 0 8px 32px rgba(108,92,231,0.4);
     }
 
-    /* ─── Trust badges ───────────────────────────────────── */
-    .trust-badges {
+    .trust-signals {
       display: flex;
-      flex-direction: row;
-      gap: 28px;
-      align-items: center;
-      flex-wrap: wrap;
+      gap: 24px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .trust-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .trust-signal {
       font-size: 13px;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255,255,255,0.3);
       font-weight: 500;
     }
 
-    .trust-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #00b894;
-      flex-shrink: 0;
+    .trust-signal::before {
+      content: '✦ ';
+      color: rgba(108,92,231,0.5);
     }
 
-    /* ─── Illustration elements ──────────────────────────── */
-    .illust-elem {
+    /* ─── Footer ──────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      padding: 48px 32px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.2);
+    }
+
+    /* ─── Glow Effects ────────────────────────────────── */
+    .glow-purple {
       position: absolute;
-      opacity: 0;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
     }
 
-    /* ─── Solution layout ────────────────────────────────── */
-    .solution-layout {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 60px;
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .solution-layout .section-text {
-      flex: 1;
-      text-align: left;
-    }
-
-    .solution-layout .device-container {
-      flex-shrink: 0;
-      min-height: auto;
-      margin-top: 0;
-      width: auto;
-    }
-
-    /* ─── CSS Phone ───────────────────────────────────────── */
-    .css-phone {
-      width: 220px;
-      height: 440px;
-      background: #0f0f1a;
-      border-radius: 32px;
-      border: 3px solid rgba(255, 255, 255, 0.12);
-      padding: 12px;
-      box-shadow:
-        0 0 40px rgba(108, 92, 231, 0.35),
-        0 0 80px rgba(108, 92, 231, 0.15),
-        0 20px 60px rgba(0, 0, 0, 0.5);
-      position: relative;
-    }
-
-    .phone-notch {
+    .glow-green {
       position: absolute;
-      top: 18px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 20px;
-      background: #000;
-      border-radius: 10px;
-      z-index: 10;
-    }
-
-    .phone-screen {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, #13131f 0%, #0d0d18 100%);
-      border-radius: 22px;
-      padding: 32px 12px 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* ─── Screen: Recording ───────────────────────────────── */
-    .screen-recording {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      gap: 16px;
-    }
-
-    .rec-circle {
-      width: 64px;
-      height: 64px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,184,148,0.1) 0%, transparent 70%);
       border-radius: 50%;
-      background: radial-gradient(circle at 35% 35%, #FF4757, #c0392b);
-      box-shadow: 0 0 20px rgba(255, 71, 87, 0.6), 0 0 40px rgba(255, 71, 87, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      pointer-events: none;
+      z-index: -1;
     }
 
-    .rec-circle::after {
-      content: '';
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .rec-timer {
-      font-size: 24px;
-      font-weight: 700;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 2px;
-    }
-
-    .rec-wave {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 3px;
-      height: 32px;
-    }
-
-    .rec-wave span {
-      display: block;
-      width: 3px;
-      background: linear-gradient(180deg, #6C5CE7, #a29bfe);
-      border-radius: 2px;
-      transform-origin: center;
-      animation: wave 1.2s ease-in-out infinite;
-    }
-
-    .rec-wave span:nth-child(1) { height: 10px; animation-delay: 0s; }
-    .rec-wave span:nth-child(2) { height: 18px; animation-delay: 0.1s; }
-    .rec-wave span:nth-child(3) { height: 28px; animation-delay: 0.2s; }
-    .rec-wave span:nth-child(4) { height: 22px; animation-delay: 0.3s; }
-    .rec-wave span:nth-child(5) { height: 30px; animation-delay: 0.4s; }
-    .rec-wave span:nth-child(6) { height: 20px; animation-delay: 0.5s; }
-    .rec-wave span:nth-child(7) { height: 14px; animation-delay: 0.6s; }
-    .rec-wave span:nth-child(8) { height: 8px;  animation-delay: 0.7s; }
-
-    @keyframes wave {
-      0%, 100% { transform: scaleY(1); }
-      50%       { transform: scaleY(1.8); }
-    }
-
-    /* ─── Screen: Brief ───────────────────────────────────── */
-    .screen-brief {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
-      padding-top: 8px;
-    }
-
-    .brief-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: 8px 10px;
-      opacity: 0;
-      transform: translateY(10px);
-    }
-
-    .brief-label {
-      font-size: 9px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 5px;
-    }
-
-    .brief-line {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.15);
-      border-radius: 2px;
-      margin-bottom: 4px;
-    }
-
-    /* ─── Screen: Todo ────────────────────────────────────── */
-    .screen-todo {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      padding-top: 8px;
-    }
-
-    .todo-voice {
-      background: rgba(108, 92, 231, 0.2);
-      border-radius: 10px;
-      padding: 8px 10px;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .todo-voice .mic-emoji {
-      font-size: 14px;
-    }
-
-    .todo-voice .voice-bars {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 2px;
-      flex: 1;
-    }
-
-    .todo-voice .voice-bars span {
-      display: block;
-      width: 2px;
-      background: rgba(108, 92, 231, 0.8);
-      border-radius: 1px;
-    }
-
-    .todo-card {
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      padding: 10px;
-      border-left: 3px solid #6C5CE7;
-    }
-
-    .todo-title {
-      font-size: 10px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .todo-meta {
-      display: flex;
-      flex-direction: row;
-      gap: 4px;
-    }
-
-    .todo-badge {
-      font-size: 8px;
-      font-weight: 600;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .todo-date {
-      background: rgba(0, 184, 148, 0.2);
-      color: #00b894;
-    }
-
-    .todo-priority {
-      background: rgba(255, 71, 87, 0.2);
-      color: #FF4757;
-    }
-
-    /* ─── CSS MacBook ─────────────────────────────────────── */
-    .css-macbook {
-      width: 320px;
-      height: 200px;
-      background: #1a1a2e;
-      border-radius: 8px;
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(108, 92, 231, 0.2);
-    }
-
-    .mac-screen {
-      display: flex;
-      width: 100%;
-      height: 100%;
-    }
-
-    .mac-sidebar {
-      width: 40px;
-      background: rgba(0, 0, 0, 0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 0;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .mac-sidebar .mac-icon {
-      width: 22px;
-      height: 22px;
-      border-radius: 5px;
-      background: rgba(108, 92, 231, 0.3);
-    }
-
-    .mac-sidebar .mac-icon:first-child {
-      background: rgba(108, 92, 231, 0.6);
-    }
-
-    .mac-list {
-      width: 90px;
-      background: rgba(255, 255, 255, 0.03);
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      display: flex;
-      flex-direction: column;
-      padding: 8px 6px;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .mac-list-item {
-      padding: 5px 6px;
-      border-radius: 5px;
-      font-size: 7px;
-      color: rgba(255, 255, 255, 0.4);
-      line-height: 1.3;
-    }
-
-    .mac-list-item.active {
-      background: rgba(108, 92, 231, 0.25);
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .mac-detail {
-      flex: 1;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .mac-detail-heading {
-      height: 8px;
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 2px;
-      width: 70%;
-    }
-
-    .mac-detail-line {
-      height: 5px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 2px;
-    }
-
-    /* ─── CSS Watch ───────────────────────────────────────── */
-    .css-watch {
-      width: 80px;
-      height: 96px;
-      background: #0f0f1a;
-      border-radius: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.12);
-      box-shadow: 0 0 20px rgba(108, 92, 231, 0.25);
-      overflow: hidden;
-    }
-
-    .watch-screen {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(180deg, #13131f, #0d0d18);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .watch-timer {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: 1px;
-    }
-
-    .watch-wave {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .watch-wave span {
-      display: block;
-      width: 3px;
-      background: linear-gradient(180deg, #6C5CE7, #a29bfe);
-      border-radius: 1px;
-      animation: wave 1.2s ease-in-out infinite;
-    }
-
-    /* ─── Multi-device ────────────────────────────────────── */
-    .multi-device {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-
-    /* ─── Responsive ─────────────────────────────────────── */
+    /* ─── Responsive ──────────────────────────────────── */
     @media (max-width: 768px) {
-      .scroll-section {
-        padding: 60px 20px;
-      }
-
-      .waitlist-form {
-        flex-direction: column;
-      }
-
-      .waitlist-form button[type="submit"] {
-        width: 100%;
-      }
-
-      .pivot-glow {
-        width: 280px;
-        height: 280px;
-      }
-
-      .solution-layout {
-        flex-direction: column;
-        gap: 32px;
-        text-align: center;
-      }
-
-      .solution-layout .section-text {
-        text-align: center;
-      }
-
-      .multi-device {
-        gap: 16px;
-      }
-
-      .css-macbook {
-        width: 260px;
-        height: 165px;
-      }
-
-      .css-phone {
-        width: 180px;
-        height: 360px;
-      }
-
-      .css-watch {
-        width: 64px;
-        height: 78px;
-      }
+      .section { padding: 60px 20px; }
+      h1, h2 { font-size: clamp(28px, 8vw, 48px); margin-bottom: 16px; }
+      .hero-section h1 { font-size: clamp(32px, 9vw, 52px); }
+      .section p, .section .body-text { font-size: 16px; }
+      .pivot-line { font-size: clamp(22px, 6vw, 36px); }
+      .pivot-brand { font-size: clamp(36px, 12vw, 64px); }
+      .cta-form { flex-direction: column; }
+      .cta-form button { width: 100%; }
+      .devices { gap: 24px; }
+      .device-shape.mac-shape { width: 80px; height: 56px; }
+      .org-nodes { width: 240px; height: 240px; }
     }
 
-    .illust-elem, .css-phone, .css-macbook, .css-watch {
-        will-change: transform, opacity;
+    /* ─── Reduced Motion ──────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Fixed gradient background -->
-  <div class="gradient-bg" id="gradientBg"></div>
+<canvas id="three-canvas"></canvas>
 
-  <!-- ─── Section 1: Hero ─────────────────────────────── -->
-  <section id="hero" class="scroll-section">
-    <h1>Your meetings<br>are broken.</h1>
-    <p>Scroll to discover why — and what fixes them.</p>
-    <div class="scroll-arrow">
-      <span>Scroll</span>
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="6 9 12 15 18 9"></polyline>
-      </svg>
-    </div>
-  </section>
+<div class="content">
 
-  <!-- ─── Section 2: Pain 1 ───────────────────────────── -->
-  <section id="pain1" class="scroll-section">
-    <div class="illustration-container">
-
-      <!-- 1. Speech bubble -->
-      <svg class="illust-elem" data-drift="1" width="80" height="60"
-           style="top:15%;left:10%" viewBox="0 0 80 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="78" height="48" rx="10" ry="10"
-              fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
-        <polyline points="14,49 10,59 24,49"
-                  fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
-        <line x1="14" y1="16" x2="66" y2="16" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="14" y1="24" x2="58" y2="24" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="14" y1="32" x2="62" y2="32" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 2. Calendar -->
-      <svg class="illust-elem" data-drift="2" width="70" height="70"
-           style="top:20%;right:15%" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="68" height="68" rx="8"
-              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <rect x="1" y="1" width="68" height="18" rx="8"
-              fill="rgba(139,58,58,0.35)" stroke="none"/>
-        <rect x="1" y="10" width="68" height="9" rx="0"
-              fill="rgba(139,58,58,0.35)" stroke="none"/>
-        <circle cx="20" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="35" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="50" cy="38" r="3" fill="rgba(255,255,255,0.4)"/>
-        <circle cx="20" cy="52" r="3" fill="rgba(255,255,255,0.3)"/>
-        <circle cx="35" cy="52" r="3" fill="rgba(255,255,255,0.3)"/>
-      </svg>
-
-      <!-- 3. Notebook page -->
-      <svg class="illust-elem" data-drift="3" width="60" height="80"
-           style="bottom:25%;left:20%" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="58" height="78" rx="5"
-              fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
-        <line x1="10" y1="20" x2="50" y2="20" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="30" x2="50" y2="30" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="40" x2="50" y2="40" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="50" x2="42" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="60" x2="46" y2="60" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 4. Question mark -->
-      <svg class="illust-elem" data-drift="4" width="50" height="50"
-           style="top:60%;right:25%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <text x="50%" y="72%" text-anchor="middle" font-size="38" font-weight="900"
-              font-family="Inter,sans-serif" fill="rgba(139,58,58,0.4)">?</text>
-      </svg>
-
-      <!-- 5. Small speech bubble -->
-      <svg class="illust-elem" data-drift="5" width="65" height="50"
-           style="top:40%;left:5%" viewBox="0 0 65 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="63" height="38" rx="8"
-              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <polyline points="10,39 8,49 22,39"
-                  fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
-        <line x1="10" y1="14" x2="54" y2="14" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="10" y1="22" x2="46" y2="22" stroke="rgba(255,255,255,0.16)" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 6. Clock -->
-      <svg class="illust-elem" data-drift="6" width="50" height="50"
-           style="bottom:15%;right:10%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="25" cy="25" r="23"
-                fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1.5"/>
-        <line x1="25" y1="25" x2="25" y2="10" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round"/>
-        <line x1="25" y1="25" x2="36" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
-        <circle cx="25" cy="25" r="2" fill="rgba(255,255,255,0.6)"/>
-      </svg>
-
-      <!-- 7. Exclamation -->
-      <svg class="illust-elem" data-drift="7" width="40" height="50"
-           style="top:10%;left:45%" viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
-        <text x="50%" y="80%" text-anchor="middle" font-size="42" font-weight="900"
-              font-family="Inter,sans-serif" fill="rgba(139,58,58,0.3)">!</text>
-      </svg>
-
-    </div>
-    <div class="section-text">
-      <h2>You just left a 45-minute meeting.</h2>
-      <p>What was decided? Who's doing what? By when? You open your notes app and stare at a half-finished sentence. The context is already fading. By tomorrow, it's gone.</p>
-    </div>
-  </section>
-
-  <!-- ─── Section 3: Pain 2 ───────────────────────────── -->
-  <section id="pain2" class="scroll-section">
-    <div class="illustration-container">
-
-      <!-- 1. Sticky note -->
-      <svg class="illust-elem" data-drift="1" width="70" height="70"
-           style="top:15%;left:8%" viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="68" height="68" rx="4"
-              fill="rgba(255,165,2,0.12)" stroke="rgba(255,165,2,0.25)" stroke-width="1"/>
-        <line x1="10" y1="22" x2="60" y2="22" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="10" y1="32" x2="52" y2="32" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="10" y1="42" x2="56" y2="42" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 2. App icon -->
-      <svg class="illust-elem" data-drift="2" width="50" height="50"
-           style="top:25%;right:18%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="48" height="48" rx="12"
-              fill="rgba(108,92,231,0.2)" stroke="rgba(108,92,231,0.4)" stroke-width="1.5"/>
-        <circle cx="25" cy="25" r="10"
-                fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
-        <circle cx="25" cy="25" r="3" fill="rgba(255,255,255,0.5)"/>
-      </svg>
-
-      <!-- 3. Voice waveform -->
-      <svg class="illust-elem" data-drift="3" width="90" height="40"
-           style="bottom:30%;left:15%" viewBox="0 0 90 40" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="90" height="40" rx="8"
-              fill="rgba(108,92,231,0.08)" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-        <rect x="10" y="14" width="6" height="12" rx="3" fill="rgba(108,92,231,0.5)"/>
-        <rect x="20" y="8"  width="6" height="24" rx="3" fill="rgba(108,92,231,0.6)"/>
-        <rect x="30" y="5"  width="6" height="30" rx="3" fill="rgba(108,92,231,0.7)"/>
-        <rect x="40" y="10" width="6" height="20" rx="3" fill="rgba(108,92,231,0.6)"/>
-        <rect x="50" y="16" width="6" height="8"  rx="3" fill="rgba(108,92,231,0.5)"/>
-        <rect x="60" y="6"  width="6" height="28" rx="3" fill="rgba(108,92,231,0.65)"/>
-        <rect x="70" y="12" width="6" height="16" rx="3" fill="rgba(108,92,231,0.55)"/>
-        <rect x="80" y="18" width="6" height="4"  rx="3" fill="rgba(108,92,231,0.4)"/>
-      </svg>
-
-      <!-- 4. Email envelope -->
-      <svg class="illust-elem" data-drift="4" width="60" height="45"
-           style="top:55%;right:12%" viewBox="0 0 60 45" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="58" height="43" rx="5"
-              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
-        <polyline points="1,4 30,26 59,4"
-                  fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-
-      <!-- 5. Phone silhouette -->
-      <svg class="illust-elem" data-drift="5" width="40" height="70"
-           style="top:10%;left:40%" viewBox="0 0 40 70" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="38" height="68" rx="8"
-              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.13)" stroke-width="1"/>
-        <rect x="13" y="5" width="14" height="3" rx="1.5"
-              fill="rgba(255,255,255,0.2)"/>
-      </svg>
-
-      <!-- 6. Hash icon -->
-      <svg class="illust-elem" data-drift="6" width="45" height="45"
-           style="bottom:20%;right:30%" viewBox="0 0 45 45" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="43" height="43" rx="8"
-              fill="rgba(0,184,148,0.1)" stroke="rgba(0,184,148,0.25)" stroke-width="1"/>
-        <text x="50%" y="70%" text-anchor="middle" font-size="26" font-weight="700"
-              font-family="Inter,sans-serif" fill="rgba(0,184,148,0.6)">#</text>
-      </svg>
-
-    </div>
-    <div class="section-text">
-      <h2>Your action items live in 5 different apps.</h2>
-      <p>Sticky notes. Slack messages. Calendar descriptions. That one email thread. A Notes app you forgot you had. Nothing is connected. Things fall through the cracks. Always.</p>
-    </div>
-  </section>
-
-  <!-- ─── Section 4: Pivot ────────────────────────────── -->
-  <section id="pivot" class="scroll-section">
-    <div class="pivot-glow" id="pivotGlow"></div>
-    <div class="section-text">
-      <h2>What if one tap could fix all of this?</h2>
-      <p>No complex setup. No bots lurking in your calls. No manual summaries. Just one tap — and your meeting takes care of itself.</p>
-    </div>
-  </section>
-
-  <!-- ─── Section 5: Solution 1 — Record ─────────────── -->
-  <section id="solution1" class="scroll-section">
-    <div class="solution-layout">
-      <div class="section-text">
-        <h2>Tap. Record.</h2>
-        <p>No bots join your call. No permissions to juggle. Just open MeetMind, tap record, and talk. It runs quietly in the background while you stay present in the conversation.</p>
+  <!-- ═══ SECTION 1: HERO ═══ -->
+  <section class="section hero-section" id="hero">
+    <div class="section-inner">
+      <h1 class="hero-headline">Every meeting you forget<br>costs you.</h1>
+      <p class="subline">The follow-up you missed. The decision you can't recall. The action item that slipped through.</p>
+      <div class="scroll-cue">
+        <span>Scroll to see what you're losing</span>
+        <span class="arrow">↓</span>
       </div>
-      <div class="device-container">
-        <div class="css-phone" id="phone1">
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 2: THE WEIGHT ═══ -->
+  <section class="section weight-section" id="weight">
+    <div class="floating-words">
+      <span class="floating-word" style="top:15%; left:8%;">action item</span>
+      <span class="floating-word" style="top:25%; right:12%;">follow up</span>
+      <span class="floating-word" style="top:55%; left:5%;">who said that?</span>
+      <span class="floating-word" style="top:70%; right:8%;">check the notes</span>
+      <span class="floating-word" style="top:40%; left:15%;">I think we agreed...</span>
+      <span class="floating-word" style="top:82%; left:20%;">circle back</span>
+      <span class="floating-word" style="top:10%; right:25%;">send the deck</span>
+      <span class="floating-word" style="top:60%; right:20%;">what was the deadline?</span>
+      <span class="floating-word" style="top:35%; right:5%;">let me check</span>
+      <span class="floating-word" style="top:88%; right:15%;">can you repeat that?</span>
+    </div>
+    <div class="section-inner">
+      <div class="glow-purple" style="top:-100px; left:-200px;"></div>
+      <h2 class="weight-headline">37 meetings this month.</h2>
+      <p class="body-text">You remember maybe 4. The rest? A blur of voices, half-finished notes, and promises you're not sure you made. You tell yourself you'll write it up later. You never do.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 3: THE BREAKING POINT ═══ -->
+  <section class="section breaking-section" id="breaking">
+    <div class="section-inner">
+      <div class="glow-purple" style="bottom:-100px; right:-200px;"></div>
+      <h2 class="breaking-headline">Your todos are everywhere.<br>Your context is nowhere.</h2>
+      <p class="body-text">A sticky note on your monitor. A Slack reminder you snoozed. A calendar event with "SEE NOTES" — but there are no notes. Every task is an orphan. Disconnected from the conversation that created it.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 4: THE SILENCE (PIVOT) ═══ -->
+  <section class="section pivot-section" id="pivot">
+    <div class="section-inner">
+      <p class="pivot-line pivot-line-1">What if you never had to remember?</p>
+      <p class="pivot-line pivot-line-2">What if your meetings remembered for you?</p>
+      <p class="pivot-brand">MeetMind</p>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 5: ONE TAP ═══ -->
+  <section class="section solution-section" id="one-tap">
+    <div class="section-inner">
+      <h2>One tap. That's all it takes.</h2>
+      <p class="body-text">Open MeetMind. Tap record. Put your phone down. No bots join your call. No one knows you're recording. Just you, your meeting, and the peace of mind that nothing will be lost.</p>
+      <div class="phone-container phone-record">
+        <div class="phone-frame">
           <div class="phone-notch"></div>
-          <div class="phone-screen screen-recording">
-            <div class="rec-circle"></div>
-            <div class="rec-timer">12:34</div>
-            <div class="rec-wave">
-              <span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Section 6: Solution 2 — AI Brief ───────────── -->
-  <section id="solution2" class="scroll-section">
-    <div class="solution-layout">
-      <div class="device-container">
-        <div class="css-phone" id="phone2">
-          <div class="phone-notch"></div>
-          <div class="phone-screen screen-brief">
-            <div class="brief-card">
-              <div class="brief-label" style="color:#6C5CE7">Summary</div>
-              <div class="brief-line" style="width:90%"></div>
-              <div class="brief-line" style="width:70%"></div>
-            </div>
-            <div class="brief-card">
-              <div class="brief-label" style="color:#00b894">Decisions</div>
-              <div class="brief-line" style="width:80%"></div>
-              <div class="brief-line" style="width:55%"></div>
-            </div>
-            <div class="brief-card">
-              <div class="brief-label" style="color:#FF4757">Action Items</div>
-              <div class="brief-line" style="width:85%"></div>
-              <div class="brief-line" style="width:65%"></div>
-            </div>
-            <div class="brief-card">
-              <div class="brief-label" style="color:#FFA502">Key Quotes</div>
-              <div class="brief-line" style="width:75%"></div>
-              <div class="brief-line" style="width:50%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="section-text">
-        <h2>AI reads your entire meeting.</h2>
-        <p>And gives you a structured brief the moment it ends. Key decisions. Open questions. Who said what. A full transcript you can search. Everything you need, nothing you don't.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── Section 7: Solution 3 — Todos ──────────────── -->
-  <section id="solution3" class="scroll-section">
-    <div class="solution-layout">
-      <div class="section-text">
-        <h2>Say it. MeetMind creates it.</h2>
-        <p>"Send the proposal by Friday." "Follow up with Jake next week." MeetMind catches every commitment made in your meeting and turns them into real, trackable todos — automatically.</p>
-      </div>
-      <div class="device-container">
-        <div class="css-phone" id="phone3">
-          <div class="phone-notch"></div>
-          <div class="phone-screen screen-todo">
-            <div class="todo-voice">
-              <span class="mic-emoji">🎙️</span>
-              <div class="voice-bars">
-                <span style="height:6px"></span>
-                <span style="height:12px"></span>
-                <span style="height:18px"></span>
-                <span style="height:10px"></span>
-                <span style="height:20px"></span>
-                <span style="height:14px"></span>
-                <span style="height:8px"></span>
-                <span style="height:16px"></span>
-                <span style="height:10px"></span>
-                <span style="height:6px"></span>
-              </div>
-            </div>
-            <div class="todo-card">
-              <div class="todo-title">Send the proposal to Acme Corp</div>
-              <div class="todo-meta">
-                <span class="todo-badge todo-date">Friday</span>
-                <span class="todo-badge todo-priority">High</span>
+          <div class="phone-screen">
+            <div class="record-ui">
+              <div class="record-btn"></div>
+              <div class="record-timer">04:32</div>
+              <div class="record-label">Recording</div>
+              <div class="waveform">
+                <div class="bar" style="animation-delay:0s; height:12px;"></div>
+                <div class="bar" style="animation-delay:0.1s; height:20px;"></div>
+                <div class="bar" style="animation-delay:0.2s; height:28px;"></div>
+                <div class="bar" style="animation-delay:0.3s; height:16px;"></div>
+                <div class="bar" style="animation-delay:0.4s; height:24px;"></div>
+                <div class="bar" style="animation-delay:0.15s; height:18px;"></div>
+                <div class="bar" style="animation-delay:0.25s; height:30px;"></div>
+                <div class="bar" style="animation-delay:0.35s; height:14px;"></div>
+                <div class="bar" style="animation-delay:0.05s; height:22px;"></div>
+                <div class="bar" style="animation-delay:0.45s; height:10px;"></div>
               </div>
             </div>
           </div>
@@ -988,128 +667,28 @@
     </div>
   </section>
 
-  <!-- ─── Section 8: Solution 4 — Organize ───────────── -->
-  <section id="solution4" class="scroll-section">
-    <div class="illustration-container">
-
-      <!-- 1. Meeting card 1 (purple) -->
-      <svg class="illust-elem org-card" width="120" height="60"
-           style="top:20%;left:10%" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="118" height="58" rx="10"
-              fill="rgba(108,92,231,0.2)" stroke="rgba(108,92,231,0.45)" stroke-width="1.5"/>
-        <circle cx="16" cy="18" r="5" fill="rgba(108,92,231,0.6)"/>
-        <line x1="28" y1="14" x2="100" y2="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
-        <line x1="28" y1="22" x2="80" y2="22" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="10" y1="36" x2="110" y2="36" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="46" x2="90" y2="46" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 2. Meeting card 2 (green) -->
-      <svg class="illust-elem org-card" width="120" height="60"
-           style="top:40%;left:8%" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="118" height="58" rx="10"
-              fill="rgba(0,184,148,0.15)" stroke="rgba(0,184,148,0.4)" stroke-width="1.5"/>
-        <circle cx="16" cy="18" r="5" fill="rgba(0,184,148,0.55)"/>
-        <line x1="28" y1="14" x2="100" y2="14" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-linecap="round"/>
-        <line x1="28" y1="22" x2="76" y2="22" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
-        <line x1="10" y1="36" x2="110" y2="36" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
-        <line x1="10" y1="46" x2="85" y2="46" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 3. Folder 1 (purple) — Acme Corp -->
-      <svg class="illust-elem org-folder" width="100" height="80"
-           style="top:20%;right:12%" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4,20 L4,76 Q4,79 7,79 L93,79 Q96,79 96,76 L96,24 Q96,21 93,21 L48,21 L40,13 Q38,11 35,11 L7,11 Q4,11 4,14 Z"
-              fill="rgba(108,92,231,0.18)" stroke="rgba(108,92,231,0.4)" stroke-width="1.5"/>
-        <text x="50%" y="58%" text-anchor="middle" font-size="11" font-weight="600"
-              font-family="Inter,sans-serif" fill="rgba(255,255,255,0.5)">Acme Corp</text>
-      </svg>
-
-      <!-- 4. Folder 2 (green) — StartupX -->
-      <svg class="illust-elem org-folder" width="100" height="80"
-           style="top:50%;right:10%" viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4,20 L4,76 Q4,79 7,79 L93,79 Q96,79 96,76 L96,24 Q96,21 93,21 L48,21 L40,13 Q38,11 35,11 L7,11 Q4,11 4,14 Z"
-              fill="rgba(0,184,148,0.15)" stroke="rgba(0,184,148,0.38)" stroke-width="1.5"/>
-        <text x="50%" y="58%" text-anchor="middle" font-size="11" font-weight="600"
-              font-family="Inter,sans-serif" fill="rgba(255,255,255,0.5)">StartupX</text>
-      </svg>
-
-      <!-- 5. Person node -->
-      <svg class="illust-elem" width="50" height="50"
-           style="bottom:15%;left:35%" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="25" cy="16" r="9"
-                fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-        <path d="M8,46 Q8,30 25,30 Q42,30 42,46"
-              fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-
-      <!-- 6. Connection lines (full container) -->
-      <svg class="illust-elem" width="100%" height="100%"
-           style="top:0;left:0;opacity:1" viewBox="0 0 100 100" preserveAspectRatio="none"
-           xmlns="http://www.w3.org/2000/svg">
-        <line class="conn-line" x1="22" y1="25" x2="82" y2="25"
-              stroke="rgba(108,92,231,0.35)" stroke-width="0.4"
-              stroke-dasharray="3 3" stroke-linecap="round"/>
-        <line class="conn-line" x1="20" y1="45" x2="84" y2="56"
-              stroke="rgba(0,184,148,0.3)" stroke-width="0.4"
-              stroke-dasharray="3 3" stroke-linecap="round"/>
-      </svg>
-
-    </div>
-    <div class="section-text">
-      <h2>Your meetings organize themselves.</h2>
-      <p>Clients, companies, and projects — MeetMind groups every meeting automatically. Your entire relationship history with anyone, right where you need it. Never dig through emails again.</p>
-    </div>
-  </section>
-
-  <!-- ─── Section 9: Solution 5 — Multi-platform ─────── -->
-  <section id="solution5" class="scroll-section">
-    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:900px;margin:0 auto;">
-      <div class="section-text" style="text-align:center;margin-bottom:48px;">
-        <h2>iPhone. Mac. Apple Watch.</h2>
-        <p>Your meetings follow you everywhere. Start a recording on your Watch. Review the summary on your Mac. Check your todos on iPhone. One app, every Apple device.</p>
-      </div>
-      <div class="multi-device" id="multiDeviceGroup">
-        <div class="css-macbook">
-          <div class="mac-screen">
-            <div class="mac-sidebar">
-              <div class="mac-icon"></div>
-              <div class="mac-icon"></div>
-              <div class="mac-icon"></div>
-            </div>
-            <div class="mac-list">
-              <div class="mac-list-item">Q1 Planning</div>
-              <div class="mac-list-item active">Acme Corp</div>
-              <div class="mac-list-item">Design Review</div>
-              <div class="mac-list-item">Team Sync</div>
-            </div>
-            <div class="mac-detail">
-              <div class="mac-detail-heading"></div>
-              <div class="mac-detail-line" style="width:90%"></div>
-              <div class="mac-detail-line" style="width:75%"></div>
-              <div class="mac-detail-line" style="width:82%"></div>
-            </div>
-          </div>
-        </div>
-        <div class="css-phone" style="width:160px;height:320px;">
+  <!-- ═══ SECTION 6: THE BRIEF ═══ -->
+  <section class="section solution-section" id="brief">
+    <div class="section-inner">
+      <h2>Your meeting, distilled.</h2>
+      <p class="body-text">When the call ends, MeetMind's AI reads every word. In seconds, you get a structured brief: executive summary, key decisions, action items with owners, and the exact quotes that mattered. Not a transcript dump. A brief your CEO could read.</p>
+      <div class="phone-container phone-brief">
+        <div class="phone-frame">
           <div class="phone-notch"></div>
-          <div class="phone-screen screen-recording">
-            <div class="rec-circle" style="width:44px;height:44px;"></div>
-            <div class="rec-timer" style="font-size:18px;">08:21</div>
-            <div class="rec-wave">
-              <span></span><span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-        </div>
-        <div class="css-watch">
-          <div class="watch-screen">
-            <div class="watch-timer">03:45</div>
-            <div class="watch-wave">
-              <span style="height:6px"></span>
-              <span style="height:10px"></span>
-              <span style="height:14px"></span>
-              <span style="height:8px"></span>
-              <span style="height:5px"></span>
+          <div class="phone-screen">
+            <div class="brief-ui">
+              <div class="brief-card summary">
+                <div class="card-label">Summary</div>
+                <div class="card-text">Team agreed to ship v2.1 by March 15 with revised onboarding flow.</div>
+              </div>
+              <div class="brief-card decisions">
+                <div class="card-label">Key Decision</div>
+                <div class="card-text">Switching to Stripe for payments. Jake to handle migration.</div>
+              </div>
+              <div class="brief-card actions">
+                <div class="card-label">Action Item</div>
+                <div class="card-text">Sarah: send revised deck to investors by Thursday EOD.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1117,494 +696,421 @@
     </div>
   </section>
 
-  <!-- ─── Section 10: CTA ─────────────────────────────── -->
-  <section id="cta" class="scroll-section">
-    <div class="cta-content">
-      <h2>Stop losing your meetings.</h2>
-      <p>Start remembering everything.</p>
+  <!-- ═══ SECTION 7: SMART TODOS ═══ -->
+  <section class="section solution-section" id="todos">
+    <div class="section-inner">
+      <h2>Your voice becomes your task list.</h2>
+      <p class="body-text">"Send Jake the revised deck by Thursday." MeetMind hears it. Extracts the task. Sets the due date. Assigns the priority. It shows up in your Today view before you've even hung up. No typing. No forgetting. No friction.</p>
+      <div class="phone-container phone-todo">
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="todo-ui">
+              <div class="voice-bar"></div>
+              <div class="todo-card">
+                <div class="todo-title">Send revised deck to Jake</div>
+                <div class="todo-meta">
+                  <span class="tag due">Thu, Mar 20</span>
+                  <span class="tag priority">High</span>
+                  <span class="tag">Q1 Planning</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      <form
-        class="waitlist-form"
-        id="waitlistForm"
-        action="https://formspree.io/f/YOUR_FORM_ID"
-        method="POST"
-      >
-        <input
-          type="email"
-          name="email"
-          placeholder="you@example.com"
-          required
-          autocomplete="email"
-        />
-        <button type="submit" id="submitBtn">Join Waitlist</button>
+  <!-- ═══ SECTION 8: YOUR WORLD, ORGANIZED ═══ -->
+  <section class="section solution-section" id="organized">
+    <div class="section-inner">
+      <div class="glow-green" style="top: -100px; right: -150px;"></div>
+      <h2>Every client. Every conversation. Connected.</h2>
+      <p class="body-text">MeetMind listens for names, companies, and context. Your meetings automatically sort into client folders. Every person you've talked to, every decision made, every follow-up — all searchable, all connected.</p>
+      <div class="org-nodes" id="org-visual">
+        <svg width="100%" height="100%" style="position:absolute;inset:0;">
+          <line x1="50%" y1="50%" x2="15%" y2="15%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+          <line x1="50%" y1="50%" x2="85%" y2="20%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+          <line x1="50%" y1="50%" x2="10%" y2="65%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+          <line x1="50%" y1="50%" x2="80%" y2="75%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+          <line x1="50%" y1="50%" x2="50%" y2="5%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+          <line x1="50%" y1="50%" x2="20%" y2="90%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
+        </svg>
+        <div class="org-node center">MeetMind</div>
+        <div class="org-node" style="top:5%; left:5%; background:rgba(0,184,148,0.15); border-color:rgba(0,184,148,0.3);">Acme</div>
+        <div class="org-node" style="top:10%; right:5%; background:rgba(253,203,110,0.15); border-color:rgba(253,203,110,0.3);">Jake</div>
+        <div class="org-node" style="top:55%; left:0%; background:rgba(108,92,231,0.15); border-color:rgba(108,92,231,0.3);">Q1</div>
+        <div class="org-node" style="bottom:5%; right:10%; background:rgba(231,76,60,0.15); border-color:rgba(231,76,60,0.3);">Sales</div>
+        <div class="org-node" style="top:0%; left:40%; background:rgba(116,185,255,0.15); border-color:rgba(116,185,255,0.3);">Sarah</div>
+        <div class="org-node" style="bottom:0%; left:10%; background:rgba(162,155,254,0.15); border-color:rgba(162,155,254,0.3);">Design</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 9: EVERYWHERE ═══ -->
+  <section class="section solution-section" id="everywhere">
+    <div class="section-inner">
+      <h2>iPhone. Mac. Apple Watch.</h2>
+      <p class="body-text">Start recording on your wrist during a coffee meeting. Review the brief on your Mac between calls. Check off todos on your phone while walking to your next meeting. One app. Every Apple device. Always in sync.</p>
+      <div class="devices" id="devices-visual">
+        <div class="device">
+          <div class="device-shape watch-shape"><div class="screen-dot"></div></div>
+          <span class="device-label">Watch</span>
+        </div>
+        <div class="device">
+          <div class="device-shape phone-shape"><div class="screen-dot"></div></div>
+          <span class="device-label">iPhone</span>
+        </div>
+        <div class="device">
+          <div class="device-shape mac-shape"><div class="screen-dot"></div></div>
+          <span class="device-label">Mac</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECTION 10: CTA ═══ -->
+  <section class="section cta-section" id="cta">
+    <div class="section-inner">
+      <div class="glow-purple" style="top: -200px; left: 50%; transform: translateX(-50%);"></div>
+      <p class="countdown-text">Your next meeting is in a few hours</p>
+      <h2>This time, you won't forget a thing.</h2>
+      <p class="countdown-relief">Join the waitlist</p>
+      <form class="cta-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="email" name="email" placeholder="your@email.com" required />
+        <button type="submit">I'm ready</button>
       </form>
-
-      <div class="trust-badges">
-        <div class="trust-badge">
-          <div class="trust-dot"></div>
-          <span>Privacy-first</span>
-        </div>
-        <div class="trust-badge">
-          <div class="trust-dot"></div>
-          <span>No bots ever</span>
-        </div>
-        <div class="trust-badge">
-          <div class="trust-dot"></div>
-          <span>Apple native</span>
-        </div>
+      <div class="trust-signals">
+        <span class="trust-signal">Privacy-first</span>
+        <span class="trust-signal">No bots ever</span>
+        <span class="trust-signal">Free to start</span>
       </div>
     </div>
   </section>
 
-  <!-- ─── GSAP + ScrollTrigger ────────────────────────── -->
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+  <footer class="footer">
+    MeetMind — Built with SwiftUI for Apple
+  </footer>
 
-  <script>
-    // ── Register plugin ────────────────────────────────────
-    gsap.registerPlugin(ScrollTrigger);
+</div>
 
-    // ── Gradient Engine ────────────────────────────────────
-    const gradientStops = [
-      { pos: 0.00, c1: '#1a1a3e', c2: '#2d1b69' }, // Hero
-      { pos: 0.10, c1: '#2d1b69', c2: '#2d1b69' }, // Hero end
-      { pos: 0.20, c1: '#2d1b69', c2: '#8b3a3a' }, // Pain 1
-      { pos: 0.30, c1: '#8b3a3a', c2: '#4a1a1a' }, // Pain 2
-      { pos: 0.40, c1: '#4a1a1a', c2: '#0a0a0a' }, // Pivot
-      { pos: 0.50, c1: '#0a0a0a', c2: '#6C5CE7' }, // Recording
-      { pos: 0.60, c1: '#6C5CE7', c2: '#00b894' }, // AI Brief
-      { pos: 0.70, c1: '#00b894', c2: '#e17055' }, // Todos
-      { pos: 0.80, c1: '#e17055', c2: '#6C5CE7' }, // Organization
-      { pos: 0.90, c1: '#6C5CE7', c2: '#00cec9' }, // Multi-platform
-      { pos: 1.00, c1: '#00cec9', c2: '#6C5CE7' }, // CTA
-    ];
+<!-- ═══ CDN Scripts ═══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
-    function hexToRgb(hex) {
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-      return { r, g, b };
-    }
+<script>
+(function() {
+  'use strict';
 
-    function rgbToHex(r, g, b) {
-      return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
-    }
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    function lerpColor(a, b, t) {
-      const ca = hexToRgb(a);
-      const cb = hexToRgb(b);
-      return rgbToHex(
-        ca.r + (cb.r - ca.r) * t,
-        ca.g + (cb.g - ca.g) * t,
-        ca.b + (cb.b - ca.b) * t
-      );
-    }
+  // ─────────────────────────────────────────────────
+  // THREE.JS — PARTICLE UNIVERSE
+  // ─────────────────────────────────────────────────
+  const canvas = document.getElementById('three-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    const gradientBg = document.getElementById('gradientBg');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+  camera.position.set(0, 0, 30);
 
-    function updateGradient(progress) {
-      // Clamp progress to [0, 1]
-      const p = Math.max(0, Math.min(1, progress));
+  // Particle system
+  const particleCount = 250;
+  const positions = new Float32Array(particleCount * 3);
+  const baseColors = new Float32Array(particleCount * 3);
+  const sizes = new Float32Array(particleCount);
 
-      // Find which segment we're in
-      let segStart = gradientStops[0];
-      let segEnd   = gradientStops[gradientStops.length - 1];
+  for (let i = 0; i < particleCount; i++) {
+    positions[i * 3]     = (Math.random() - 0.5) * 100;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+    // Start blue
+    baseColors[i * 3]     = 0;
+    baseColors[i * 3 + 1] = 0.4;
+    baseColors[i * 3 + 2] = 1;
+    sizes[i] = Math.random() * 0.12 + 0.06;
+  }
 
-      for (let i = 0; i < gradientStops.length - 1; i++) {
-        if (p >= gradientStops[i].pos && p <= gradientStops[i + 1].pos) {
-          segStart = gradientStops[i];
-          segEnd   = gradientStops[i + 1];
-          break;
-        }
+  const particleGeometry = new THREE.BufferGeometry();
+  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particleGeometry.setAttribute('color', new THREE.BufferAttribute(baseColors, 3));
+
+  const particleMaterial = new THREE.PointsMaterial({
+    size: 0.15,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.7,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    sizeAttenuation: true
+  });
+
+  const particles = new THREE.Points(particleGeometry, particleMaterial);
+  scene.add(particles);
+
+  // Scroll state
+  let scrollProgress = 0;
+  const totalHeight = () => document.documentElement.scrollHeight - window.innerHeight;
+
+  function updateScrollProgress() {
+    scrollProgress = window.scrollY / totalHeight();
+  }
+
+  window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+  // Color interpolation: blue → purple → green
+  function getParticleColor(t) {
+    const r = t < 0.5
+      ? THREE.MathUtils.lerp(0, 0.42, t * 2)
+      : THREE.MathUtils.lerp(0.42, 0, (t - 0.5) * 2);
+    const g = t < 0.5
+      ? THREE.MathUtils.lerp(0.4, 0.36, t * 2)
+      : THREE.MathUtils.lerp(0.36, 0.72, (t - 0.5) * 2);
+    const b = t < 0.5
+      ? THREE.MathUtils.lerp(1, 0.9, t * 2)
+      : THREE.MathUtils.lerp(0.9, 0.58, (t - 0.5) * 2);
+    return { r, g, b };
+  }
+
+  // Render loop
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.016;
+
+    if (!prefersReducedMotion) {
+      // Camera fly-through on scroll
+      camera.position.z = THREE.MathUtils.lerp(30, -20, scrollProgress);
+      camera.position.y = Math.sin(scrollProgress * Math.PI * 2) * 3;
+
+      // Subtle rotation
+      particles.rotation.x += 0.0001;
+      particles.rotation.y += 0.00015;
+
+      // Color shift
+      const col = getParticleColor(scrollProgress);
+      const colorsAttr = particleGeometry.getAttribute('color');
+      for (let i = 0; i < particleCount; i++) {
+        colorsAttr.array[i * 3]     = col.r + Math.sin(time + i * 0.1) * 0.05;
+        colorsAttr.array[i * 3 + 1] = col.g + Math.sin(time + i * 0.15) * 0.05;
+        colorsAttr.array[i * 3 + 2] = col.b + Math.cos(time + i * 0.1) * 0.05;
       }
+      colorsAttr.needsUpdate = true;
 
-      const range = segEnd.pos - segStart.pos;
-      const t = range === 0 ? 0 : (p - segStart.pos) / range;
+      // Pivot section: fade particles
+      const pivotFade = scrollProgress > 0.25 && scrollProgress < 0.4
+        ? 1 - Math.min(1, (scrollProgress - 0.25) / 0.05)
+        : scrollProgress >= 0.4 && scrollProgress < 0.45
+          ? Math.min(1, (scrollProgress - 0.4) / 0.05)
+          : 1;
 
-      const c1 = lerpColor(segStart.c1, segEnd.c1, t);
-      const c2 = lerpColor(segStart.c2, segEnd.c2, t);
+      particleMaterial.opacity = 0.7 * Math.max(0.05, pivotFade);
 
-      gradientBg.style.setProperty('--grad-1', c1);
-      gradientBg.style.setProperty('--grad-2', c2);
+      // Chaos effect in pain sections (clustering/scattering)
+      const posAttr = particleGeometry.getAttribute('position');
+      if (scrollProgress > 0.1 && scrollProgress < 0.25) {
+        const chaos = Math.sin(time * 2) * 0.02;
+        for (let i = 0; i < particleCount; i++) {
+          posAttr.array[i * 3] += (Math.random() - 0.5) * chaos;
+          posAttr.array[i * 3 + 1] += (Math.random() - 0.5) * chaos;
+        }
+        posAttr.needsUpdate = true;
+      }
     }
 
-    // Drive gradient from scroll progress
-    ScrollTrigger.create({
-      trigger: 'body',
-      start: 'top top',
-      end: 'bottom bottom',
-      onUpdate: (self) => updateGradient(self.progress),
-    });
+    renderer.render(scene, camera);
+  }
+  animate();
 
-    // Initialize gradient at 0
-    updateGradient(0);
+  // Resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
 
-    // ── Section Animations ─────────────────────────────────
+  // ─────────────────────────────────────────────────
+  // GSAP + SCROLLTRIGGER ANIMATIONS
+  // ─────────────────────────────────────────────────
+  gsap.registerPlugin(ScrollTrigger);
 
-    // Hero: fade in on load
-    gsap.from('#hero h1, #hero p, #hero .scroll-arrow', {
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      delay: 0.3,
-      stagger: 0.15,
-      ease: 'power3.out',
-    });
+  if (!prefersReducedMotion) {
 
-    // Hero: pin for extra scroll depth
+    // ── Hero pinned ──
     ScrollTrigger.create({
       trigger: '#hero',
       start: 'top top',
       end: '+=50%',
       pin: true,
-      pinSpacing: true,
+      pinSpacing: true
     });
 
-    // Pain 1
-    gsap.from('#pain1 h2', {
-      opacity: 0,
-      y: 60,
-      scrollTrigger: {
-        trigger: '#pain1',
-        start: 'top 80%',
-        end: 'center 60%',
-        scrub: true,
-      },
+    gsap.from('.hero-headline', {
+      opacity: 0, y: 60, duration: 1.2, ease: 'power3.out', delay: 0.3
     });
-    gsap.from('#pain1 p', {
-      opacity: 0,
-      y: 40,
-      scrollTrigger: {
-        trigger: '#pain1',
-        start: 'top 70%',
-        end: 'center 55%',
-        scrub: true,
-      },
+    gsap.from('.hero-section .subline', {
+      opacity: 0, y: 40, duration: 1, ease: 'power3.out', delay: 0.6
+    });
+    gsap.from('.scroll-cue', {
+      opacity: 0, duration: 1, delay: 1.2
     });
 
-    // Pain 2
-    gsap.from('#pain2 h2', {
-      opacity: 0,
-      y: 60,
-      scrollTrigger: {
-        trigger: '#pain2',
-        start: 'top 80%',
-        end: 'center 60%',
-        scrub: true,
-      },
+    // ── The Weight ──
+    gsap.from('.weight-headline', {
+      scrollTrigger: { trigger: '#weight', start: 'top 70%', end: 'top 30%', scrub: 1 },
+      opacity: 0, y: 80, scale: 0.95
     });
-    gsap.from('#pain2 p', {
-      opacity: 0,
-      y: 40,
-      scrollTrigger: {
-        trigger: '#pain2',
-        start: 'top 70%',
-        end: 'center 55%',
-        scrub: true,
-      },
+    gsap.from('#weight .body-text', {
+      scrollTrigger: { trigger: '#weight', start: 'top 60%', end: 'top 20%', scrub: 1 },
+      opacity: 0, y: 60
+    });
+    // Floating words drift
+    gsap.utils.toArray('.floating-word').forEach((word, i) => {
+      gsap.fromTo(word, {
+        opacity: 0, y: 30
+      }, {
+        opacity: 0.12,
+        y: -20 - (i * 5),
+        scrollTrigger: { trigger: '#weight', start: 'top 80%', end: 'bottom 20%', scrub: 1 }
+      });
     });
 
-    // Pivot: pin for extra depth
+    // ── Breaking Point ──
+    gsap.from('.breaking-headline', {
+      scrollTrigger: { trigger: '#breaking', start: 'top 70%', end: 'top 30%', scrub: 1 },
+      opacity: 0, y: 80, scale: 0.95
+    });
+    gsap.from('#breaking .body-text', {
+      scrollTrigger: { trigger: '#breaking', start: 'top 60%', end: 'top 20%', scrub: 1 },
+      opacity: 0, y: 60
+    });
+
+    // ── Pivot (pinned) ──
     ScrollTrigger.create({
       trigger: '#pivot',
       start: 'top top',
-      end: '+=100%',
+      end: '+=200%',
       pin: true,
-      pinSpacing: true,
+      pinSpacing: true
     });
 
-    gsap.from('#pivot h2', {
-      opacity: 0,
-      scale: 0.95,
-      scrollTrigger: {
-        trigger: '#pivot',
-        start: 'top 80%',
-        end: 'center 60%',
-        scrub: true,
-      },
+    const pivotTl = gsap.timeline({
+      scrollTrigger: { trigger: '#pivot', start: 'top top', end: '+=200%', scrub: 1 }
     });
+    pivotTl
+      .to('.pivot-line-1', { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      .to('.pivot-line-1', { opacity: 0.3, duration: 0.2 }, '+=0.1')
+      .to('.pivot-line-2', { opacity: 1, duration: 0.3, ease: 'power2.out' })
+      .to('.pivot-line-2', { opacity: 0.3, duration: 0.2 }, '+=0.1')
+      .to('.pivot-brand', { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
 
-    gsap.to('#pivotGlow', {
-      opacity: 1,
-      scale: 1.5,
-      scrollTrigger: {
-        trigger: '#pivot',
-        start: 'top 80%',
-        end: 'center 50%',
-        scrub: true,
-      },
-    });
-
-    // Solutions 1–5
-    ['#solution1', '#solution2', '#solution3', '#solution4', '#solution5'].forEach((id) => {
-      gsap.from(`${id} h2`, {
-        opacity: 0,
-        y: 60,
-        scrollTrigger: {
-          trigger: id,
-          start: 'top 80%',
-          end: 'center 60%',
-          scrub: true,
-        },
-      });
-      gsap.from(`${id} p`, {
-        opacity: 0,
-        y: 40,
-        scrollTrigger: {
-          trigger: id,
-          start: 'top 70%',
-          end: 'center 55%',
-          scrub: true,
-        },
-      });
-    });
-
-    // CTA: staggered fade
-    gsap.from('#cta .cta-content > *', {
-      opacity: 0,
-      y: 40,
-      stagger: 0.15,
-      scrollTrigger: {
-        trigger: '#cta',
-        start: 'top 80%',
-        end: 'center 60%',
-        scrub: true,
-      },
-    });
-
-    // ── Illustration Animations ────────────────────────────
-
-    // Pain 1: drift elements in on scroll
-    document.querySelectorAll('#pain1 .illust-elem').forEach((el) => {
-      const drift = parseInt(el.getAttribute('data-drift') || '1', 10);
-      const sign  = drift % 2 === 0 ? 1 : -1;
-      const xDrift = sign * (drift * 8);
-      const yDrift = (drift % 3 === 0 ? -1 : 1) * (drift * 6);
-      gsap.fromTo(el,
-        { opacity: 0, x: xDrift, y: yDrift },
-        {
-          opacity: 0.8,
-          x: 0,
-          y: 0,
-          scrollTrigger: {
-            trigger: '#pain1',
-            start: 'top 80%',
-            end: 'bottom 20%',
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    // Pain 2: staggered pop-in
-    document.querySelectorAll('#pain2 .illust-elem').forEach((el, i) => {
-      const rot = (i % 2 === 0 ? 1 : -1) * (8 + i * 4);
-      gsap.fromTo(el,
-        { opacity: 0, scale: 0.5, rotation: rot },
-        {
-          opacity: 0.7,
-          scale: 1,
-          rotation: 0,
-          scrollTrigger: {
-            trigger: '#pain2',
-            start: `top ${80 - i * 5}%`,
-            end: `bottom ${30 - i * 2}%`,
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    // Org cards: slide in from left
-    gsap.utils.toArray('.org-card').forEach((el) => {
-      gsap.fromTo(el,
-        { x: -50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          scrollTrigger: {
-            trigger: '#solution4',
-            start: 'top 80%',
-            end: 'center 40%',
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    // Org folders: slide in from right
-    gsap.utils.toArray('.org-folder').forEach((el) => {
-      gsap.fromTo(el,
-        { x: 50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          scrollTrigger: {
-            trigger: '#solution4',
-            start: 'top 80%',
-            end: 'center 40%',
-            scrub: true,
-          },
-        }
-      );
-    });
-
-    // Connection lines: draw on scroll
-    document.querySelectorAll('.conn-line').forEach((line) => {
-      const length = line.getTotalLength();
-      gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
-      gsap.to(line, {
-        strokeDashoffset: 0,
-        scrollTrigger: {
-          trigger: '#solution4',
-          start: 'center 60%',
-          end: 'bottom 30%',
-          scrub: true,
-        },
-      });
-    });
-
-    // ── Device Animations ──────────────────────────────────
-
-    // Phone 1: enter from below with rotateY
-    gsap.from('#phone1', {
-      y: 100,
-      opacity: 0,
-      rotateY: -15,
-      scrollTrigger: {
-        trigger: '#solution1',
-        start: 'top 80%',
-        end: 'top 20%',
-        scrub: true,
-      },
-    });
-    gsap.to('#phone1', {
-      rotateY: 10,
-      scrollTrigger: {
-        trigger: '#solution1',
-        start: 'top 20%',
-        end: 'bottom top',
-        scrub: true,
-      },
-    });
-
-    // Phone 2: enter from left, brief cards staggered
-    gsap.from('#phone2', {
-      x: -80,
-      opacity: 0,
-      scrollTrigger: {
-        trigger: '#solution2',
-        start: 'top 80%',
-        end: 'top 20%',
-        scrub: true,
-      },
-    });
-    document.querySelectorAll('#phone2 .brief-card').forEach((card, i) => {
-      gsap.to(card, {
+    // ── Solution sections — phones ──
+    gsap.utils.toArray('.phone-container').forEach(phone => {
+      gsap.to(phone, {
         opacity: 1,
         y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#solution2',
-          start: `top ${75 - i * 10}%`,
-          end: `top ${45 - i * 10}%`,
-          scrub: true,
-        },
+          trigger: phone.closest('.section'),
+          start: 'top 60%',
+          toggleActions: 'play none none reverse'
+        }
       });
     });
 
-    // Phone 3: enter from below with rotateY
-    gsap.from('#phone3', {
-      y: 80,
-      opacity: 0,
-      rotateY: 15,
-      scrollTrigger: {
-        trigger: '#solution3',
-        start: 'top 80%',
-        end: 'top 20%',
-        scrub: true,
-      },
+    // Subtle phone float
+    gsap.utils.toArray('.phone-container').forEach(phone => {
+      gsap.to(phone, {
+        y: '-=8',
+        duration: 3,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        delay: Math.random()
+      });
     });
 
-    // Multi-device: staggered entrances
-    gsap.from('#multiDeviceGroup .css-macbook', {
-      x: -100,
-      opacity: 0,
-      rotateY: -10,
-      scrollTrigger: {
-        trigger: '#solution5',
-        start: 'top 80%',
-        end: 'top 30%',
-        scrub: true,
-      },
+    // ── Organization nodes ──
+    gsap.to('#org-visual', {
+      opacity: 1,
+      duration: 0.8,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: '#organized', start: 'top 50%', toggleActions: 'play none none reverse' }
     });
-    gsap.from('#multiDeviceGroup .css-phone', {
-      y: 80,
-      opacity: 0,
-      scrollTrigger: {
-        trigger: '#solution5',
-        start: 'top 70%',
-        end: 'top 20%',
-        scrub: true,
-      },
-    });
-    gsap.from('#multiDeviceGroup .css-watch', {
-      x: 100,
-      opacity: 0,
-      rotateY: 10,
-      scrollTrigger: {
-        trigger: '#solution5',
-        start: 'top 60%',
-        end: 'top 10%',
-        scrub: true,
-      },
+    gsap.utils.toArray('.org-node:not(.center)').forEach((node, i) => {
+      gsap.from(node, {
+        scale: 0,
+        opacity: 0,
+        duration: 0.5,
+        delay: i * 0.1,
+        ease: 'back.out(1.7)',
+        scrollTrigger: { trigger: '#organized', start: 'top 50%', toggleActions: 'play none none reverse' }
+      });
     });
 
-    // ── Waitlist Form Handler ──────────────────────────────
-    const form      = document.getElementById('waitlistForm');
-    const submitBtn = document.getElementById('submitBtn');
+    // ── Devices ──
+    gsap.to('#devices-visual', {
+      opacity: 1,
+      duration: 0.8,
+      scrollTrigger: { trigger: '#everywhere', start: 'top 50%', toggleActions: 'play none none reverse' }
+    });
+    gsap.utils.toArray('.device').forEach((device, i) => {
+      gsap.from(device, {
+        y: 60 + i * 20,
+        opacity: 0,
+        duration: 0.6,
+        delay: i * 0.15,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: '#everywhere', start: 'top 55%', toggleActions: 'play none none reverse' }
+      });
+    });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // ── CTA ──
+    ScrollTrigger.create({
+      trigger: '#cta',
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      pinSpacing: true
+    });
 
-      const email = form.querySelector('input[type="email"]').value;
-      const originalText = submitBtn.textContent;
+    const ctaTl = gsap.timeline({
+      scrollTrigger: { trigger: '#cta', start: 'top top', end: '+=100%', scrub: 1 }
+    });
+    ctaTl
+      .from('.countdown-text', { opacity: 0, y: 30, duration: 0.2 })
+      .from('#cta h2', { opacity: 0, y: 30, duration: 0.3 }, '+=0.05')
+      .from('.countdown-relief', { opacity: 0, duration: 0.2 }, '+=0.05')
+      .from('.cta-form', { opacity: 0, y: 20, duration: 0.2 }, '+=0.05')
+      .from('.trust-signals', { opacity: 0, duration: 0.2 }, '+=0.05');
 
-      submitBtn.textContent = 'Joining…';
-      submitBtn.disabled = true;
-
-      try {
-        const response = await fetch(form.action, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ email }),
+    // ── Parallax depth for all sections ──
+    gsap.utils.toArray('.section:not(.hero-section):not(.pivot-section):not(.cta-section)').forEach(section => {
+      const h2 = section.querySelector('h2');
+      const p = section.querySelector('.body-text');
+      if (h2) {
+        gsap.to(h2, {
+          y: -30,
+          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: 1 }
         });
-
-        if (response.ok) {
-          submitBtn.textContent = "You're in!";
-          submitBtn.style.background = '#00b894';
-          form.querySelector('input[type="email"]').disabled = true;
-        } else {
-          throw new Error('Submission failed');
-        }
-      } catch (err) {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+      }
+      if (p) {
+        gsap.to(p, {
+          y: -15,
+          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: 1 }
+        });
       }
     });
 
-    // Performance: pause wave animations when off-screen
-    const waveElements = document.querySelectorAll('.rec-wave span');
-    const waveObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            waveElements.forEach(span => {
-                span.style.animationPlayState = entry.isIntersecting ? 'running' : 'paused';
-            });
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.screen-recording').forEach(el => waveObserver.observe(el));
-  </script>
-<footer style="text-align:center;padding:32px;color:rgba(255,255,255,0.3);font-size:12px">
-    <p>MeetMind — Built with SwiftUI for Apple platforms</p>
-</footer>
+  } // end reduced motion check
+
+})();
+</script>
+
 </body>
 </html>
