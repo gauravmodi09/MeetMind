@@ -103,6 +103,12 @@ class TodoService: ObservableObject {
         }
     }
 
+    func toggleCompletion(for id: UUID) {
+        guard let index = todos.firstIndex(where: { $0.id == id }) else { return }
+        todos[index].isCompleted.toggle()
+        todos[index].completedAt = todos[index].isCompleted ? Date() : nil
+    }
+
     func reschedule(_ todo: TodoItem, to date: Date) {
         guard let index = todos.firstIndex(where: { $0.id == todo.id }) else { return }
         todos[index].dueDate = date

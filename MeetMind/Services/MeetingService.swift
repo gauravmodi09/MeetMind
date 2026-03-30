@@ -670,6 +670,47 @@ class MeetingService: ObservableObject {
         pipeline.reset()
     }
 
+    // MARK: - Process Recorded Audio
+
+    func processRecordedAudio(url: URL, title: String) async {
+        var meeting = Meeting(title: title, date: Date(), status: .processing)
+        meeting.audioFilePath = url.lastPathComponent
+        saveMeetingToCoreData(meeting)
+        loadMeetings()
+
+        do {
+            let brief = try await pipeline.process(
+                audioURL: url,
+                userNotes: meeting.userNotes,
+                template: meeting.template
+            )
+
+            meeting.status = .complete
+            meeting.title = extractMarkdownTitle(from: brief.summary) ?? brief.title
+            meeting.briefSummary = brief.summary
+            meeting.briefDecisions = brief.decisions
+            meeting.briefKeyTopics = brief.keyTopics
+            meeting.clientName = brief.clientName
+            meeting.briefKeyQuotes = brief.keyQuotes ?? []
+            meeting.rawTranscript = pipeline.lastRawTranscript
+
+            let actionItems: [ActionItem] = brief.actionItems.map { item in
+                ActionItem(text: item.text, owner: item.owner, dueDate: parseDateString(item.due), isMine: item.isMine)
+            }
+            meeting.briefActionItems = actionItems
+
+            updateMeetingInCoreData(meeting)
+            loadMeetings()
+        } catch {
+            meeting.status = .failed
+            updateMeetingInCoreData(meeting)
+            loadMeetings()
+            print("[MeetingService] Processing failed: \(error)")
+        }
+
+        pipeline.reset()
+    }
+
     // MARK: - CRUD
 
     func loadMeetings() {

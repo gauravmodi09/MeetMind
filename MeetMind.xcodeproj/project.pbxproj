@@ -126,6 +126,15 @@
 		FA8FB840B8964936B548D9BD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4B3F8819FB594A59BFA8A67D /* Assets.xcassets */; };
 		FB424459B1E4C339D705BB6B /* MeetingChatSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0B455BBBCEA35170A3BCD1 /* MeetingChatSheet.swift */; };
 		FB9E4F7F99E2490CAE41926C /* WatchWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1EF4E01B6C783D1BACBD84D /* WatchWidgetData.swift */; };
+		FCED236B1C67493AB3C9C36E /* MacIconRail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F01B7A5450444C6B1819499 /* MacIconRail.swift */; };
+		2916EAFB6EFE4386AF2C1CA8 /* MacMeetingListPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FFC0A93FD9D42C9AEADEA44 /* MacMeetingListPanel.swift */; };
+		867D8DC6A1F644B7A85E456B /* MacMeetingDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC88E92F153342028BBD2F4B /* MacMeetingDetail.swift */; };
+		861739D46F464C27A2AD2737 /* MacRecordingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AF8FA9BABDA4CB58C8DE643 /* MacRecordingView.swift */; };
+		94397328A92745B3B91B6922 /* MacTodosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979DA27956CF405E9D5255D5 /* MacTodosView.swift */; };
+		9E7BA0BD18214D61ACE3E015 /* MacNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7F051B00B64972BDD6B65D /* MacNotesView.swift */; };
+		E063F844738C4A7AA2A38414 /* MacLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */; };
+		480F48092F6447CF8D0121DE /* MacChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6001C1705F44D139299B24E /* MacChatView.swift */; };
+		4FD74B190DC54494932750E3 /* MacSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -181,8 +190,8 @@
 		B5C720A901744077BFD5268C /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = /Watch;
-			dstSubfolderSpec = 16;
+			dstPath = Watch;
+			dstSubfolderSpec = 1;
 			files = (
 				B4BDB3C3457A41089AEDBD06 /* MeetMindWatch Watch App.app in Embed Watch Content */,
 			);
@@ -401,6 +410,15 @@
 		FD0946C6947F1833325126E2 /* MMTypography.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MMTypography.swift; path = MeetMind/DesignSystem/MMTypography.swift; sourceTree = SOURCE_ROOT; };
 		FD6E1C1C90AB02B05D4B7CBF /* PositioningDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositioningDashboard.swift; sourceTree = "<group>"; };
 		FE8547E08FF4C3EE5D01AB98 /* StorageManagementService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StorageManagementService.swift; path = MeetMind/Services/StorageManagementService.swift; sourceTree = SOURCE_ROOT; };
+		5F01B7A5450444C6B1819499 /* MacIconRail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacIconRail.swift; path = MeetMind/MacApp/Views/MacIconRail.swift; sourceTree = SOURCE_ROOT; };
+		7FFC0A93FD9D42C9AEADEA44 /* MacMeetingListPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacMeetingListPanel.swift; path = MeetMind/MacApp/Views/MacMeetingListPanel.swift; sourceTree = SOURCE_ROOT; };
+		CC88E92F153342028BBD2F4B /* MacMeetingDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacMeetingDetail.swift; path = MeetMind/MacApp/Views/MacMeetingDetail.swift; sourceTree = SOURCE_ROOT; };
+		6AF8FA9BABDA4CB58C8DE643 /* MacRecordingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacRecordingView.swift; path = MeetMind/MacApp/Views/MacRecordingView.swift; sourceTree = SOURCE_ROOT; };
+		979DA27956CF405E9D5255D5 /* MacTodosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacTodosView.swift; path = MeetMind/MacApp/Views/MacTodosView.swift; sourceTree = SOURCE_ROOT; };
+		6E7F051B00B64972BDD6B65D /* MacNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacNotesView.swift; path = MeetMind/MacApp/Views/MacNotesView.swift; sourceTree = SOURCE_ROOT; };
+		42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacLibraryView.swift; path = MeetMind/MacApp/Views/MacLibraryView.swift; sourceTree = SOURCE_ROOT; };
+		D6001C1705F44D139299B24E /* MacChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacChatView.swift; path = MeetMind/MacApp/Views/MacChatView.swift; sourceTree = SOURCE_ROOT; };
+		E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MacSettingsView.swift; path = MeetMind/MacApp/Views/MacSettingsView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -798,6 +816,7 @@
 				4F5D6B2E53428931BD33AADB /* Models */,
 				AD294DE0D1D30AE1081E92ED /* Resources */,
 				97553CF4336E2F753705B317 /* Services */,
+				891A5D6E879E4219BDD1D59F /* MacApp */,
 			);
 			path = MeetMind;
 			sourceTree = "<group>";
@@ -1036,6 +1055,30 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		891A5D6E879E4219BDD1D59F /* MacApp */ = {
+			isa = PBXGroup;
+			children = (
+				DDF5CA6DECAA42A98E86180E /* Views */,
+			);
+			path = MacApp;
+			sourceTree = "<group>";
+		};
+		DDF5CA6DECAA42A98E86180E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5F01B7A5450444C6B1819499 /* MacIconRail.swift */,
+				7FFC0A93FD9D42C9AEADEA44 /* MacMeetingListPanel.swift */,
+				CC88E92F153342028BBD2F4B /* MacMeetingDetail.swift */,
+				6AF8FA9BABDA4CB58C8DE643 /* MacRecordingView.swift */,
+				979DA27956CF405E9D5255D5 /* MacTodosView.swift */,
+				6E7F051B00B64972BDD6B65D /* MacNotesView.swift */,
+				42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */,
+				D6001C1705F44D139299B24E /* MacChatView.swift */,
+				E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1047,11 +1090,13 @@
 				A3B4C5D6E7F8A9B0C1D2E3F4 /* Frameworks */,
 				975A1D6ABF6C13936BCCC31F /* Resources */,
 				27335DDDAAF571A68484B7B7 /* Embed Foundation Extensions */,
+				B5C720A901744077BFD5268C /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				C502A7F82F6BA5970041A292 /* PBXTargetDependency */,
+				1943A299E7FB4617BFE2599E /* PBXTargetDependency */,
 			);
 			name = MeetMind;
 			packageProductDependencies = (
@@ -1365,6 +1410,15 @@
 				DE324AF9B24903819BD4A177 /* TodoHistoryView.swift in Sources */,
 				A9BB4251AA66E62D91E11814 /* TeamsIntegrationService.swift in Sources */,
 				AE2448D68460394E9BCD73C6 /* QuickNoteView.swift in Sources */,
+				FCED236B1C67493AB3C9C36E /* MacIconRail.swift in Sources */,
+				2916EAFB6EFE4386AF2C1CA8 /* MacMeetingListPanel.swift in Sources */,
+				867D8DC6A1F644B7A85E456B /* MacMeetingDetail.swift in Sources */,
+				861739D46F464C27A2AD2737 /* MacRecordingView.swift in Sources */,
+				94397328A92745B3B91B6922 /* MacTodosView.swift in Sources */,
+				9E7BA0BD18214D61ACE3E015 /* MacNotesView.swift in Sources */,
+				E063F844738C4A7AA2A38414 /* MacLibraryView.swift in Sources */,
+				480F48092F6447CF8D0121DE /* MacChatView.swift in Sources */,
+				4FD74B190DC54494932750E3 /* MacSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1651,7 +1705,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.widgets.MeetMindWatchWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.MeetMindWatchWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1690,7 +1744,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.widgets.MeetMindWatchWidgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.MeetMindWatchWidgets;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -1723,7 +1777,7 @@
 					"$(inherited)",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MeetMindWatch;
+				INFOPLIST_KEY_CFBundleDisplayName = MeetMind;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.meetmind.app;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1732,14 +1786,14 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -1762,7 +1816,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = MeetMindWatch;
+				INFOPLIST_KEY_CFBundleDisplayName = MeetMind;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.meetmind.app;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1771,13 +1825,13 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp.widgets;
+				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
+				SKIP_INSTALL = NO;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;

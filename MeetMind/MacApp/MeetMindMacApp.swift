@@ -27,6 +27,11 @@ struct MeetMindMacApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         print("[MeetMind Mac] App launched")
+        MeetingAppDetector.shared.startMonitoring()
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        MeetingAppDetector.shared.stopMonitoring()
     }
 }
 #endif
