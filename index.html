@@ -3,1114 +3,1282 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MeetMind — Your Meetings, Remembered</title>
-  <meta name="description" content="MeetMind records, transcribes, and summarizes your meetings with AI. One tap. No bots. Action items become todos automatically." />
-  <meta property="og:title" content="MeetMind — Your Meetings, Remembered">
-  <meta property="og:description" content="AI-powered meeting intelligence. Record, transcribe, summarize. No bots. One tap.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://gauravmodi09.github.io/MeetMind/">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MeetMind — Your Meetings, Remembered">
-  <meta name="twitter:description" content="AI-powered meeting intelligence. Record, transcribe, summarize. No bots. One tap.">
-  <meta name="theme-color" content="#6C5CE7">
+  <title>MeetMind — Stop Losing Your Meetings</title>
+  <meta name="description" content="AI-powered meeting intelligence. Record, summarize, and act — all from your iPhone, Mac, or Apple Watch." />
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { scroll-behavior: auto; }
+    :root {
+      --void: #050507;
+      --violet: #7C3AED;
+      --violet-dim: #5B21B6;
+      --teal: #14F0C5;
+      --coral: #FF6B6B;
+      --amber: #FBBF24;
+      --white: #F8F8FC;
+      --grey: #9CA3AF;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.08);
+      --font-display: 'Instrument Serif', serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #fff;
+      background: var(--void);
+      color: var(--white);
+      font-family: var(--font-body);
       overflow-x: hidden;
-      background: #0a0a0f;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── Three.js Canvas ─────────────────────────────── */
-    #three-canvas {
+    /* ── Film Grain Overlay ── */
+    .grain {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      z-index: 0;
+      inset: 0;
+      z-index: 9999;
       pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 128px 128px;
     }
 
-    /* ─── Content Layer ───────────────────────────────── */
-    .content {
+    /* ── Three.js Canvas ── */
+    #universe {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+    }
+
+    /* ── Scroll Container ── */
+    .scroll-container { position: relative; z-index: 1; }
+
+    /* ── Shared Section ── */
+    .frame {
       position: relative;
-      z-index: 1;
-    }
-
-    /* ─── Sections ────────────────────────────────────── */
-    .section {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 80px 32px;
-      position: relative;
-    }
-
-    .section-inner {
-      max-width: 720px;
       width: 100%;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
     }
 
-    /* ─── Typography ──────────────────────────────────── */
-    h1, h2 {
-      font-size: clamp(36px, 6vw, 72px);
-      font-weight: 900;
-      letter-spacing: -0.03em;
+    .frame-inner {
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    /* ── Typography ── */
+    .display {
+      font-family: var(--font-display);
+      font-weight: 400;
       line-height: 1.05;
-      margin-bottom: 24px;
+      letter-spacing: -0.02em;
     }
 
-    .section p, .section .body-text {
-      font-size: clamp(16px, 2vw, 20px);
-      color: rgba(255,255,255,0.65);
-      line-height: 1.7;
-      max-width: 520px;
-      margin: 0 auto;
+    .display-xl { font-size: clamp(3rem, 8vw, 7.5rem); }
+    .display-lg { font-size: clamp(2.5rem, 6vw, 5.5rem); }
+    .display-md { font-size: clamp(2rem, 4vw, 3.5rem); }
+
+    .body-lg {
+      font-family: var(--font-body);
+      font-size: clamp(1.1rem, 2vw, 1.4rem);
+      line-height: 1.6;
+      font-weight: 300;
+      color: var(--grey);
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--violet);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--violet), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ═══════════════════════════════════════
+       FRAME 1 — THE COST (Hero + Pain)
+       ═══════════════════════════════════════ */
+    #cost {
+      height: 250vh;
+      justify-content: flex-start;
+    }
+
+    .hero-content {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    .hero-label {
+      margin-bottom: 2rem;
+      opacity: 0;
+    }
+
+    .hero-headline {
+      max-width: 900px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+    }
+
+    .hero-sub {
+      max-width: 560px;
+      margin-bottom: 3rem;
+      opacity: 0;
     }
 
     .scroll-cue {
-      font-size: 13px;
-      color: rgba(255,255,255,0.3);
-      margin-top: 48px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
     }
 
-    .scroll-cue .arrow {
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--violet), transparent);
+      animation: pulse-line 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-line {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.3); }
+    }
+
+    /* Pain stats */
+    .pain-stats {
+      position: absolute;
+      bottom: 15vh;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: clamp(2rem, 5vw, 5rem);
+      opacity: 0;
+    }
+
+    .pain-stat {
+      text-align: center;
+    }
+
+    .pain-stat .num {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--coral);
       display: block;
-      margin-top: 8px;
-      animation: bounce 2s ease-in-out infinite;
+      line-height: 1;
     }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(8px); }
+    .pain-stat .label {
+      font-size: 0.85rem;
+      color: var(--grey);
+      margin-top: 0.5rem;
+      display: block;
+      max-width: 140px;
     }
 
-    /* ─── Hero ─────────────────────────────────────────── */
-    .hero-section {
-      min-height: 100vh;
+    /* ═══════════════════════════════════════
+       FRAME 2 — THE SHIFT (Pivot + Product)
+       ═══════════════════════════════════════ */
+    #shift {
+      height: 300vh;
+      justify-content: flex-start;
     }
 
-    .hero-section h1 {
-      font-size: clamp(40px, 7vw, 80px);
-      background: linear-gradient(135deg, #fff 30%, rgba(108,92,231,0.8));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .shift-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 clamp(24px, 5vw, 80px);
     }
 
-    .hero-section .subline {
-      font-size: clamp(17px, 2.2vw, 22px);
-      color: rgba(255,255,255,0.5);
-      max-width: 560px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* ─── Pivot Section ───────────────────────────────── */
-    .pivot-section {
-      min-height: 200vh;
-    }
-
-    .pivot-line {
+    .pivot-text {
       opacity: 0;
-      font-size: clamp(28px, 5vw, 56px);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 32px;
+      max-width: 700px;
     }
 
-    .pivot-brand {
-      opacity: 0;
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      background: linear-gradient(135deg, #6C5CE7, #a855f7, #6C5CE7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-shadow: none;
-      filter: drop-shadow(0 0 40px rgba(108,92,231,0.5));
+    .pivot-text em {
+      font-family: var(--font-display);
+      font-style: italic;
+      color: var(--teal);
     }
 
-    /* ─── Floating Words (pain section) ───────────────── */
-    .floating-words {
+    /* 3D Phone */
+    .phone-stage {
+      perspective: 1200px;
       position: absolute;
       inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .floating-word {
-      position: absolute;
-      font-size: clamp(12px, 1.5vw, 16px);
-      color: rgba(255,255,255,0.12);
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    /* ─── Phone Canvas ────────────────────────────────── */
-    .phone-container {
-      width: 220px;
-      height: 440px;
-      margin: 40px auto 0;
-      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       opacity: 0;
-      transform: translateY(60px);
+      pointer-events: none;
     }
 
-    .phone-frame {
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(145deg, #1a1a2e, #16162a);
-      border-radius: 32px;
-      border: 2px solid rgba(255,255,255,0.08);
+    .phone {
+      width: clamp(200px, 22vw, 280px);
+      height: clamp(420px, 46vw, 580px);
+      background: linear-gradient(145deg, #1a1a2e, #0d0d15);
+      border-radius: 40px;
+      border: 2px solid rgba(124, 58, 237, 0.3);
       position: relative;
-      overflow: hidden;
+      transform-style: preserve-3d;
       box-shadow:
-        0 0 0 1px rgba(255,255,255,0.05),
-        0 20px 60px rgba(0,0,0,0.6),
-        0 0 80px rgba(108,92,231,0.15);
+        0 0 80px rgba(124, 58, 237, 0.15),
+        0 30px 60px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .phone-notch {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
       width: 100px;
       height: 28px;
-      background: #0a0a0f;
-      border-radius: 0 0 16px 16px;
-      margin: 0 auto;
-      position: relative;
+      background: #000;
+      border-radius: 20px;
       z-index: 2;
     }
 
     .phone-screen {
       position: absolute;
-      top: 28px; left: 10px; right: 10px; bottom: 10px;
-      background: #0d0d1a;
-      border-radius: 0 0 22px 22px;
+      inset: 14px;
+      border-radius: 30px;
       overflow: hidden;
+      background: #0a0a12;
+    }
+
+    .screen-state {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
+      padding: 50px 20px 24px;
+      opacity: 0;
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .screen-state.active { opacity: 1; }
+
+    /* Screen: Recording */
+    .screen-recording { background: linear-gradient(180deg, #0f0a1a, #1a0a2e); }
+    .screen-recording .rec-badge {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      padding: 20px 16px;
+      gap: 8px;
+      margin-bottom: auto;
     }
-
-    /* ─── Record Button ───────────────────────────────── */
-    .record-ui { text-align: center; }
-
-    .record-btn {
-      width: 72px; height: 72px;
+    .rec-dot {
+      width: 10px; height: 10px;
+      background: var(--coral);
       border-radius: 50%;
-      background: #e74c3c;
-      margin: 0 auto 16px;
-      position: relative;
-      animation: pulse-record 2s ease-in-out infinite;
+      animation: rec-pulse 1.5s ease-in-out infinite;
     }
-
-    .record-btn::after {
-      content: '';
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 2px solid rgba(231,76,60,0.3);
-      animation: pulse-ring 2s ease-in-out infinite;
+    @keyframes rec-pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,107,107,0.4); }
+      50% { opacity: 0.6; box-shadow: 0 0 0 8px rgba(255,107,107,0); }
     }
-
-    @keyframes pulse-record {
-      0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(231,76,60,0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(231,76,60,0.6); }
+    .rec-label { font-size: 0.75rem; color: var(--coral); font-weight: 600; letter-spacing: 0.1em; }
+    .rec-timer {
+      font-family: var(--font-mono);
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--white);
+      text-align: center;
+      margin: auto 0;
     }
-
-    @keyframes pulse-ring {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.3; }
-    }
-
-    .record-timer {
-      font-size: 18px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .record-label {
-      font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    /* ─── Waveform ─────────────────────────────────────── */
-    .waveform {
+    .rec-waveform {
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 3px;
-      height: 40px;
-      margin-top: 20px;
     }
-
-    .waveform .bar {
+    .wave-bar {
       width: 3px;
-      background: rgba(108,92,231,0.6);
+      background: var(--violet);
       border-radius: 2px;
       animation: wave 1.2s ease-in-out infinite;
     }
-
     @keyframes wave {
       0%, 100% { height: 8px; }
-      50% { height: 32px; }
+      50% { height: var(--h, 40px); }
     }
-
-    /* ─── Brief Cards ─────────────────────────────────── */
-    .brief-ui {
-      width: 100%;
-    }
-
-    .brief-card {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      text-align: left;
-      border-left: 3px solid;
-    }
-
-    .brief-card.summary { border-color: #6C5CE7; }
-    .brief-card.decisions { border-color: #00b894; }
-    .brief-card.actions { border-color: #fdcb6e; }
-
-    .brief-card .card-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 4px;
-    }
-
-    .brief-card .card-text {
-      font-size: 11px;
-      color: rgba(255,255,255,0.7);
-      line-height: 1.4;
-    }
-
-    /* ─── Todo Card ────────────────────────────────────── */
-    .todo-ui { width: 100%; }
-
-    .voice-bar {
-      height: 4px;
-      background: linear-gradient(90deg, #6C5CE7, #a855f7, #6C5CE7);
-      border-radius: 2px;
-      margin-bottom: 16px;
-      animation: voice-pulse 2s ease-in-out infinite;
-    }
-
-    @keyframes voice-pulse {
-      0%, 100% { opacity: 0.4; transform: scaleX(0.7); }
-      50% { opacity: 1; transform: scaleX(1); }
-    }
-
-    .todo-card {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 14px;
-      text-align: left;
-    }
-
-    .todo-card .todo-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 8px;
-    }
-
-    .todo-card .todo-meta {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .todo-card .tag {
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(108,92,231,0.2);
-      color: rgba(255,255,255,0.6);
-    }
-
-    .todo-card .tag.due { background: rgba(253,203,110,0.2); }
-    .todo-card .tag.priority { background: rgba(231,76,60,0.2); }
-
-    /* ─── Organization Nodes ──────────────────────────── */
-    .org-nodes {
-      position: relative;
-      width: 280px;
-      height: 280px;
-      margin: 40px auto 0;
-      opacity: 0;
-    }
-
-    .org-node {
-      position: absolute;
+    .rec-mic-btn {
       width: 56px; height: 56px;
+      background: var(--coral);
       border-radius: 50%;
+      margin: 16px auto 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: rgba(255,255,255,0.8);
-      border: 1.5px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 30px rgba(255,107,107,0.3);
     }
 
-    .org-node.center {
-      width: 72px; height: 72px;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(108,92,231,0.3);
-      border-color: rgba(108,92,231,0.5);
-      font-size: 10px;
-    }
-
-    .org-line {
-      position: absolute;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(108,92,231,0.4), rgba(108,92,231,0.1));
-      transform-origin: left center;
-    }
-
-    /* ─── Device Silhouettes ──────────────────────────── */
-    .devices {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 40px;
-      margin-top: 48px;
-      opacity: 0;
-    }
-
-    .device {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .device-shape {
-      border: 2px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .device-shape.phone-shape { width: 48px; height: 88px; border-radius: 14px; }
-    .device-shape.mac-shape { width: 120px; height: 80px; border-radius: 8px; }
-    .device-shape.mac-shape::after {
-      content: '';
-      position: absolute;
-      bottom: -12px;
-      width: 60px; height: 8px;
-      border: 2px solid rgba(255,255,255,0.08);
-      border-top: none;
-      border-radius: 0 0 4px 4px;
-    }
-    .device-shape.watch-shape { width: 44px; height: 52px; border-radius: 14px; }
-
-    .device-shape .screen-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(108,92,231,0.5);
-      animation: pulse-record 3s ease-in-out infinite;
-    }
-
-    .device-label {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      font-weight: 600;
-    }
-
-    /* ─── CTA Section ─────────────────────────────────── */
-    .cta-section {
-      min-height: 100vh;
-    }
-
-    .countdown-text {
-      font-size: clamp(20px, 3vw, 32px);
-      color: rgba(255,255,255,0.4);
-      font-weight: 600;
+    /* Screen: Brief */
+    .screen-brief { background: linear-gradient(180deg, #0a1a15, #0a0f1a); }
+    .brief-header {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
       margin-bottom: 12px;
     }
+    .brief-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .brief-card {
+      background: rgba(20, 240, 197, 0.06);
+      border: 1px solid rgba(20, 240, 197, 0.12);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+    .brief-card-label {
+      font-size: 0.65rem;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .brief-card-text {
+      font-size: 0.75rem;
+      color: var(--grey);
+      line-height: 1.5;
+    }
 
-    .countdown-relief {
-      font-size: clamp(18px, 2.5vw, 26px);
-      color: rgba(255,255,255,0.6);
+    /* Screen: Todos */
+    .screen-todos { background: linear-gradient(180deg, #1a0f2e, #0a0a15); }
+    .todo-header {
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+    .todo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .todo-check {
+      width: 18px; height: 18px;
+      border: 2px solid var(--violet);
+      border-radius: 5px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .todo-check.done {
+      background: var(--violet);
+    }
+    .todo-text {
+      font-size: 0.8rem;
+      color: var(--white);
+      line-height: 1.4;
+    }
+    .todo-meta {
+      font-size: 0.65rem;
+      color: var(--grey);
+      margin-top: 4px;
+    }
+    .todo-priority {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 4px;
+    }
+
+    /* ═══════════════════════════════════════
+       FRAME 3 — THE EXPERIENCE (Features)
+       ═══════════════════════════════════════ */
+    #experience {
+      min-height: 200vh;
+      justify-content: flex-start;
+      padding-top: 10vh;
+    }
+
+    .features-intro {
+      text-align: center;
+      margin-bottom: clamp(3rem, 6vh, 6rem);
+      opacity: 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    .feature-card {
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: clamp(24px, 3vw, 36px);
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .feature-card:hover {
+      border-color: rgba(124, 58, 237, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(124, 58, 237, 0.1);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.4rem;
+    }
+
+    .feature-card h3 {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--white);
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--grey);
+      line-height: 1.6;
+    }
+
+    /* Device showcase */
+    .device-showcase {
+      margin-top: clamp(4rem, 8vh, 8rem);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: clamp(2rem, 4vw, 4rem);
+      padding: 0 clamp(24px, 5vw, 80px);
+      opacity: 0;
+    }
+
+    .device-badge {
+      text-align: center;
+    }
+
+    .device-icon-wrap {
+      width: clamp(80px, 10vw, 120px);
+      height: clamp(80px, 10vw, 120px);
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2rem, 3vw, 3rem);
+      margin-bottom: 1rem;
+      transition: all 0.4s ease;
+    }
+
+    .device-badge:hover .device-icon-wrap {
+      border-color: var(--violet);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .device-name {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
       font-weight: 500;
-      font-style: italic;
-      margin-bottom: 48px;
+      color: var(--white);
+    }
+
+    .device-detail {
+      font-size: 0.75rem;
+      color: var(--grey);
+      margin-top: 0.25rem;
+    }
+
+    /* ═══════════════════════════════════════
+       FRAME 4 — THE MOVE (CTA)
+       ═══════════════════════════════════════ */
+    #move {
+      min-height: 100vh;
+      justify-content: center;
+    }
+
+    .cta-content {
+      text-align: center;
+      max-width: 700px;
+      padding: 0 clamp(24px, 5vw, 80px);
+    }
+
+    .cta-headline {
+      margin-bottom: 1rem;
+      opacity: 0;
+    }
+
+    .cta-sub {
+      margin-bottom: 2.5rem;
+      opacity: 0;
     }
 
     .cta-form {
       display: flex;
       gap: 12px;
-      max-width: 420px;
-      margin: 0 auto 32px;
-    }
-
-    .cta-form input {
-      flex: 1;
-      padding: 16px 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      color: #fff;
-      font-size: 16px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-
-    .cta-form input::placeholder { color: rgba(255,255,255,0.25); }
-    .cta-form input:focus { border-color: rgba(108,92,231,0.5); }
-
-    .cta-form button {
-      padding: 16px 28px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #6C5CE7, #a855f7);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: transform 0.2s, box-shadow 0.3s;
-    }
-
-    .cta-form button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(108,92,231,0.4);
-    }
-
-    .trust-signals {
-      display: flex;
-      gap: 24px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+      opacity: 0;
     }
 
-    .trust-signal {
-      font-size: 13px;
-      color: rgba(255,255,255,0.3);
-      font-weight: 500;
+    .cta-input {
+      width: 320px;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
     }
 
-    .trust-signal::before {
-      content: '✦ ';
-      color: rgba(108,92,231,0.5);
+    .cta-input::placeholder { color: rgba(255,255,255,0.25); }
+    .cta-input:focus {
+      border-color: var(--violet);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
     }
 
-    /* ─── Footer ──────────────────────────────────────── */
-    .footer {
+    .cta-btn {
+      padding: 16px 36px;
+      background: linear-gradient(135deg, var(--violet), var(--violet-dim));
+      border: none;
+      border-radius: 14px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--teal), var(--violet));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .cta-btn:hover::before { opacity: 1; }
+    .cta-btn span { position: relative; z-index: 1; }
+
+    .cta-btn.success {
+      background: linear-gradient(135deg, #059669, #10B981);
+      pointer-events: none;
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--grey);
+    }
+
+    .trust-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    /* ── Footer ── */
+    footer {
       text-align: center;
-      padding: 48px 32px;
-      font-size: 13px;
+      padding: 3rem 2rem;
+      font-size: 0.8rem;
       color: rgba(255,255,255,0.2);
+      position: relative;
+      z-index: 1;
     }
 
-    /* ─── Glow Effects ────────────────────────────────── */
-    .glow-purple {
-      position: absolute;
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, rgba(108,92,231,0.15) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    .glow-green {
-      position: absolute;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(0,184,148,0.1) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: -1;
-    }
-
-    /* ─── Responsive ──────────────────────────────────── */
+    /* ── Responsive ── */
     @media (max-width: 768px) {
-      .section { padding: 60px 20px; }
-      h1, h2 { font-size: clamp(28px, 8vw, 48px); margin-bottom: 16px; }
-      .hero-section h1 { font-size: clamp(32px, 9vw, 52px); }
-      .section p, .section .body-text { font-size: 16px; }
-      .pivot-line { font-size: clamp(22px, 6vw, 36px); }
-      .pivot-brand { font-size: clamp(36px, 12vw, 64px); }
-      .cta-form { flex-direction: column; }
-      .cta-form button { width: 100%; }
-      .devices { gap: 24px; }
-      .device-shape.mac-shape { width: 80px; height: 56px; }
-      .org-nodes { width: 240px; height: 240px; }
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .pain-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .device-showcase {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .cta-form { flex-direction: column; align-items: center; }
+      .cta-input { width: 100%; max-width: 360px; }
+
+      .phone {
+        width: 200px;
+        height: 420px;
+      }
+
+      .trust-badges { flex-direction: column; align-items: center; }
     }
 
-    /* ─── Reduced Motion ──────────────────────────────── */
+    @media (max-width: 480px) {
+      .display-xl { font-size: 2.5rem; }
+      .display-lg { font-size: 2rem; }
+    }
+
+    /* ── Reduced Motion ── */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }
+      .scroll-line { animation: none; opacity: 0.5; }
+      .grain { display: none; }
     }
   </style>
 </head>
 <body>
 
-<canvas id="three-canvas"></canvas>
+  <!-- Film Grain -->
+  <div class="grain" aria-hidden="true"></div>
 
-<div class="content">
+  <!-- Three.js Particle Universe -->
+  <canvas id="universe" aria-hidden="true"></canvas>
 
-  <!-- ═══ SECTION 1: HERO ═══ -->
-  <section class="section hero-section" id="hero">
-    <div class="section-inner">
-      <h1 class="hero-headline">Every meeting you forget<br>costs you.</h1>
-      <p class="subline">The follow-up you missed. The decision you can't recall. The action item that slipped through.</p>
-      <div class="scroll-cue">
-        <span>Scroll to see what you're losing</span>
-        <span class="arrow">↓</span>
-      </div>
-    </div>
-  </section>
+  <!-- Scroll Container -->
+  <div class="scroll-container">
 
-  <!-- ═══ SECTION 2: THE WEIGHT ═══ -->
-  <section class="section weight-section" id="weight">
-    <div class="floating-words">
-      <span class="floating-word" style="top:15%; left:8%;">action item</span>
-      <span class="floating-word" style="top:25%; right:12%;">follow up</span>
-      <span class="floating-word" style="top:55%; left:5%;">who said that?</span>
-      <span class="floating-word" style="top:70%; right:8%;">check the notes</span>
-      <span class="floating-word" style="top:40%; left:15%;">I think we agreed...</span>
-      <span class="floating-word" style="top:82%; left:20%;">circle back</span>
-      <span class="floating-word" style="top:10%; right:25%;">send the deck</span>
-      <span class="floating-word" style="top:60%; right:20%;">what was the deadline?</span>
-      <span class="floating-word" style="top:35%; right:5%;">let me check</span>
-      <span class="floating-word" style="top:88%; right:15%;">can you repeat that?</span>
-    </div>
-    <div class="section-inner">
-      <div class="glow-purple" style="top:-100px; left:-200px;"></div>
-      <h2 class="weight-headline">37 meetings this month.</h2>
-      <p class="body-text">You remember maybe 4. The rest? A blur of voices, half-finished notes, and promises you're not sure you made. You tell yourself you'll write it up later. You never do.</p>
-    </div>
-  </section>
-
-  <!-- ═══ SECTION 3: THE BREAKING POINT ═══ -->
-  <section class="section breaking-section" id="breaking">
-    <div class="section-inner">
-      <div class="glow-purple" style="bottom:-100px; right:-200px;"></div>
-      <h2 class="breaking-headline">Your todos are everywhere.<br>Your context is nowhere.</h2>
-      <p class="body-text">A sticky note on your monitor. A Slack reminder you snoozed. A calendar event with "SEE NOTES" — but there are no notes. Every task is an orphan. Disconnected from the conversation that created it.</p>
-    </div>
-  </section>
-
-  <!-- ═══ SECTION 4: THE SILENCE (PIVOT) ═══ -->
-  <section class="section pivot-section" id="pivot">
-    <div class="section-inner">
-      <p class="pivot-line pivot-line-1">What if you never had to remember?</p>
-      <p class="pivot-line pivot-line-2">What if your meetings remembered for you?</p>
-      <p class="pivot-brand">MeetMind</p>
-    </div>
-  </section>
-
-  <!-- ═══ SECTION 5: ONE TAP ═══ -->
-  <section class="section solution-section" id="one-tap">
-    <div class="section-inner">
-      <h2>One tap. That's all it takes.</h2>
-      <p class="body-text">Open MeetMind. Tap record. Put your phone down. No bots join your call. No one knows you're recording. Just you, your meeting, and the peace of mind that nothing will be lost.</p>
-      <div class="phone-container phone-record">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="record-ui">
-              <div class="record-btn"></div>
-              <div class="record-timer">04:32</div>
-              <div class="record-label">Recording</div>
-              <div class="waveform">
-                <div class="bar" style="animation-delay:0s; height:12px;"></div>
-                <div class="bar" style="animation-delay:0.1s; height:20px;"></div>
-                <div class="bar" style="animation-delay:0.2s; height:28px;"></div>
-                <div class="bar" style="animation-delay:0.3s; height:16px;"></div>
-                <div class="bar" style="animation-delay:0.4s; height:24px;"></div>
-                <div class="bar" style="animation-delay:0.15s; height:18px;"></div>
-                <div class="bar" style="animation-delay:0.25s; height:30px;"></div>
-                <div class="bar" style="animation-delay:0.35s; height:14px;"></div>
-                <div class="bar" style="animation-delay:0.05s; height:22px;"></div>
-                <div class="bar" style="animation-delay:0.45s; height:10px;"></div>
-              </div>
-            </div>
-          </div>
+    <!-- ═══ FRAME 1: THE COST ═══ -->
+    <section id="cost" class="frame" aria-label="The cost of broken meetings">
+      <div class="hero-content">
+        <div class="hero-label mono">The Problem Nobody Solves</div>
+        <h1 class="hero-headline display display-xl">
+          Your meetings<br/>disappear the moment<br/>they <em style="font-family:var(--font-display);color:var(--coral)">end.</em>
+        </h1>
+        <p class="hero-sub body-lg">
+          Decisions evaporate. Action items scatter across five apps. And by tomorrow, you'll remember none of it.
+        </p>
+        <div class="scroll-cue">
+          <span class="mono" style="font-size:0.65rem;color:var(--grey)">Scroll</span>
+          <div class="scroll-line"></div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ═══ SECTION 6: THE BRIEF ═══ -->
-  <section class="section solution-section" id="brief">
-    <div class="section-inner">
-      <h2>Your meeting, distilled.</h2>
-      <p class="body-text">When the call ends, MeetMind's AI reads every word. In seconds, you get a structured brief: executive summary, key decisions, action items with owners, and the exact quotes that mattered. Not a transcript dump. A brief your CEO could read.</p>
-      <div class="phone-container phone-brief">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="brief-ui">
-              <div class="brief-card summary">
-                <div class="card-label">Summary</div>
-                <div class="card-text">Team agreed to ship v2.1 by March 15 with revised onboarding flow.</div>
-              </div>
-              <div class="brief-card decisions">
-                <div class="card-label">Key Decision</div>
-                <div class="card-text">Switching to Stripe for payments. Jake to handle migration.</div>
-              </div>
-              <div class="brief-card actions">
-                <div class="card-label">Action Item</div>
-                <div class="card-text">Sarah: send revised deck to investors by Thursday EOD.</div>
-              </div>
-            </div>
-          </div>
+      <div class="pain-stats">
+        <div class="pain-stat">
+          <span class="num">73%</span>
+          <span class="label">of action items are forgotten within 24 hours</span>
+        </div>
+        <div class="pain-stat">
+          <span class="num">31h</span>
+          <span class="label">wasted per month in unproductive meetings</span>
+        </div>
+        <div class="pain-stat">
+          <span class="num">5+</span>
+          <span class="label">apps used to track a single meeting's output</span>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══ SECTION 7: SMART TODOS ═══ -->
-  <section class="section solution-section" id="todos">
-    <div class="section-inner">
-      <h2>Your voice becomes your task list.</h2>
-      <p class="body-text">"Send Jake the revised deck by Thursday." MeetMind hears it. Extracts the task. Sets the due date. Assigns the priority. It shows up in your Today view before you've even hung up. No typing. No forgetting. No friction.</p>
-      <div class="phone-container phone-todo">
-        <div class="phone-frame">
-          <div class="phone-notch"></div>
-          <div class="phone-screen">
-            <div class="todo-ui">
-              <div class="voice-bar"></div>
-              <div class="todo-card">
-                <div class="todo-title">Send revised deck to Jake</div>
-                <div class="todo-meta">
-                  <span class="tag due">Thu, Mar 20</span>
-                  <span class="tag priority">High</span>
-                  <span class="tag">Q1 Planning</span>
+    <!-- ═══ FRAME 2: THE SHIFT ═══ -->
+    <section id="shift" class="frame" aria-label="MeetMind solves it">
+      <div class="shift-sticky">
+        <p class="pivot-text display display-lg">
+          What if <em>one tap</em> could<br/>capture everything?
+        </p>
+
+        <!-- 3D Phone -->
+        <div class="phone-stage">
+          <div class="phone" id="phone3d">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <!-- State 1: Recording -->
+              <div class="screen-state screen-recording active" id="screenRec">
+                <div class="rec-badge">
+                  <div class="rec-dot"></div>
+                  <span class="rec-label">RECORDING</span>
+                </div>
+                <div class="rec-timer">14:32</div>
+                <div class="rec-waveform">
+                  <div class="wave-bar" style="--h:20px;animation-delay:0s"></div>
+                  <div class="wave-bar" style="--h:35px;animation-delay:0.1s"></div>
+                  <div class="wave-bar" style="--h:25px;animation-delay:0.2s"></div>
+                  <div class="wave-bar" style="--h:45px;animation-delay:0.15s"></div>
+                  <div class="wave-bar" style="--h:30px;animation-delay:0.25s"></div>
+                  <div class="wave-bar" style="--h:50px;animation-delay:0.05s"></div>
+                  <div class="wave-bar" style="--h:20px;animation-delay:0.3s"></div>
+                  <div class="wave-bar" style="--h:40px;animation-delay:0.12s"></div>
+                  <div class="wave-bar" style="--h:15px;animation-delay:0.22s"></div>
+                  <div class="wave-bar" style="--h:35px;animation-delay:0.08s"></div>
+                  <div class="wave-bar" style="--h:25px;animation-delay:0.18s"></div>
+                  <div class="wave-bar" style="--h:45px;animation-delay:0.28s"></div>
+                </div>
+                <div class="rec-mic-btn">
+                  <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                </div>
+              </div>
+
+              <!-- State 2: Brief -->
+              <div class="screen-state screen-brief" id="screenBrief">
+                <div class="brief-header">AI Meeting Brief</div>
+                <div class="brief-title">Q1 Product Sync</div>
+                <div class="brief-card">
+                  <div class="brief-card-label">Summary</div>
+                  <div class="brief-card-text">Agreed on v2.0 launch timeline. Design handoff by March 15.</div>
+                </div>
+                <div class="brief-card">
+                  <div class="brief-card-label">Decisions</div>
+                  <div class="brief-card-text">Ship mobile-first. Delay desktop by 2 weeks.</div>
+                </div>
+                <div class="brief-card">
+                  <div class="brief-card-label">Action Items</div>
+                  <div class="brief-card-text">Sarah: Update roadmap. James: Finalize API contract.</div>
+                </div>
+              </div>
+
+              <!-- State 3: Todos -->
+              <div class="screen-state screen-todos" id="screenTodos">
+                <div class="todo-header">Smart Todos</div>
+                <div class="todo-item">
+                  <div class="todo-check"></div>
+                  <div>
+                    <div class="todo-text">Update roadmap with new timeline</div>
+                    <div class="todo-meta"><span class="todo-priority" style="background:var(--coral)"></span>High &middot; Due Mar 15</div>
+                  </div>
+                </div>
+                <div class="todo-item">
+                  <div class="todo-check done"></div>
+                  <div>
+                    <div class="todo-text" style="text-decoration:line-through;opacity:0.5">Send proposal to Acme Corp</div>
+                    <div class="todo-meta"><span class="todo-priority" style="background:var(--amber)"></span>Med &middot; Done</div>
+                  </div>
+                </div>
+                <div class="todo-item">
+                  <div class="todo-check"></div>
+                  <div>
+                    <div class="todo-text">Finalize API contract</div>
+                    <div class="todo-meta"><span class="todo-priority" style="background:var(--teal)"></span>Normal &middot; Due Mar 18</div>
+                  </div>
+                </div>
+                <div class="todo-item">
+                  <div class="todo-check"></div>
+                  <div>
+                    <div class="todo-text">Schedule follow-up with design team</div>
+                    <div class="todo-meta"><span class="todo-priority" style="background:var(--amber)"></span>Med &middot; Due Mar 20</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══ SECTION 8: YOUR WORLD, ORGANIZED ═══ -->
-  <section class="section solution-section" id="organized">
-    <div class="section-inner">
-      <div class="glow-green" style="top: -100px; right: -150px;"></div>
-      <h2>Every client. Every conversation. Connected.</h2>
-      <p class="body-text">MeetMind listens for names, companies, and context. Your meetings automatically sort into client folders. Every person you've talked to, every decision made, every follow-up — all searchable, all connected.</p>
-      <div class="org-nodes" id="org-visual">
-        <svg width="100%" height="100%" style="position:absolute;inset:0;">
-          <line x1="50%" y1="50%" x2="15%" y2="15%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-          <line x1="50%" y1="50%" x2="85%" y2="20%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-          <line x1="50%" y1="50%" x2="10%" y2="65%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-          <line x1="50%" y1="50%" x2="80%" y2="75%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-          <line x1="50%" y1="50%" x2="50%" y2="5%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-          <line x1="50%" y1="50%" x2="20%" y2="90%" stroke="rgba(108,92,231,0.2)" stroke-width="1"/>
-        </svg>
-        <div class="org-node center">MeetMind</div>
-        <div class="org-node" style="top:5%; left:5%; background:rgba(0,184,148,0.15); border-color:rgba(0,184,148,0.3);">Acme</div>
-        <div class="org-node" style="top:10%; right:5%; background:rgba(253,203,110,0.15); border-color:rgba(253,203,110,0.3);">Jake</div>
-        <div class="org-node" style="top:55%; left:0%; background:rgba(108,92,231,0.15); border-color:rgba(108,92,231,0.3);">Q1</div>
-        <div class="org-node" style="bottom:5%; right:10%; background:rgba(231,76,60,0.15); border-color:rgba(231,76,60,0.3);">Sales</div>
-        <div class="org-node" style="top:0%; left:40%; background:rgba(116,185,255,0.15); border-color:rgba(116,185,255,0.3);">Sarah</div>
-        <div class="org-node" style="bottom:0%; left:10%; background:rgba(162,155,254,0.15); border-color:rgba(162,155,254,0.3);">Design</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ SECTION 9: EVERYWHERE ═══ -->
-  <section class="section solution-section" id="everywhere">
-    <div class="section-inner">
-      <h2>iPhone. Mac. Apple Watch.</h2>
-      <p class="body-text">Start recording on your wrist during a coffee meeting. Review the brief on your Mac between calls. Check off todos on your phone while walking to your next meeting. One app. Every Apple device. Always in sync.</p>
-      <div class="devices" id="devices-visual">
-        <div class="device">
-          <div class="device-shape watch-shape"><div class="screen-dot"></div></div>
-          <span class="device-label">Watch</span>
+    <!-- ═══ FRAME 3: THE EXPERIENCE ═══ -->
+    <section id="experience" class="frame" aria-label="Features and platform">
+      <div class="frame-inner">
+        <div class="features-intro">
+          <div class="mono" style="margin-bottom:1rem">What You Get</div>
+          <h2 class="display display-md">Intelligence that<br/><span class="gradient-text">works while you talk.</span></h2>
         </div>
-        <div class="device">
-          <div class="device-shape phone-shape"><div class="screen-dot"></div></div>
-          <span class="device-label">iPhone</span>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(255,107,107,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--coral)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+            </div>
+            <h3>One-Tap Recording</h3>
+            <p>No bots join your call. No awkward announcements. Just tap and capture everything through your device microphone.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(20,240,197,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3>AI Meeting Briefs</h3>
+            <p>Structured summaries with decisions, action items, key quotes, and participant detection — generated in seconds.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(124,58,237,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--violet)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3>Smart Todos</h3>
+            <p>"Send the proposal by Friday" becomes a todo with the right title, due date, and priority — automatically from voice.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(251,191,36,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--amber)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <h3>Auto-Organization</h3>
+            <p>Clients, companies, and people detected from conversation context. Your meetings organize themselves.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(20,240,197,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <h3>AI Chat</h3>
+            <p>"What action items are on me?" Ask questions across all your meetings and get instant, contextual answers.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon" style="background:rgba(124,58,237,0.1)">
+              <svg width="24" height="24" fill="none" stroke="var(--violet)" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <h3>Meeting Recipes</h3>
+            <p>Six AI recipes: Coach me, Prep me, Write a brief, Draft follow-up, Extract tasks, Analyze sentiment.</p>
+          </div>
         </div>
-        <div class="device">
-          <div class="device-shape mac-shape"><div class="screen-dot"></div></div>
-          <span class="device-label">Mac</span>
+
+        <!-- Device Showcase -->
+        <div class="device-showcase">
+          <div class="device-badge">
+            <div class="device-icon-wrap">
+              <svg width="36" height="36" fill="none" stroke="var(--white)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><circle cx="12" cy="18" r="1"/></svg>
+            </div>
+            <div class="device-name">iPhone</div>
+            <div class="device-detail">Full experience</div>
+          </div>
+          <div class="device-badge">
+            <div class="device-icon-wrap" style="width:clamp(100px,12vw,150px)">
+              <svg width="42" height="42" fill="none" stroke="var(--white)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+            </div>
+            <div class="device-name">Mac</div>
+            <div class="device-detail">Three-panel + menu bar</div>
+          </div>
+          <div class="device-badge">
+            <div class="device-icon-wrap" style="width:clamp(60px,8vw,90px);height:clamp(60px,8vw,90px);border-radius:50%">
+              <svg width="28" height="28" fill="none" stroke="var(--white)" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="9"/><circle cx="12" cy="12" r="4"/></svg>
+            </div>
+            <div class="device-name">Watch</div>
+            <div class="device-detail">Waveform recording</div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ═══ SECTION 10: CTA ═══ -->
-  <section class="section cta-section" id="cta">
-    <div class="section-inner">
-      <div class="glow-purple" style="top: -200px; left: 50%; transform: translateX(-50%);"></div>
-      <p class="countdown-text">Your next meeting is in a few hours</p>
-      <h2>This time, you won't forget a thing.</h2>
-      <p class="countdown-relief">Join the waitlist</p>
-      <form class="cta-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-        <input type="email" name="email" placeholder="your@email.com" required />
-        <button type="submit">I'm ready</button>
-      </form>
-      <div class="trust-signals">
-        <span class="trust-signal">Privacy-first</span>
-        <span class="trust-signal">No bots ever</span>
-        <span class="trust-signal">Free to start</span>
+    <!-- ═══ FRAME 4: THE MOVE ═══ -->
+    <section id="move" class="frame" aria-label="Join the waitlist">
+      <div class="cta-content">
+        <div class="mono" style="margin-bottom:1.5rem;opacity:0" id="ctaLabel">Ready?</div>
+        <h2 class="cta-headline display display-lg">
+          Stop losing your<br/><span class="gradient-text">meetings.</span>
+        </h2>
+        <p class="cta-sub body-lg">
+          Start remembering everything. Record, summarize, and act — from iPhone, Mac, and Apple Watch.
+        </p>
+        <form class="cta-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="waitlistForm">
+          <input type="email" name="email" class="cta-input" placeholder="you@company.com" required aria-label="Email address" />
+          <button type="submit" class="cta-btn"><span>Join the Waitlist</span></button>
+        </form>
+        <div class="trust-badges">
+          <div class="trust-badge"><div class="trust-dot"></div>Privacy-first</div>
+          <div class="trust-badge"><div class="trust-dot"></div>No bots ever</div>
+          <div class="trust-badge"><div class="trust-dot"></div>Apple native</div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <footer class="footer">
-    MeetMind — Built with SwiftUI for Apple
-  </footer>
+  </div>
 
-</div>
-
-<!-- ═══ CDN Scripts ═══ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <footer>MeetMind &copy; 2026. All rights reserved.</footer>
 
 <script>
+/* ═══════════════════════════════════════
+   THREE.JS — Particle Universe
+   ═══════════════════════════════════════ */
 (function() {
-  'use strict';
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // ─────────────────────────────────────────────────
-  // THREE.JS — PARTICLE UNIVERSE
-  // ─────────────────────────────────────────────────
-  const canvas = document.getElementById('three-canvas');
+  const canvas = document.getElementById('universe');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
-  camera.position.set(0, 0, 30);
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
 
-  // Particle system
-  const particleCount = 250;
-  const positions = new Float32Array(particleCount * 3);
-  const baseColors = new Float32Array(particleCount * 3);
-  const sizes = new Float32Array(particleCount);
+  // Particles
+  const count = 400;
+  const geo = new THREE.BufferGeometry();
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
 
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3]     = (Math.random() - 0.5) * 100;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-    // Start blue
-    baseColors[i * 3]     = 0;
-    baseColors[i * 3 + 1] = 0.4;
-    baseColors[i * 3 + 2] = 1;
-    sizes[i] = Math.random() * 0.12 + 0.06;
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
+
+    // Start with violet
+    colors[i * 3] = 0.486;     // r
+    colors[i * 3 + 1] = 0.227; // g
+    colors[i * 3 + 2] = 0.929; // b
+
+    sizes[i] = Math.random() * 3 + 1;
   }
 
-  const particleGeometry = new THREE.BufferGeometry();
-  particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeometry.setAttribute('color', new THREE.BufferAttribute(baseColors, 3));
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
 
-  const particleMaterial = new THREE.PointsMaterial({
-    size: 0.15,
+  const mat = new THREE.PointsMaterial({
+    size: 0.06,
     vertexColors: true,
     transparent: true,
-    opacity: 0.7,
+    opacity: 0.6,
     blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    sizeAttenuation: true
+    sizeAttenuation: true,
   });
 
-  const particles = new THREE.Points(particleGeometry, particleMaterial);
+  const particles = new THREE.Points(geo, mat);
   scene.add(particles);
 
-  // Scroll state
+  // Scroll-driven color palette
+  const palettes = [
+    { r: 0.486, g: 0.227, b: 0.929 }, // violet
+    { r: 1.0,   g: 0.42,  b: 0.42  }, // coral (pain)
+    { r: 0.078, g: 0.941, b: 0.773 }, // teal (shift)
+    { r: 0.486, g: 0.227, b: 0.929 }, // violet (experience)
+  ];
+
+  function lerpColor(a, b, t) {
+    return { r: a.r + (b.r - a.r) * t, g: a.g + (b.g - a.g) * t, b: a.b + (b.b - a.b) * t };
+  }
+
   let scrollProgress = 0;
-  const totalHeight = () => document.documentElement.scrollHeight - window.innerHeight;
+  let targetScroll = 0;
 
-  function updateScrollProgress() {
-    scrollProgress = window.scrollY / totalHeight();
-  }
-
-  window.addEventListener('scroll', updateScrollProgress, { passive: true });
-
-  // Color interpolation: blue → purple → green
-  function getParticleColor(t) {
-    const r = t < 0.5
-      ? THREE.MathUtils.lerp(0, 0.42, t * 2)
-      : THREE.MathUtils.lerp(0.42, 0, (t - 0.5) * 2);
-    const g = t < 0.5
-      ? THREE.MathUtils.lerp(0.4, 0.36, t * 2)
-      : THREE.MathUtils.lerp(0.36, 0.72, (t - 0.5) * 2);
-    const b = t < 0.5
-      ? THREE.MathUtils.lerp(1, 0.9, t * 2)
-      : THREE.MathUtils.lerp(0.9, 0.58, (t - 0.5) * 2);
-    return { r, g, b };
-  }
+  window.addEventListener('scroll', () => {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    targetScroll = maxScroll > 0 ? window.scrollY / maxScroll : 0;
+  });
 
   // Render loop
-  let time = 0;
   function animate() {
     requestAnimationFrame(animate);
-    time += 0.016;
 
-    if (!prefersReducedMotion) {
-      // Camera fly-through on scroll
-      camera.position.z = THREE.MathUtils.lerp(30, -20, scrollProgress);
-      camera.position.y = Math.sin(scrollProgress * Math.PI * 2) * 3;
+    scrollProgress += (targetScroll - scrollProgress) * 0.05;
 
-      // Subtle rotation
-      particles.rotation.x += 0.0001;
-      particles.rotation.y += 0.00015;
+    // Rotate particles
+    particles.rotation.y += 0.0003;
+    particles.rotation.x += 0.0001;
 
-      // Color shift
-      const col = getParticleColor(scrollProgress);
-      const colorsAttr = particleGeometry.getAttribute('color');
-      for (let i = 0; i < particleCount; i++) {
-        colorsAttr.array[i * 3]     = col.r + Math.sin(time + i * 0.1) * 0.05;
-        colorsAttr.array[i * 3 + 1] = col.g + Math.sin(time + i * 0.15) * 0.05;
-        colorsAttr.array[i * 3 + 2] = col.b + Math.cos(time + i * 0.1) * 0.05;
-      }
-      colorsAttr.needsUpdate = true;
+    // Camera drift based on scroll
+    camera.position.z = 5 - scrollProgress * 2;
+    camera.position.y = scrollProgress * 1.5;
+    camera.lookAt(0, scrollProgress * 0.5, 0);
 
-      // Pivot section: fade particles
-      const pivotFade = scrollProgress > 0.25 && scrollProgress < 0.4
-        ? 1 - Math.min(1, (scrollProgress - 0.25) / 0.05)
-        : scrollProgress >= 0.4 && scrollProgress < 0.45
-          ? Math.min(1, (scrollProgress - 0.4) / 0.05)
-          : 1;
+    // Color shift
+    const seg = scrollProgress * (palettes.length - 1);
+    const idx = Math.min(Math.floor(seg), palettes.length - 2);
+    const t = seg - idx;
+    const c = lerpColor(palettes[idx], palettes[idx + 1], t);
 
-      particleMaterial.opacity = 0.7 * Math.max(0.05, pivotFade);
-
-      // Chaos effect in pain sections (clustering/scattering)
-      const posAttr = particleGeometry.getAttribute('position');
-      if (scrollProgress > 0.1 && scrollProgress < 0.25) {
-        const chaos = Math.sin(time * 2) * 0.02;
-        for (let i = 0; i < particleCount; i++) {
-          posAttr.array[i * 3] += (Math.random() - 0.5) * chaos;
-          posAttr.array[i * 3 + 1] += (Math.random() - 0.5) * chaos;
-        }
-        posAttr.needsUpdate = true;
-      }
+    const colorsAttr = geo.attributes.color;
+    for (let i = 0; i < count; i++) {
+      colorsAttr.array[i * 3] = c.r + (Math.random() - 0.5) * 0.05;
+      colorsAttr.array[i * 3 + 1] = c.g + (Math.random() - 0.5) * 0.05;
+      colorsAttr.array[i * 3 + 2] = c.b + (Math.random() - 0.5) * 0.05;
     }
+    colorsAttr.needsUpdate = true;
 
     renderer.render(scene, camera);
   }
   animate();
 
-  // Resize handler
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
-
-  // ─────────────────────────────────────────────────
-  // GSAP + SCROLLTRIGGER ANIMATIONS
-  // ─────────────────────────────────────────────────
-  gsap.registerPlugin(ScrollTrigger);
-
-  if (!prefersReducedMotion) {
-
-    // ── Hero pinned ──
-    ScrollTrigger.create({
-      trigger: '#hero',
-      start: 'top top',
-      end: '+=50%',
-      pin: true,
-      pinSpacing: true
-    });
-
-    gsap.from('.hero-headline', {
-      opacity: 0, y: 60, duration: 1.2, ease: 'power3.out', delay: 0.3
-    });
-    gsap.from('.hero-section .subline', {
-      opacity: 0, y: 40, duration: 1, ease: 'power3.out', delay: 0.6
-    });
-    gsap.from('.scroll-cue', {
-      opacity: 0, duration: 1, delay: 1.2
-    });
-
-    // ── The Weight ──
-    gsap.from('.weight-headline', {
-      scrollTrigger: { trigger: '#weight', start: 'top 70%', end: 'top 30%', scrub: 1 },
-      opacity: 0, y: 80, scale: 0.95
-    });
-    gsap.from('#weight .body-text', {
-      scrollTrigger: { trigger: '#weight', start: 'top 60%', end: 'top 20%', scrub: 1 },
-      opacity: 0, y: 60
-    });
-    // Floating words drift
-    gsap.utils.toArray('.floating-word').forEach((word, i) => {
-      gsap.fromTo(word, {
-        opacity: 0, y: 30
-      }, {
-        opacity: 0.12,
-        y: -20 - (i * 5),
-        scrollTrigger: { trigger: '#weight', start: 'top 80%', end: 'bottom 20%', scrub: 1 }
-      });
-    });
-
-    // ── Breaking Point ──
-    gsap.from('.breaking-headline', {
-      scrollTrigger: { trigger: '#breaking', start: 'top 70%', end: 'top 30%', scrub: 1 },
-      opacity: 0, y: 80, scale: 0.95
-    });
-    gsap.from('#breaking .body-text', {
-      scrollTrigger: { trigger: '#breaking', start: 'top 60%', end: 'top 20%', scrub: 1 },
-      opacity: 0, y: 60
-    });
-
-    // ── Pivot (pinned) ──
-    ScrollTrigger.create({
-      trigger: '#pivot',
-      start: 'top top',
-      end: '+=200%',
-      pin: true,
-      pinSpacing: true
-    });
-
-    const pivotTl = gsap.timeline({
-      scrollTrigger: { trigger: '#pivot', start: 'top top', end: '+=200%', scrub: 1 }
-    });
-    pivotTl
-      .to('.pivot-line-1', { opacity: 1, duration: 0.3, ease: 'power2.out' })
-      .to('.pivot-line-1', { opacity: 0.3, duration: 0.2 }, '+=0.1')
-      .to('.pivot-line-2', { opacity: 1, duration: 0.3, ease: 'power2.out' })
-      .to('.pivot-line-2', { opacity: 0.3, duration: 0.2 }, '+=0.1')
-      .to('.pivot-brand', { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' });
-
-    // ── Solution sections — phones ──
-    gsap.utils.toArray('.phone-container').forEach(phone => {
-      gsap.to(phone, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: phone.closest('.section'),
-          start: 'top 60%',
-          toggleActions: 'play none none reverse'
-        }
-      });
-    });
-
-    // Subtle phone float
-    gsap.utils.toArray('.phone-container').forEach(phone => {
-      gsap.to(phone, {
-        y: '-=8',
-        duration: 3,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        delay: Math.random()
-      });
-    });
-
-    // ── Organization nodes ──
-    gsap.to('#org-visual', {
-      opacity: 1,
-      duration: 0.8,
-      ease: 'power3.out',
-      scrollTrigger: { trigger: '#organized', start: 'top 50%', toggleActions: 'play none none reverse' }
-    });
-    gsap.utils.toArray('.org-node:not(.center)').forEach((node, i) => {
-      gsap.from(node, {
-        scale: 0,
-        opacity: 0,
-        duration: 0.5,
-        delay: i * 0.1,
-        ease: 'back.out(1.7)',
-        scrollTrigger: { trigger: '#organized', start: 'top 50%', toggleActions: 'play none none reverse' }
-      });
-    });
-
-    // ── Devices ──
-    gsap.to('#devices-visual', {
-      opacity: 1,
-      duration: 0.8,
-      scrollTrigger: { trigger: '#everywhere', start: 'top 50%', toggleActions: 'play none none reverse' }
-    });
-    gsap.utils.toArray('.device').forEach((device, i) => {
-      gsap.from(device, {
-        y: 60 + i * 20,
-        opacity: 0,
-        duration: 0.6,
-        delay: i * 0.15,
-        ease: 'power3.out',
-        scrollTrigger: { trigger: '#everywhere', start: 'top 55%', toggleActions: 'play none none reverse' }
-      });
-    });
-
-    // ── CTA ──
-    ScrollTrigger.create({
-      trigger: '#cta',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      pinSpacing: true
-    });
-
-    const ctaTl = gsap.timeline({
-      scrollTrigger: { trigger: '#cta', start: 'top top', end: '+=100%', scrub: 1 }
-    });
-    ctaTl
-      .from('.countdown-text', { opacity: 0, y: 30, duration: 0.2 })
-      .from('#cta h2', { opacity: 0, y: 30, duration: 0.3 }, '+=0.05')
-      .from('.countdown-relief', { opacity: 0, duration: 0.2 }, '+=0.05')
-      .from('.cta-form', { opacity: 0, y: 20, duration: 0.2 }, '+=0.05')
-      .from('.trust-signals', { opacity: 0, duration: 0.2 }, '+=0.05');
-
-    // ── Parallax depth for all sections ──
-    gsap.utils.toArray('.section:not(.hero-section):not(.pivot-section):not(.cta-section)').forEach(section => {
-      const h2 = section.querySelector('h2');
-      const p = section.querySelector('.body-text');
-      if (h2) {
-        gsap.to(h2, {
-          y: -30,
-          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: 1 }
-        });
-      }
-      if (p) {
-        gsap.to(p, {
-          y: -15,
-          scrollTrigger: { trigger: section, start: 'top bottom', end: 'bottom top', scrub: 1 }
-        });
-      }
-    });
-
-  } // end reduced motion check
-
 })();
-</script>
 
+/* ═══════════════════════════════════════
+   GSAP — Scroll Animations
+   ═══════════════════════════════════════ */
+gsap.registerPlugin(ScrollTrigger);
+
+// Frame 1: Hero entrance
+gsap.to('.hero-label', { opacity: 1, y: 0, duration: 0.8, delay: 0.3 });
+gsap.from('.hero-label', { y: 20, duration: 0.8, delay: 0.3 });
+gsap.to('.hero-headline', { opacity: 1, y: 0, duration: 0.8, delay: 0.6 });
+gsap.from('.hero-headline', { y: 30, duration: 0.8, delay: 0.6 });
+gsap.to('.hero-sub', { opacity: 1, duration: 0.8, delay: 0.9 });
+gsap.to('.scroll-cue', { opacity: 1, duration: 0.8, delay: 1.2 });
+
+// Pain stats reveal on scroll
+gsap.to('.pain-stats', {
+  opacity: 1,
+  scrollTrigger: {
+    trigger: '#cost',
+    start: 'top top',
+    end: '60% top',
+    scrub: 1,
+  }
+});
+
+// Fade out hero on scroll
+gsap.to('.hero-content > *', {
+  opacity: 0,
+  y: -30,
+  stagger: 0.05,
+  scrollTrigger: {
+    trigger: '#cost',
+    start: '30% top',
+    end: '60% top',
+    scrub: 1,
+  }
+});
+
+// Frame 2: Pivot text
+gsap.to('.pivot-text', {
+  opacity: 1,
+  scale: 1,
+  scrollTrigger: {
+    trigger: '#shift',
+    start: 'top 80%',
+    end: 'top 30%',
+    scrub: 1,
+  }
+});
+
+gsap.from('.pivot-text', {
+  scale: 0.95,
+  scrollTrigger: {
+    trigger: '#shift',
+    start: 'top 80%',
+    end: 'top 30%',
+    scrub: 1,
+  }
+});
+
+// Fade pivot text out, bring phone in
+gsap.to('.pivot-text', {
+  opacity: 0,
+  scrollTrigger: {
+    trigger: '#shift',
+    start: '25% top',
+    end: '35% top',
+    scrub: 1,
+  }
+});
+
+gsap.to('.phone-stage', {
+  opacity: 1,
+  scrollTrigger: {
+    trigger: '#shift',
+    start: '30% top',
+    end: '40% top',
+    scrub: 1,
+  }
+});
+
+// Phone rotation + screen transitions
+gsap.to('#phone3d', {
+  rotateY: 15,
+  rotateX: -5,
+  scrollTrigger: {
+    trigger: '#shift',
+    start: '30% top',
+    end: '90% top',
+    scrub: 1,
+  }
+});
+
+// Screen state transitions
+ScrollTrigger.create({
+  trigger: '#shift',
+  start: 'top top',
+  end: 'bottom top',
+  onUpdate: (self) => {
+    const p = self.progress;
+    const screens = ['screenRec', 'screenBrief', 'screenTodos'];
+    let activeIdx = 0;
+    if (p > 0.6) activeIdx = 2;
+    else if (p > 0.4) activeIdx = 1;
+
+    screens.forEach((id, i) => {
+      document.getElementById(id).classList.toggle('active', i === activeIdx);
+    });
+  }
+});
+
+// Frame 3: Features
+gsap.to('.features-intro', {
+  opacity: 1,
+  y: 0,
+  scrollTrigger: {
+    trigger: '#experience',
+    start: 'top 70%',
+    end: 'top 40%',
+    scrub: 1,
+  }
+});
+gsap.from('.features-intro', {
+  y: 40,
+  scrollTrigger: {
+    trigger: '#experience',
+    start: 'top 70%',
+    end: 'top 40%',
+    scrub: 1,
+  }
+});
+
+// Feature cards stagger
+document.querySelectorAll('.feature-card').forEach((card, i) => {
+  gsap.to(card, {
+    opacity: 1,
+    y: 0,
+    scrollTrigger: {
+      trigger: card,
+      start: 'top 85%',
+      end: 'top 60%',
+      scrub: 1,
+    }
+  });
+});
+
+// Device showcase
+gsap.to('.device-showcase', {
+  opacity: 1,
+  y: 0,
+  scrollTrigger: {
+    trigger: '.device-showcase',
+    start: 'top 85%',
+    end: 'top 60%',
+    scrub: 1,
+  }
+});
+gsap.from('.device-showcase', {
+  y: 40,
+  scrollTrigger: {
+    trigger: '.device-showcase',
+    start: 'top 85%',
+    end: 'top 60%',
+    scrub: 1,
+  }
+});
+
+// Frame 4: CTA
+gsap.to('#ctaLabel', {
+  opacity: 1,
+  scrollTrigger: { trigger: '#move', start: 'top 70%', end: 'top 50%', scrub: 1 }
+});
+gsap.to('.cta-headline', {
+  opacity: 1, y: 0,
+  scrollTrigger: { trigger: '#move', start: 'top 65%', end: 'top 45%', scrub: 1 }
+});
+gsap.from('.cta-headline', {
+  y: 30,
+  scrollTrigger: { trigger: '#move', start: 'top 65%', end: 'top 45%', scrub: 1 }
+});
+gsap.to('.cta-sub', {
+  opacity: 1,
+  scrollTrigger: { trigger: '#move', start: 'top 60%', end: 'top 40%', scrub: 1 }
+});
+gsap.to('.cta-form', {
+  opacity: 1,
+  scrollTrigger: { trigger: '#move', start: 'top 55%', end: 'top 35%', scrub: 1 }
+});
+gsap.to('.trust-badges', {
+  opacity: 1,
+  scrollTrigger: { trigger: '#move', start: 'top 50%', end: 'top 30%', scrub: 1 }
+});
+
+/* ═══════════════════════════════════════
+   FORM HANDLING
+   ═══════════════════════════════════════ */
+document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('.cta-btn');
+  const input = this.querySelector('.cta-input');
+  const email = input.value;
+
+  fetch(this.action, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ email: email })
+  })
+  .then(r => {
+    btn.classList.add('success');
+    btn.querySelector('span').textContent = 'You\'re in! \u2713';
+    input.disabled = true;
+    input.style.opacity = '0.5';
+  })
+  .catch(() => {
+    btn.querySelector('span').textContent = 'Try again';
+    setTimeout(() => { btn.querySelector('span').textContent = 'Join the Waitlist'; }, 2000);
+  });
+});
+</script>
 </body>
 </html>
