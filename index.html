@@ -1,467 +1,657 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeetMind — AI Meeting Notes That Actually Work</title>
-    <meta name="description" content="Stop writing meeting notes. MeetMind records, transcribes, and summarizes your meetings with AI — Summary, decisions, action items in seconds.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        :root{
-            --primary:#6C5CE7;--primary-light:#a29bfe;--primary-dark:#4B3ABE;
-            --success:#00CE9E;--recording:#FF4757;--info:#2D98FF;--warning:#FFA502;
-            --bg:#FAFBFF;--bg-card:#FFFFFF;--bg-purple:rgba(108,92,231,0.06);
-            --text:#1a1a2e;--text-secondary:#5f6580;--text-muted:#9ca3af;
-            --border:rgba(0,0,0,0.06);--shadow:0 2px 24px rgba(108,92,231,0.08);
-            --shadow-lg:0 12px 48px rgba(108,92,231,0.12);
-        }
-        html{scroll-behavior:smooth}
-        body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.65}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MeetMind — Your Meetings, Remembered</title>
+  <meta name="description" content="MeetMind records, transcribes, and summarizes your meetings with AI. One tap. No bots. Action items become todos automatically." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
 
-        /* Nav */
-        nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:14px 32px;background:rgba(250,251,255,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:all .3s}
-        .nav-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
-        .logo{font-size:22px;font-weight:800;color:var(--primary);letter-spacing:-.5px}
-        .nav-links{display:flex;gap:28px;list-style:none}
-        .nav-links a{color:var(--text-secondary);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
-        .nav-links a:hover{color:var(--primary)}
-        .nav-cta{background:var(--primary);color:#fff;padding:10px 22px;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;transition:all .3s;border:none;cursor:pointer}
-        .nav-cta:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,92,231,.35)}
+  <style>
+    /* ─── Reset ─────────────────────────────────────────── */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Sections */
-        section{padding:100px 32px;max-width:1140px;margin:0 auto}
-        .label{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:12px}
-        .title{font-size:clamp(28px,4.5vw,44px);font-weight:800;line-height:1.18;margin-bottom:18px;letter-spacing:-.8px;color:var(--text)}
-        .subtitle{font-size:17px;color:var(--text-secondary);max-width:560px;line-height:1.7}
+    /* ─── Base ───────────────────────────────────────────── */
+    html {
+      scroll-behavior: smooth;
+    }
 
-        /* Hero */
-        .hero{padding-top:140px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-        .hero-text .badge{display:inline-flex;align-items:center;gap:8px;background:var(--bg-purple);border:1px solid rgba(108,92,231,.12);padding:7px 18px;border-radius:50px;font-size:12px;font-weight:600;color:var(--primary);margin-bottom:24px}
-        .hero-text h1{font-size:clamp(36px,5.5vw,56px);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:20px}
-        .hero-text h1 .highlight{color:var(--primary)}
-        .hero-text p{font-size:18px;color:var(--text-secondary);line-height:1.7;margin-bottom:32px;max-width:480px}
-        .hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
-        .btn-primary{background:var(--primary);color:#fff;padding:15px 32px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;border:none;cursor:pointer;box-shadow:0 6px 24px rgba(108,92,231,.3);transition:all .3s;display:inline-flex;align-items:center;gap:8px}
-        .btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 10px 32px rgba(108,92,231,.4)}
-        .btn-ghost{background:transparent;color:var(--text);padding:15px 32px;border-radius:12px;font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--border);transition:all .3s;cursor:pointer}
-        .btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--bg-purple)}
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      background: #1a1a3e;
+    }
 
-        /* Phone mockup */
-        .phone{max-width:300px;margin:0 auto;background:#fff;border-radius:36px;padding:10px;border:2px solid #e8e8f0;box-shadow:var(--shadow-lg);position:relative}
-        .phone-screen{background:linear-gradient(180deg,#0f0f1a,#1a1a2e);border-radius:28px;padding:36px 16px 16px;min-height:460px;position:relative;overflow:hidden}
-        .phone-notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:100px;height:24px;background:#000;border-radius:16px}
-        .phone .app-title{color:#fff;font-size:16px;font-weight:700;text-align:center;margin:18px 0 16px}
-        .phone .m-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px;margin-bottom:10px;border-left:3px solid var(--primary)}
-        .phone .m-card h4{color:#fff;font-size:12px;font-weight:600;margin-bottom:3px}
-        .phone .m-card .meta{font-size:10px;color:rgba(255,255,255,.4);display:flex;gap:10px}
-        .phone .m-card .tag{display:inline-block;font-size:9px;font-weight:600;background:var(--primary);color:#fff;padding:2px 7px;border-radius:5px;margin-top:6px}
-        .phone .rec-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;padding:12px;border-radius:24px;font-size:13px;font-weight:600;margin-top:12px;box-shadow:0 6px 20px rgba(108,92,231,.35)}
+    /* ─── Gradient background overlay ───────────────────── */
+    .gradient-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(135deg, var(--grad-1, #1a1a3e), var(--grad-2, #2d1b69));
+      transition: background 0.1s linear;
+    }
 
-        /* Pain points */
-        .pain-section{background:var(--bg-purple);border-radius:24px;padding:60px 48px;margin:0 auto;max-width:1140px}
-        .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:40px}
-        .pain-card{background:var(--bg-card);border-radius:16px;padding:28px;border:1px solid var(--border);box-shadow:var(--shadow)}
-        .pain-card .pain-icon{font-size:28px;margin-bottom:14px;display:block}
-        .pain-card h3{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--recording)}
-        .pain-card p{font-size:13px;color:var(--text-secondary);line-height:1.7}
-        .pain-card .solution{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-        .pain-card .solution h4{font-size:13px;font-weight:700;color:var(--success);margin-bottom:4px;display:flex;align-items:center;gap:6px}
-        .pain-card .solution p{font-size:12px;color:var(--text-secondary)}
+    /* ─── Scroll sections ────────────────────────────────── */
+    .scroll-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 32px;
+      position: relative;
+    }
 
-        /* Features showcase */
-        .feature-showcase{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:60px;padding:40px 0}
-        .feature-showcase.reverse{direction:rtl}
-        .feature-showcase.reverse > *{direction:ltr}
-        .feature-showcase .feat-text .feat-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
-        .feature-showcase .feat-text h3{font-size:28px;font-weight:800;margin-bottom:12px;letter-spacing:-.5px}
-        .feature-showcase .feat-text p{font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:20px}
-        .feature-showcase .feat-text .feat-bullets{list-style:none;display:flex;flex-direction:column;gap:8px}
-        .feature-showcase .feat-text .feat-bullets li{font-size:14px;color:var(--text-secondary);display:flex;align-items:flex-start;gap:8px}
-        .feature-showcase .feat-text .feat-bullets li::before{content:'';display:block;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-top:7px;flex-shrink:0}
+    /* ─── Section text ───────────────────────────────────── */
+    .section-text {
+      max-width: 720px;
+      text-align: center;
+    }
 
-        /* Screenshot mockup */
-        .screenshot{background:linear-gradient(135deg,#1a1a2e,#0f0f1a);border-radius:20px;padding:24px;min-height:340px;display:flex;flex-direction:column;border:1px solid rgba(108,92,231,.15);box-shadow:var(--shadow-lg);overflow:hidden}
-        .screenshot .ss-header{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-        .screenshot .ss-dot{width:8px;height:8px;border-radius:50%}
-        .screenshot .ss-title{color:rgba(255,255,255,.6);font-size:11px;font-weight:600}
-        .screenshot .ss-content{flex:1;display:flex;flex-direction:column;gap:8px}
-        .screenshot .ss-line{height:10px;border-radius:4px;background:rgba(255,255,255,.08)}
-        .screenshot .ss-line.heading{height:14px;width:60%;background:rgba(108,92,231,.3);margin-bottom:4px}
-        .screenshot .ss-line.short{width:40%}
-        .screenshot .ss-line.medium{width:70%}
-        .screenshot .ss-line.accent{background:rgba(0,206,158,.2)}
-        .screenshot .ss-line.warn{background:rgba(255,165,2,.2)}
-        .screenshot .ss-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px}
-        .screenshot .ss-card h5{color:#fff;font-size:11px;font-weight:600;margin-bottom:6px}
-        .screenshot .ss-card .ss-row{display:flex;gap:6px;margin-bottom:4px}
-        .screenshot .ss-card .ss-cell{height:8px;border-radius:3px;flex:1;background:rgba(255,255,255,.06)}
-        .screenshot .ss-card .ss-cell.purple{background:rgba(108,92,231,.25)}
-        .screenshot .ss-card .ss-cell.green{background:rgba(0,206,158,.25)}
-        .screenshot .ss-badge{display:inline-block;font-size:9px;font-weight:600;padding:3px 8px;border-radius:5px;color:#fff}
+    .section-text h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 24px;
+    }
 
-        /* Integration logos */
-        .integrations{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;margin-top:40px;padding:40px 0}
-        .int-item{display:flex;align-items:center;gap:10px;color:var(--text-secondary);font-size:14px;font-weight:600}
-        .int-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px}
+    .section-text p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.7;
+    }
 
-        /* Features grid compact */
-        .feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:40px}
-        .feat-mini{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:all .3s;cursor:default}
-        .feat-mini:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
-        .feat-mini .fm-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
-        .feat-mini h4{font-size:14px;font-weight:700;margin-bottom:4px}
-        .feat-mini p{font-size:12px;color:var(--text-muted);line-height:1.6}
+    /* ─── Hero ───────────────────────────────────────────── */
+    #hero {
+      flex-direction: column;
+      text-align: center;
+    }
 
-        /* How it works */
-        .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:48px}
-        .step{text-align:center;position:relative}
-        .step .step-num{width:56px;height:56px;border-radius:16px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;margin:0 auto 16px;box-shadow:0 6px 20px rgba(108,92,231,.25)}
-        .step h3{font-size:18px;font-weight:700;margin-bottom:8px}
-        .step p{font-size:13px;color:var(--text-secondary);line-height:1.7}
-        .step-arrow{position:absolute;top:28px;right:-14px;color:var(--primary);font-size:20px;opacity:.4}
+    #hero h1 {
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 900;
+      letter-spacing: -3px;
+      line-height: 1.05;
+      margin-bottom: 28px;
+    }
 
-        /* CTA */
-        .cta-box{text-align:center;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:28px;padding:72px 40px;color:#fff;margin:0 auto;max-width:1140px}
-        .cta-box h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin-bottom:16px;letter-spacing:-.5px}
-        .cta-box p{font-size:17px;opacity:.85;max-width:480px;margin:0 auto 36px;line-height:1.7}
-        .cta-box .btn-white{background:#fff;color:var(--primary);padding:16px 40px;border-radius:14px;font-weight:700;font-size:16px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all .3s;border:none;cursor:pointer}
-        .cta-box .btn-white:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(0,0,0,.2)}
+    #hero p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 60px;
+    }
 
-        /* Footer */
-        footer{text-align:center;padding:48px 32px 32px;border-top:1px solid var(--border);margin-top:80px}
-        footer .f-logo{font-size:18px;font-weight:800;color:var(--primary);margin-bottom:12px}
-        footer .f-links{display:flex;justify-content:center;gap:24px;margin-bottom:20px;flex-wrap:wrap}
-        footer .f-links a{color:var(--text-muted);text-decoration:none;font-size:13px;transition:color .2s}
-        footer .f-links a:hover{color:var(--primary)}
-        footer .f-credit{font-size:13px;color:var(--text-muted)}
+    .scroll-arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-        /* Animations */
-        .fade-up{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
-        .fade-up.visible{opacity:1;transform:translateY(0)}
+    .scroll-arrow svg {
+      animation: bounce 2s ease-in-out infinite;
+    }
 
-        /* Mobile */
-        @media(max-width:768px){
-            section{padding:72px 20px}
-            .hero{grid-template-columns:1fr;text-align:center;padding-top:120px}
-            .hero-text p{margin-left:auto;margin-right:auto}
-            .hero-ctas{justify-content:center}
-            .phone{max-width:240px}
-            nav .nav-links{display:none}
-            .pain-section{padding:36px 20px;border-radius:16px}
-            .pain-grid{grid-template-columns:1fr}
-            .feature-showcase,.feature-showcase.reverse{grid-template-columns:1fr;direction:ltr}
-            .steps{grid-template-columns:1fr}
-            .step-arrow{display:none}
-            .feat-grid{grid-template-columns:repeat(2,1fr)}
-            .cta-box{margin:0 16px;padding:48px 24px;border-radius:20px}
-            .integrations{gap:20px}
-        }
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}.fade-up{opacity:1;transform:none}}
-    </style>
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(10px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-arrow svg {
+        animation: none;
+      }
+    }
+
+    /* ─── Illustration container ─────────────────────────── */
+    .illustration-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* ─── Pivot glow ─────────────────────────────────────── */
+    #pivot {
+      flex-direction: column;
+    }
+
+    .pivot-glow {
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108, 92, 231, 0.3), transparent 70%);
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* ─── Device container ───────────────────────────────── */
+    .device-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      width: 100%;
+      margin-top: 48px;
+    }
+
+    /* ─── CTA section ────────────────────────────────────── */
+    #cta {
+      flex-direction: column;
+    }
+
+    .cta-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .cta-content h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      margin-bottom: 16px;
+    }
+
+    .cta-content > p {
+      font-size: clamp(16px, 2vw, 20px);
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 40px;
+    }
+
+    /* ─── Waitlist form ──────────────────────────────────── */
+    .waitlist-form {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 24px;
+    }
+
+    .waitlist-form input[type="email"] {
+      flex: 1;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .waitlist-form input[type="email"]::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .waitlist-form input[type="email"]:focus {
+      border-color: rgba(108, 92, 231, 0.8);
+    }
+
+    .waitlist-form button[type="submit"] {
+      padding: 16px 28px;
+      background: #6C5CE7;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+
+    .waitlist-form button[type="submit"]:hover {
+      background: #5a4dd4;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(108, 92, 231, 0.5);
+    }
+
+    /* ─── Trust badges ───────────────────────────────────── */
+    .trust-badges {
+      display: flex;
+      flex-direction: row;
+      gap: 28px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+      font-weight: 500;
+    }
+
+    .trust-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00b894;
+      flex-shrink: 0;
+    }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .scroll-section {
+        padding: 60px 20px;
+      }
+
+      .waitlist-form {
+        flex-direction: column;
+      }
+
+      .waitlist-form button[type="submit"] {
+        width: 100%;
+      }
+
+      .pivot-glow {
+        width: 280px;
+        height: 280px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<nav>
-    <div class="nav-inner">
-        <div class="logo">MeetMind</div>
-        <ul class="nav-links">
-            <li><a href="#pain">Problem</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#how">How It Works</a></li>
-        </ul>
-        <a href="#download" class="nav-cta">Get the App</a>
-    </div>
-</nav>
+  <!-- Fixed gradient background -->
+  <div class="gradient-bg" id="gradientBg"></div>
 
-<!-- Hero -->
-<section class="hero" id="hero">
-    <div class="hero-text">
-        <div class="badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-            Powered by Groq AI
+  <!-- ─── Section 1: Hero ─────────────────────────────── -->
+  <section id="hero" class="scroll-section">
+    <h1>Your meetings<br>are broken.</h1>
+    <p>Scroll to discover why — and what fixes them.</p>
+    <div class="scroll-arrow">
+      <span>Scroll</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── Section 2: Pain 1 ───────────────────────────── -->
+  <section id="pain1" class="scroll-section">
+    <div class="illustration-container"></div>
+    <div class="section-text">
+      <h2>You just left a 45-minute meeting.</h2>
+      <p>What was decided? Who's doing what? By when? You open your notes app and stare at a half-finished sentence. The context is already fading. By tomorrow, it's gone.</p>
+    </div>
+  </section>
+
+  <!-- ─── Section 3: Pain 2 ───────────────────────────── -->
+  <section id="pain2" class="scroll-section">
+    <div class="illustration-container"></div>
+    <div class="section-text">
+      <h2>Your action items live in 5 different apps.</h2>
+      <p>Sticky notes. Slack messages. Calendar descriptions. That one email thread. A Notes app you forgot you had. Nothing is connected. Things fall through the cracks. Always.</p>
+    </div>
+  </section>
+
+  <!-- ─── Section 4: Pivot ────────────────────────────── -->
+  <section id="pivot" class="scroll-section">
+    <div class="pivot-glow" id="pivotGlow"></div>
+    <div class="section-text">
+      <h2>What if one tap could fix all of this?</h2>
+      <p>No complex setup. No bots lurking in your calls. No manual summaries. Just one tap — and your meeting takes care of itself.</p>
+    </div>
+  </section>
+
+  <!-- ─── Section 5: Solution 1 — Record ─────────────── -->
+  <section id="solution1" class="scroll-section">
+    <div class="section-text">
+      <h2>Tap. Record.</h2>
+      <p>No bots join your call. No permissions to juggle. Just open MeetMind, tap record, and talk. It runs quietly in the background while you stay present in the conversation.</p>
+    </div>
+    <div class="device-container"></div>
+  </section>
+
+  <!-- ─── Section 6: Solution 2 — AI Brief ───────────── -->
+  <section id="solution2" class="scroll-section">
+    <div class="section-text">
+      <h2>AI reads your entire meeting.</h2>
+      <p>And gives you a structured brief the moment it ends. Key decisions. Open questions. Who said what. A full transcript you can search. Everything you need, nothing you don't.</p>
+    </div>
+    <div class="device-container"></div>
+  </section>
+
+  <!-- ─── Section 7: Solution 3 — Todos ──────────────── -->
+  <section id="solution3" class="scroll-section">
+    <div class="section-text">
+      <h2>Say it. MeetMind creates it.</h2>
+      <p>"Send the proposal by Friday." "Follow up with Jake next week." MeetMind catches every commitment made in your meeting and turns them into real, trackable todos — automatically.</p>
+    </div>
+    <div class="device-container"></div>
+  </section>
+
+  <!-- ─── Section 8: Solution 4 — Organize ───────────── -->
+  <section id="solution4" class="scroll-section">
+    <div class="illustration-container"></div>
+    <div class="section-text">
+      <h2>Your meetings organize themselves.</h2>
+      <p>Clients, companies, and projects — MeetMind groups every meeting automatically. Your entire relationship history with anyone, right where you need it. Never dig through emails again.</p>
+    </div>
+  </section>
+
+  <!-- ─── Section 9: Solution 5 — Multi-platform ─────── -->
+  <section id="solution5" class="scroll-section">
+    <div class="section-text">
+      <h2>iPhone. Mac. Apple Watch.</h2>
+      <p>Your meetings follow you everywhere. Start a recording on your Watch. Review the summary on your Mac. Check your todos on iPhone. One app, every Apple device.</p>
+    </div>
+    <div class="device-container"></div>
+  </section>
+
+  <!-- ─── Section 10: CTA ─────────────────────────────── -->
+  <section id="cta" class="scroll-section">
+    <div class="cta-content">
+      <h2>Stop losing your meetings.</h2>
+      <p>Start remembering everything.</p>
+
+      <form
+        class="waitlist-form"
+        id="waitlistForm"
+        action="https://formspree.io/f/YOUR_FORM_ID"
+        method="POST"
+      >
+        <input
+          type="email"
+          name="email"
+          placeholder="you@example.com"
+          required
+          autocomplete="email"
+        />
+        <button type="submit" id="submitBtn">Join Waitlist</button>
+      </form>
+
+      <div class="trust-badges">
+        <div class="trust-badge">
+          <div class="trust-dot"></div>
+          <span>Privacy-first</span>
         </div>
-        <h1>Stop writing<br>meeting notes.<br><span class="highlight">Let AI do it.</span></h1>
-        <p>MeetMind records your meetings and delivers structured notes in seconds — Summary, decisions, action items, and open questions. All on your iPhone.</p>
-        <div class="hero-ctas">
-            <a href="#download" class="btn-primary">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83"/><path d="M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
-                Download for iOS
-            </a>
-            <a href="#features" class="btn-ghost">See Features</a>
+        <div class="trust-badge">
+          <div class="trust-dot"></div>
+          <span>No bots ever</span>
         </div>
-    </div>
-    <div class="phone fade-up">
-        <div class="phone-screen">
-            <div class="phone-notch"></div>
-            <div class="app-title">MeetMind</div>
-            <div class="m-card">
-                <h4>Weekly Sprint Planning</h4>
-                <div class="meta"><span>Today, 2:30 PM</span><span>45 min</span></div>
-                <span class="tag">5 action items</span>
-            </div>
-            <div class="m-card" style="border-left-color:var(--success)">
-                <h4>Product Roadmap Review</h4>
-                <div class="meta"><span>Yesterday</span><span>38 min</span></div>
-                <span class="tag" style="background:var(--success)">Complete</span>
-            </div>
-            <div class="m-card" style="border-left-color:var(--info)">
-                <h4>Client Discovery Call</h4>
-                <div class="meta"><span>Mon</span><span>52 min</span></div>
-                <span class="tag" style="background:var(--info)">3 decisions</span>
-            </div>
-            <div class="rec-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-                Record Meeting
-            </div>
+        <div class="trust-badge">
+          <div class="trust-dot"></div>
+          <span>Apple native</span>
         </div>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- Pain Points -->
-<section id="pain" style="padding-top:60px">
-    <div class="pain-section fade-up">
-        <div class="label">The Problem</div>
-        <h2 class="title">Sound familiar?</h2>
-        <p class="subtitle">Meetings eat your day. Notes eat the rest.</p>
-        <div class="pain-grid">
-            <div class="pain-card">
-                <span class="pain-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--recording)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                </span>
-                <h3>30 min writing notes after every call</h3>
-                <p>You spend half as long documenting the meeting as you spent in it.</p>
-                <div class="solution">
-                    <h4><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg> MeetMind fixes this</h4>
-                    <p>AI-generated notes in under 30 seconds. Structured, complete, ready to share.</p>
-                </div>
-            </div>
-            <div class="pain-card">
-                <span class="pain-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--recording)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                </span>
-                <h3>"Who was supposed to do that?"</h3>
-                <p>Action items get lost. Nobody remembers who committed to what, or by when.</p>
-                <div class="solution">
-                    <h4><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg> MeetMind fixes this</h4>
-                    <p>Auto-extracted action items with owner, due date, and priority — in a clean table.</p>
-                </div>
-            </div>
-            <div class="pain-card">
-                <span class="pain-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--recording)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                </span>
-                <h3>"Wait, what did they decide?"</h3>
-                <p>Decisions are buried in conversation. A week later, nobody agrees on what was agreed.</p>
-                <div class="solution">
-                    <h4><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg> MeetMind fixes this</h4>
-                    <p>Key decisions extracted as first-class items — who decided what, with context.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+  <!-- ─── GSAP + ScrollTrigger ────────────────────────── -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
 
-<!-- Feature Showcase 1: Meeting Notes -->
-<section id="features">
-    <div class="feature-showcase fade-up">
-        <div class="feat-text">
-            <div class="feat-label">AI Meeting Notes</div>
-            <h3>Golden Template format.</h3>
-            <p>Every meeting gets a structured brief that a busy executive can scan in under 2 minutes.</p>
-            <ul class="feat-bullets">
-                <li><strong>Summary</strong> — 2-3 sentences, the bottom line</li>
-                <li><strong>Key Decisions</strong> — who decided what</li>
-                <li><strong>Action Items Table</strong> — task, owner, due date, priority</li>
-                <li><strong>Open Questions</strong> — unresolved items tracked</li>
-                <li><strong>Discussion Notes</strong> — grouped by topic</li>
-            </ul>
-        </div>
-        <div class="screenshot">
-            <div class="ss-header">
-                <div class="ss-dot" style="background:var(--recording)"></div>
-                <div class="ss-dot" style="background:var(--warning)"></div>
-                <div class="ss-dot" style="background:var(--success)"></div>
-                <span class="ss-title">Meeting Notes</span>
-            </div>
-            <div class="ss-content">
-                <div class="ss-line heading"></div>
-                <div class="ss-card">
-                    <h5 style="color:var(--warning)">Summary</h5>
-                    <div class="ss-line medium"></div>
-                    <div class="ss-line"></div>
-                </div>
-                <div class="ss-card">
-                    <h5 style="color:var(--success)">Action Items</h5>
-                    <div class="ss-row"><div class="ss-cell purple"></div><div class="ss-cell"></div><div class="ss-cell green" style="flex:.5"></div></div>
-                    <div class="ss-row"><div class="ss-cell purple"></div><div class="ss-cell"></div><div class="ss-cell" style="flex:.5"></div></div>
-                    <div class="ss-row"><div class="ss-cell purple"></div><div class="ss-cell"></div><div class="ss-cell green" style="flex:.5"></div></div>
-                </div>
-                <div class="ss-card">
-                    <h5 style="color:var(--info)">Open Questions</h5>
-                    <div class="ss-line medium"></div>
-                    <div class="ss-line short"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+  <script>
+    // ── Register plugin ────────────────────────────────────
+    gsap.registerPlugin(ScrollTrigger);
 
-    <!-- Feature 2: Smart Chat -->
-    <div class="feature-showcase reverse fade-up">
-        <div class="feat-text">
-            <div class="feat-label">Smart Chat</div>
-            <h3>Ask anything about your meetings.</h3>
-            <p>Instant answers to stats, action items, and task queries — no waiting for AI.</p>
-            <ul class="feat-bullets">
-                <li>"How many meetings this week?" — instant count</li>
-                <li>"What action items are on me?" — filtered list</li>
-                <li>"Tasks related to Databricks" — smart search</li>
-                <li>Complex questions use AI for deep analysis</li>
-            </ul>
-        </div>
-        <div class="screenshot">
-            <div class="ss-header">
-                <div class="ss-dot" style="background:var(--recording)"></div>
-                <div class="ss-dot" style="background:var(--warning)"></div>
-                <div class="ss-dot" style="background:var(--success)"></div>
-                <span class="ss-title">Chat</span>
-            </div>
-            <div class="ss-content">
-                <div style="background:var(--primary);color:#fff;font-size:11px;padding:10px 14px;border-radius:12px 12px 4px 12px;align-self:flex-end;max-width:70%">How many meetings this week?</div>
-                <div class="ss-card" style="max-width:80%">
-                    <h5 style="color:var(--primary)">3 meetings this week</h5>
-                    <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:6px">
-                        <div>Sprint Planning — Today</div>
-                        <div>Roadmap Review — Yesterday</div>
-                        <div>Client Call — Monday</div>
-                    </div>
-                </div>
-                <div style="background:var(--primary);color:#fff;font-size:11px;padding:10px 14px;border-radius:12px 12px 4px 12px;align-self:flex-end;max-width:70%">What action items are on me?</div>
-                <div class="ss-card" style="max-width:80%">
-                    <h5 style="color:var(--warning)">4 action items on you</h5>
-                    <div class="ss-line accent" style="height:6px;margin-top:6px"></div>
-                    <div class="ss-line accent" style="height:6px;width:80%"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    // ── Gradient Engine ────────────────────────────────────
+    const gradientStops = [
+      { pos: 0.00, c1: '#1a1a3e', c2: '#2d1b69' }, // Hero
+      { pos: 0.10, c1: '#2d1b69', c2: '#2d1b69' }, // Hero end
+      { pos: 0.20, c1: '#2d1b69', c2: '#8b3a3a' }, // Pain 1
+      { pos: 0.30, c1: '#8b3a3a', c2: '#4a1a1a' }, // Pain 2
+      { pos: 0.40, c1: '#4a1a1a', c2: '#0a0a0a' }, // Pivot
+      { pos: 0.50, c1: '#0a0a0a', c2: '#6C5CE7' }, // Recording
+      { pos: 0.60, c1: '#6C5CE7', c2: '#00b894' }, // AI Brief
+      { pos: 0.70, c1: '#00b894', c2: '#e17055' }, // Todos
+      { pos: 0.80, c1: '#e17055', c2: '#6C5CE7' }, // Organization
+      { pos: 0.90, c1: '#6C5CE7', c2: '#00cec9' }, // Multi-platform
+      { pos: 1.00, c1: '#00cec9', c2: '#6C5CE7' }, // CTA
+    ];
 
-    <!-- Feature 3: Communication Coach -->
-    <div class="feature-showcase fade-up">
-        <div class="feat-text">
-            <div class="feat-label">Communication Coach</div>
-            <h3>Improve with every meeting.</h3>
-            <p>AI analyzes your speaking patterns and gives you actionable coaching insights.</p>
-            <ul class="feat-bullets">
-                <li><strong>Filler Words</strong> — count of "um", "like", "you know"</li>
-                <li><strong>Speaking Pace</strong> — words per minute analysis</li>
-                <li><strong>Talk Ratio</strong> — are you dominating or listening?</li>
-                <li><strong>Questions Asked</strong> — engagement metric</li>
-                <li><strong>Tips</strong> — personalized improvement suggestions</li>
-            </ul>
-        </div>
-        <div class="screenshot">
-            <div class="ss-header">
-                <div class="ss-dot" style="background:var(--recording)"></div>
-                <div class="ss-dot" style="background:var(--warning)"></div>
-                <div class="ss-dot" style="background:var(--success)"></div>
-                <span class="ss-title">Communication Coach</span>
-            </div>
-            <div class="ss-content">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-                    <div class="ss-card" style="text-align:center"><h5 style="color:var(--success)">142</h5><div style="font-size:9px;color:rgba(255,255,255,.4)">WPM</div></div>
-                    <div class="ss-card" style="text-align:center"><h5 style="color:var(--warning)">12</h5><div style="font-size:9px;color:rgba(255,255,255,.4)">Fillers</div></div>
-                    <div class="ss-card" style="text-align:center"><h5 style="color:var(--info)">62%</h5><div style="font-size:9px;color:rgba(255,255,255,.4)">Talk Ratio</div></div>
-                    <div class="ss-card" style="text-align:center"><h5 style="color:var(--primary-light)">8</h5><div style="font-size:9px;color:rgba(255,255,255,.4)">Questions</div></div>
-                </div>
-                <div class="ss-card" style="margin-top:8px">
-                    <h5 style="color:var(--warning)">Tip</h5>
-                    <div style="font-size:10px;color:rgba(255,255,255,.5)">Try replacing filler words with brief pauses — silence sounds more confident.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    function hexToRgb(hex) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return { r, g, b };
+    }
 
-<!-- Integrations -->
-<section style="padding:40px 32px">
-    <div style="text-align:center" class="fade-up">
-        <div class="label">Integrations</div>
-        <h2 class="title">Works with your tools.</h2>
-    </div>
-    <div class="integrations fade-up">
-        <div class="int-item"><div class="int-icon" style="background:rgba(66,133,244,.1);color:#4285F4"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>Google Calendar</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(0,120,212,.1);color:#0078D4"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><rect width="20" height="20" x="2" y="2" rx="2"/></svg></div>Outlook Calendar</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(114,137,218,.1);color:#7289DA"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l5 5M9 4H4v5M20 20l-5-5m5 0v5h-5"/></svg></div>Slack &amp; Teams</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(0,0,0,.06)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>Email Notes</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(108,92,231,.1);color:var(--primary)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>iOS Widgets</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(0,0,0,.06)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/><path d="M16.5 17.3a9 9 0 1 1 1-11.8"/></svg></div>Apple Watch</div>
-        <div class="int-item"><div class="int-icon" style="background:rgba(0,206,158,.1);color:var(--success)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>Export CSV/JSON</div>
-    </div>
-</section>
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+    }
 
-<!-- More features grid -->
-<section>
-    <div style="text-align:center" class="fade-up">
-        <div class="label">And More</div>
-        <h2 class="title">30+ features, one app.</h2>
-    </div>
-    <div class="feat-grid fade-up">
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(108,92,231,.1);color:var(--primary)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><h4>Live Transcription</h4><p>Real-time words on screen during recording</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(255,71,87,.1);color:var(--recording)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><h4>Key Moments</h4><p>Tappable timestamps for decisions and actions</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(0,206,158,.1);color:var(--success)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div><h4>Sentiment Analysis</h4><p>Positive, neutral, or negative meeting tone</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(255,165,2,.1);color:var(--warning)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><h4>Voice Todos</h4><p>"Send proposal by Friday" — auto-parsed</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(45,152,255,.1);color:var(--info)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h4>Speaker ID</h4><p>Detects who said what in the meeting</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(108,92,231,.1);color:var(--primary)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><h4>Streaks & Stats</h4><p>Track consistency and productivity levels</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(0,0,0,.06)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div><h4>Meeting Prep</h4><p>Context from last meeting before you record</p></div>
-        <div class="feat-mini"><div class="fm-icon" style="background:rgba(0,0,0,.06)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h4>Offline Support</h4><p>Queue meetings for processing when offline</p></div>
-    </div>
-</section>
+    function lerpColor(a, b, t) {
+      const ca = hexToRgb(a);
+      const cb = hexToRgb(b);
+      return rgbToHex(
+        ca.r + (cb.r - ca.r) * t,
+        ca.g + (cb.g - ca.g) * t,
+        ca.b + (cb.b - ca.b) * t
+      );
+    }
 
-<!-- How it works -->
-<section id="how">
-    <div style="text-align:center" class="fade-up">
-        <div class="label">How It Works</div>
-        <h2 class="title">Three steps. Zero effort.</h2>
-    </div>
-    <div class="steps fade-up">
-        <div class="step"><div class="step-num">1</div><h3>Record</h3><p>Tap the mic button. Works near laptop speakers, with AirPods, or phone on your desk. Background recording stays on.</p><span class="step-arrow">&rarr;</span></div>
-        <div class="step"><div class="step-num">2</div><h3>AI Processes</h3><p>Groq Whisper transcribes in seconds. Llama 3.3 70B generates structured notes with the Golden Template format.</p><span class="step-arrow">&rarr;</span></div>
-        <div class="step"><div class="step-num">3</div><h3>Get Notes</h3><p>Summary, decisions, action items table, open questions — ready to share. Chat with AI about any meeting.</p></div>
-    </div>
-</section>
+    const gradientBg = document.getElementById('gradientBg');
 
-<!-- CTA -->
-<section id="download" style="padding-bottom:0">
-    <div class="cta-box fade-up">
-        <h2>Stop writing notes.<br>Start taking action.</h2>
-        <p>Download MeetMind and transform how you handle meetings. Free to start.</p>
-        <a href="#" class="btn-white">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83"/><path d="M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11"/></svg>
-            Download for iOS — Coming Soon
-        </a>
-    </div>
-</section>
+    function updateGradient(progress) {
+      // Clamp progress to [0, 1]
+      const p = Math.max(0, Math.min(1, progress));
 
-<footer>
-    <div class="f-logo">MeetMind</div>
-    <div class="f-links">
-        <a href="#features">Features</a>
-        <a href="#how">How It Works</a>
-        <a href="https://meetmind.app/privacy">Privacy</a>
-        <a href="https://meetmind.app/terms">Terms</a>
-        <a href="https://github.com/gauravmodi09/MeetMind">GitHub</a>
-    </div>
-    <p class="f-credit">Made with &#10084;&#65039; by Gaurav Modi &middot; Powered by Groq AI &middot; Built with SwiftUI</p>
-    <p style="font-size:11px;color:var(--text-muted);margin-top:10px">&copy; 2026 MeetMind. All rights reserved.</p>
-</footer>
+      // Find which segment we're in
+      let segStart = gradientStops[0];
+      let segEnd   = gradientStops[gradientStops.length - 1];
 
-<script>
-const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
-document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
-window.addEventListener('scroll',()=>{const n=document.querySelector('nav');n.style.boxShadow=window.scrollY>50?'0 2px 24px rgba(0,0,0,0.06)':'none'});
-</script>
+      for (let i = 0; i < gradientStops.length - 1; i++) {
+        if (p >= gradientStops[i].pos && p <= gradientStops[i + 1].pos) {
+          segStart = gradientStops[i];
+          segEnd   = gradientStops[i + 1];
+          break;
+        }
+      }
+
+      const range = segEnd.pos - segStart.pos;
+      const t = range === 0 ? 0 : (p - segStart.pos) / range;
+
+      const c1 = lerpColor(segStart.c1, segEnd.c1, t);
+      const c2 = lerpColor(segStart.c2, segEnd.c2, t);
+
+      gradientBg.style.setProperty('--grad-1', c1);
+      gradientBg.style.setProperty('--grad-2', c2);
+    }
+
+    // Drive gradient from scroll progress
+    ScrollTrigger.create({
+      trigger: 'body',
+      start: 'top top',
+      end: 'bottom bottom',
+      onUpdate: (self) => updateGradient(self.progress),
+    });
+
+    // Initialize gradient at 0
+    updateGradient(0);
+
+    // ── Section Animations ─────────────────────────────────
+
+    // Hero: fade in on load
+    gsap.from('#hero h1, #hero p, #hero .scroll-arrow', {
+      opacity: 0,
+      y: 40,
+      duration: 1,
+      delay: 0.3,
+      stagger: 0.15,
+      ease: 'power3.out',
+    });
+
+    // Hero: pin for extra scroll depth
+    ScrollTrigger.create({
+      trigger: '#hero',
+      start: 'top top',
+      end: '+=50%',
+      pin: true,
+      pinSpacing: true,
+    });
+
+    // Pain 1
+    gsap.from('#pain1 h2', {
+      opacity: 0,
+      y: 60,
+      scrollTrigger: {
+        trigger: '#pain1',
+        start: 'top 80%',
+        end: 'center 60%',
+        scrub: true,
+      },
+    });
+    gsap.from('#pain1 p', {
+      opacity: 0,
+      y: 40,
+      scrollTrigger: {
+        trigger: '#pain1',
+        start: 'top 70%',
+        end: 'center 55%',
+        scrub: true,
+      },
+    });
+
+    // Pain 2
+    gsap.from('#pain2 h2', {
+      opacity: 0,
+      y: 60,
+      scrollTrigger: {
+        trigger: '#pain2',
+        start: 'top 80%',
+        end: 'center 60%',
+        scrub: true,
+      },
+    });
+    gsap.from('#pain2 p', {
+      opacity: 0,
+      y: 40,
+      scrollTrigger: {
+        trigger: '#pain2',
+        start: 'top 70%',
+        end: 'center 55%',
+        scrub: true,
+      },
+    });
+
+    // Pivot: pin for extra depth
+    ScrollTrigger.create({
+      trigger: '#pivot',
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      pinSpacing: true,
+    });
+
+    gsap.from('#pivot h2', {
+      opacity: 0,
+      scale: 0.95,
+      scrollTrigger: {
+        trigger: '#pivot',
+        start: 'top 80%',
+        end: 'center 60%',
+        scrub: true,
+      },
+    });
+
+    gsap.to('#pivotGlow', {
+      opacity: 1,
+      scale: 1.5,
+      scrollTrigger: {
+        trigger: '#pivot',
+        start: 'top 80%',
+        end: 'center 50%',
+        scrub: true,
+      },
+    });
+
+    // Solutions 1–5
+    ['#solution1', '#solution2', '#solution3', '#solution4', '#solution5'].forEach((id) => {
+      gsap.from(`${id} h2`, {
+        opacity: 0,
+        y: 60,
+        scrollTrigger: {
+          trigger: id,
+          start: 'top 80%',
+          end: 'center 60%',
+          scrub: true,
+        },
+      });
+      gsap.from(`${id} p`, {
+        opacity: 0,
+        y: 40,
+        scrollTrigger: {
+          trigger: id,
+          start: 'top 70%',
+          end: 'center 55%',
+          scrub: true,
+        },
+      });
+    });
+
+    // CTA: staggered fade
+    gsap.from('#cta .cta-content > *', {
+      opacity: 0,
+      y: 40,
+      stagger: 0.15,
+      scrollTrigger: {
+        trigger: '#cta',
+        start: 'top 80%',
+        end: 'center 60%',
+        scrub: true,
+      },
+    });
+
+    // ── Waitlist Form Handler ──────────────────────────────
+    const form      = document.getElementById('waitlistForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = form.querySelector('input[type="email"]').value;
+      const originalText = submitBtn.textContent;
+
+      submitBtn.textContent = 'Joining…';
+      submitBtn.disabled = true;
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        if (response.ok) {
+          submitBtn.textContent = "You're in!";
+          submitBtn.style.background = '#00b894';
+          form.querySelector('input[type="email"]').disabled = true;
+        } else {
+          throw new Error('Submission failed');
+        }
+      } catch (err) {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
