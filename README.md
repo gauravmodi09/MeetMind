@@ -16,9 +16,76 @@ Professionals who spend significant time in meetings face two recurring pain poi
 
 2. **Todo fragmentation** — tasks captured in the moment lack structure, context, and follow-through. Voice memos sit unprocessed, sticky notes get lost, and nothing connects back to the meeting where the task originated.
 
-Existing solutions either require bots to join your call, are web-first and desktop-only, or charge $14–18/month. None offer a truly mobile-native, bot-free experience with smart todo management built in.
+Existing solutions either require bots to join your call, are web-first and desktop-only, or charge $14-18/month. None offer a truly mobile-native, bot-free experience with smart todo management built in.
 
 **MeetMind solves both problems in one app** — record from your phone's microphone, get AI-generated briefs in seconds, and have action items automatically flow into your task list.
+
+---
+
+## How It Works
+
+### Meeting Recording Flow
+
+```mermaid
+flowchart LR
+    A["🎙️ One-Tap Record"] --> B["🔊 Audio Capture"]
+    B --> C["📝 Real-Time\nTranscription"]
+    C --> D["🤖 AI Engine"]
+    D --> E["📋 Meeting Brief"]
+    D --> F["✅ Action Items"]
+    D --> G["👥 People &\nCompany Detection"]
+
+    E --> H["💾 Core Data"]
+    F --> H
+    G --> H
+
+    style A fill:#007AFF,color:#fff,stroke:none
+    style D fill:#34C759,color:#fff,stroke:none
+    style H fill:#FF9500,color:#fff,stroke:none
+```
+
+### Smart Todo Flow
+
+```mermaid
+flowchart LR
+    A["🎤 Voice Input"] --> B["🤖 AI Processing"]
+    B --> C["📌 Extract Title"]
+    B --> D["📅 Detect Due Date"]
+    B --> E["🔴 Set Priority"]
+
+    C --> F["✅ Smart Todo"]
+    D --> F
+    E --> F
+
+    G["📋 Meeting\nAction Items"] --> F
+
+    F --> H["📱 Today View\n& Streaks"]
+
+    style A fill:#AF52DE,color:#fff,stroke:none
+    style B fill:#34C759,color:#fff,stroke:none
+    style F fill:#007AFF,color:#fff,stroke:none
+```
+
+### AI Chat Flow
+
+```mermaid
+flowchart TD
+    A["💬 User Question"] --> B["🤖 Context Engine"]
+
+    B --> C["📋 Meeting Transcripts"]
+    B --> D["✅ Action Items"]
+    B --> E["👥 People & Companies"]
+
+    C --> F["🧠 AI Response"]
+    D --> F
+    E --> F
+
+    F --> G["💡 Contextual Answer"]
+
+    style A fill:#007AFF,color:#fff,stroke:none
+    style B fill:#34C759,color:#fff,stroke:none
+    style F fill:#FF9500,color:#fff,stroke:none
+```
 
 ---
 
@@ -30,7 +97,7 @@ Existing solutions either require bots to join your call, are web-first and desk
 - **Background recording** — switch apps freely during calls, recording continues
 - **In-meeting notepad** — scratchpad to jot rough notes during the call; AI enhances them post-meeting
 - **Real-time transcription** — proprietary speech-to-text engine with 216x real-time speed
-- **AI meeting briefs** — MeetMind's intelligence engine generates structured summaries with executive summary, key discussion points, decisions, blockers, risks, and action items
+- **AI meeting briefs** — structured summaries with executive summary, key discussion points, decisions, blockers, risks, and action items
 - **Key quotes extraction** with speaker attribution
 - **Client & company auto-detection** — automatically identifies participants and organizations from conversation context
 - **Meeting templates** — General, 1:1, Sales Call, Interview, Standup, Discovery, Brainstorm
@@ -63,12 +130,57 @@ Existing solutions either require bots to join your call, are web-first and desk
 - **Action item tracker** — cross-meeting view with filters (mine/others, pending/done)
 - **Spaces** — custom workspaces to group related meetings
 
+---
+
+## Platform Experience
+
+### Multi-Platform Architecture
+
+```mermaid
+graph TB
+    subgraph Apple["Apple Ecosystem"]
+        subgraph iOS["📱 iPhone & iPad"]
+            I1["Tab-based Navigation"]
+            I2["Meetings • Todos • Chat • Library"]
+            I3["Home & Lock Screen Widgets"]
+        end
+
+        subgraph macOS["💻 macOS"]
+            M1["Three-Panel Layout"]
+            M2["Menu Bar Companion"]
+            M3["System Audio Capture"]
+            M4["Meeting App Detection"]
+        end
+
+        subgraph Watch["⌚ Apple Watch"]
+            W1["Waveform Recording"]
+            W2["Quick Todo List"]
+        end
+    end
+
+    subgraph Core["🧠 Shared Core"]
+        CD["Core Data"]
+        AI["AI Engine"]
+        SR["Services Layer"]
+    end
+
+    iOS --> Core
+    macOS --> Core
+    Watch -->|WatchConnectivity| iOS
+
+    style Apple fill:#1a1a2e,color:#fff,stroke:#333
+    style iOS fill:#007AFF22,stroke:#007AFF
+    style macOS fill:#34C75922,stroke:#34C759
+    style Watch fill:#FF950022,stroke:#FF9500
+    style Core fill:#AF52DE22,stroke:#AF52DE
+```
+
 ### macOS Desktop App
 - **Three-panel layout** — icon rail (dark sidebar) + meeting list + detail panel
 - **Menu bar companion** — quick-record and recent meetings from the menu bar
 - **System audio capture** — record system audio directly on macOS
-- **Meeting app detection** — auto-detects active video conferencing apps
-- **Native macOS design** — not an iPad app running on Mac; purpose-built for desktop
+- **Meeting app detection** — auto-detects active video conferencing apps (Zoom, Meet, Teams, etc.)
+- **Native macOS design** — purpose-built for desktop, not an iPad port
 
 ### iOS Widgets
 - **Quick Record** (small) — one-tap recording from Home Screen
@@ -80,10 +192,6 @@ Existing solutions either require bots to join your call, are web-first and desk
 - **Recording view** with waveform visualization and timer
 - **Todo list** with tap-to-complete
 - **WatchConnectivity** for syncing with iPhone
-
-### Authentication
-- **Google Sign-In** for secure account access
-- **Profile setup** with name, role, and preferences
 
 ---
 
@@ -108,26 +216,138 @@ Existing solutions either require bots to join your call, are web-first and desk
 
 ### AI Pipeline
 
+```mermaid
+flowchart TB
+    subgraph Input["📥 Input Layer"]
+        REC["🎙️ Audio Recording\n(M4A, 44.1kHz)"]
+        COMP["🗜️ Smart Compression\n& Chunking"]
+    end
+
+    subgraph STT["🗣️ Speech-to-Text"]
+        TRANS["Custom Transcription Engine\n216x real-time speed"]
+    end
+
+    subgraph MIE["🧠 Meeting Intelligence Engine"]
+        BRIEF["📋 Structured Brief\nSummary • Quotes\nDecisions • Risks"]
+        ACTION["✅ Action Items\nAuto-create Todos"]
+        CLIENT["👥 Client Detection\nAuto-organize\nby Company"]
+        SENTIMENT["📊 Sentiment\nAnalysis"]
+    end
+
+    subgraph Output["💾 Output Layer"]
+        STORE["Core Data Store"]
+        NOTIFY["🔔 Notifications\n& Widgets"]
+    end
+
+    REC --> COMP --> TRANS
+    TRANS --> BRIEF
+    TRANS --> ACTION
+    TRANS --> CLIENT
+    TRANS --> SENTIMENT
+
+    BRIEF --> STORE
+    ACTION --> STORE
+    CLIENT --> STORE
+    SENTIMENT --> STORE
+    STORE --> NOTIFY
+
+    style Input fill:#007AFF22,stroke:#007AFF
+    style STT fill:#FF950022,stroke:#FF9500
+    style MIE fill:#34C75922,stroke:#34C759
+    style Output fill:#AF52DE22,stroke:#AF52DE
 ```
-                        ┌─────────────────────────────────┐
-                        │        MeetMind AI Engine        │
-                        └─────────────────────────────────┘
-                                       │
-Record Audio ──► Smart Compress ──► Speech-to-Text ──► Raw Transcript
-                                                            │
-                                                   Meeting Intelligence
-                                                       Engine (MIE)
-                                                            │
-                                          ┌─────────────────┼─────────────────┐
-                                          │                 │                 │
-                                   Structured Brief   Action Items     Client Detection
-                                   (summary, quotes,  (auto-create     (auto-organize
-                                    decisions, risks)   todos)           by company)
-                                          │                 │                 │
-                                          └─────────────────┼─────────────────┘
-                                                            │
-                                                     Core Data Store
+
+### Meeting Brief Structure
+
+```mermaid
+graph LR
+    subgraph Brief["📋 AI Meeting Brief"]
+        A["📝 Executive Summary"]
+        B["💬 Key Discussion Points"]
+        C["⚖️ Decisions Made"]
+        D["🚧 Blockers & Risks"]
+        E["✅ Action Items\n(with assignees)"]
+        F["💡 Key Quotes\n(with speakers)"]
+        G["👥 Participants\n& Companies"]
+    end
+
+    Brief --> H["📧 Follow-up Email"]
+    Brief --> I["✅ Auto-create Todos"]
+    Brief --> J["📁 Client Folders"]
+
+    style Brief fill:#1a1a2e,color:#fff,stroke:#333
+    style H fill:#007AFF,color:#fff,stroke:none
+    style I fill:#34C759,color:#fff,stroke:none
+    style J fill:#FF9500,color:#fff,stroke:none
 ```
+
+---
+
+## User Journey
+
+```mermaid
+journey
+    title A Day with MeetMind
+    section Morning
+      Check Today view & streaks: 5: User
+      Review pending action items: 4: User
+      Add voice todo for the day: 5: User
+    section Meeting Time
+      One-tap record meeting: 5: User
+      Jot notes in meeting pad: 4: User
+      Switch apps freely: 5: User
+    section Post-Meeting
+      AI generates meeting brief: 5: MeetMind
+      Action items auto-created: 5: MeetMind
+      Clients auto-detected: 4: MeetMind
+      Send follow-up email: 5: User
+    section Evening
+      Ask AI about tasks: 4: User
+      Complete todos & build streak: 5: User
+      Review day's meetings: 3: User
+```
+
+---
+
+## Meeting Templates
+
+```mermaid
+graph TD
+    T["🏷️ Meeting Templates"] --> G["General"]
+    T --> O["1:1"]
+    T --> S["Sales Call"]
+    T --> I["Interview"]
+    T --> ST["Standup"]
+    T --> D["Discovery"]
+    T --> B["Brainstorm"]
+
+    G --> AI["🤖 Template-Optimized\nAI Processing"]
+    O --> AI
+    S --> AI
+    I --> AI
+    ST --> AI
+    D --> AI
+    B --> AI
+
+    AI --> R["📋 Tailored Brief\nFormat & Focus Areas"]
+
+    style T fill:#007AFF,color:#fff,stroke:none
+    style AI fill:#34C759,color:#fff,stroke:none
+    style R fill:#FF9500,color:#fff,stroke:none
+```
+
+---
+
+## Meeting Recipes
+
+| Recipe | What It Does |
+|--------|-------------|
+| **Coach Me** | Get AI coaching feedback on your meeting performance |
+| **Prep Me** | Generate a preparation brief before your next meeting |
+| **Write a Brief** | Create a polished, shareable meeting summary |
+| **Draft Follow-up** | Auto-generate a professional follow-up email |
+| **Extract Tasks** | Pull all action items into a structured list |
+| **Analyze Sentiment** | Understand the tone and dynamics of the conversation |
 
 ---
 
@@ -239,7 +459,7 @@ open MeetMind.xcodeproj
 | AI meeting recipes | ✓ | Rare |
 | System audio capture (Mac) | ✓ | Rare |
 | Menu bar companion | ✓ | Some |
-| Free for personal use | ✓ | $14–18/month |
+| Free for personal use | ✓ | $14-18/month |
 
 ---
 
