@@ -312,28 +312,42 @@
     /* Product copy - appears beside phone */
     .product-copy {
       position: absolute;
-      z-index: 2;
-      max-width: 380px;
+      z-index: 3;
+      max-width: 320px;
       opacity: 0;
     }
-    .product-copy-left { left: clamp(24px, 8vw, 120px); top: 50%; transform: translateY(-50%); }
-    .product-copy-right { right: clamp(24px, 8vw, 120px); top: 50%; transform: translateY(-50%); }
+    .product-copy-left {
+      left: clamp(20px, 5vw, 80px);
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: left;
+    }
+    .product-copy-right {
+      right: clamp(20px, 5vw, 80px);
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: right;
+    }
     .product-copy h3 {
       font-family: var(--font-display);
-      font-size: clamp(1.6rem, 3vw, 2.4rem);
-      margin-bottom: 1rem; line-height: 1.15;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      margin-bottom: 0.8rem; line-height: 1.15;
     }
     .product-copy p {
-      font-size: 0.95rem; color: var(--grey);
-      line-height: 1.65; margin-bottom: 0.75rem;
+      font-size: 0.88rem; color: var(--grey);
+      line-height: 1.6; margin-bottom: 0.6rem;
     }
 
     /* 3D Phone */
     .phone-stage {
       perspective: 1200px;
-      position: absolute; inset: 0;
+      position: absolute;
+      top: 0; bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(220px, 24vw, 300px);
       display: flex; justify-content: center; align-items: center;
-      opacity: 0; z-index: 1;
+      opacity: 0; z-index: 2;
     }
 
     .phone {
@@ -570,10 +584,26 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
+      .product-copy {
+        max-width: 260px;
+      }
+      .product-copy h3 { font-size: 1.2rem; }
+      .product-copy p { font-size: 0.8rem; }
+    }
+
+    @media (max-width: 860px) {
       .product-copy-left, .product-copy-right {
-        position: relative; left: auto; right: auto; top: auto;
-        transform: none; text-align: center;
-        max-width: 500px; margin: 2rem auto;
+        position: absolute;
+        left: 50% !important; right: auto !important;
+        transform: translateX(-50%) !important;
+        top: auto !important; bottom: 8vh;
+        text-align: center !important;
+        max-width: 340px;
+      }
+      .product-copy-right { bottom: 5vh; }
+      .phone-stage {
+        top: 5vh; bottom: auto;
+        height: 60vh;
       }
     }
 
