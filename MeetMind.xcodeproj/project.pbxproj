@@ -84,7 +84,7 @@
 		AFB3D00027E1460080FCE215 /* UpcomingMeetingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F3F71566024A0685D56DF1 /* UpcomingMeetingsView.swift */; };
 		B1ED41CF8B66E7A16FC8C59A /* MMTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD0946C6947F1833325126E2 /* MMTypography.swift */; };
 		B23B432C9D4BD8C2196DA69A /* ActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70C4D388D6806D813303B39 /* ActionItemsView.swift */; };
-		B4BDB3C3457A41089AEDBD06 /* MeetMindWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C5ED847C2F6C4D4F000F59F9 /* MeetMindWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B4BDB3C3457A41089AEDBD06 /* MeetMindWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = C5ED847C2F6C4D4F000F59F9 /* MeetMindWatch Watch App.app */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B52F407A8D3A417CEC0FB267 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA5F4873AC1AC524814F7CB7 /* MainTabView.swift */; };
 		B591414EADB34FC1F0DDF959 /* MMComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923D4C75B450CB23642B34AA /* MMComponents.swift */; };
 		B70C40BFA8C6FB1E2711D76A /* MeetingTemplateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47154518B157A412E45EC48E /* MeetingTemplateSelector.swift */; };
@@ -93,10 +93,10 @@
 		BB22CC33DD44EE55FF66AA11 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* SignInView.swift */; };
 		BDE04D85934177E48CC4090B /* AudioPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ACE4F8B9922BE0FC415B5E8 /* AudioPlayerView.swift */; };
 		C0924905982AEEE69C90DB73 /* AudioRecordingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */; };
-		C502A7F62F6BA5970041A292 /* MeetMindWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C502A7F62F6BA5970041A292 /* MeetMindWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 163A59A82C29E4B334D1EB7E /* MeetMindWidgetExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C586007F2F6C92E200B14973 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C586007E2F6C92E200B14973 /* WidgetKit.framework */; };
 		C58600812F6C92E200B14973 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C58600802F6C92E200B14973 /* SwiftUI.framework */; };
-		C58600902F6C92E300B14973 /* MeetMindWatchWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C586007D2F6C92E200B14973 /* MeetMindWatchWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C58600902F6C92E300B14973 /* MeetMindWatchWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C586007D2F6C92E200B14973 /* MeetMindWatchWidgetsExtension.appex */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C6D137C800AB4893BB396BC5 /* NotepadView.swift in None */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
 		C9D0E1F2A3B4C5D6E7F8A9B0 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79556B905F65E2B695E8851D /* UserProfile.swift */; };
 		CBCA4A8DB9CBDDC67F633292 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8CC45FDB10D711132EF449A /* KeychainService.swift */; };
@@ -1872,9 +1872,10 @@
 					"$(SRCROOT)/MeetMind/Core/Components",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SDKROOT = auto;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1899,9 +1900,10 @@
 					"$(SRCROOT)/MeetMind/Core/Components",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.meetmind.app;
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
+				SDKROOT = auto;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
