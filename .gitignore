@@ -27,6 +27,10 @@ Secrets.plist
 
 # Superpowers
 .superpowers/
+docs/superpowers/
+
+# Temp scripts
+*.py
 
 # Dependencies
 node_modules/
