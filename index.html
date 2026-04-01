@@ -181,30 +181,100 @@ body::after{content:'';position:fixed;inset:0;z-index:10000;pointer-events:none;
 .story-transition h3{font-size:clamp(1.3rem,2.5vw,1.8rem);color:var(--white-full);font-weight:400}
 .story-arrow{display:block;margin:2rem auto 0;width:2px;height:70px;background:linear-gradient(to bottom,var(--violet),transparent);opacity:.5}
 
-/* ========== COMPANION ========== */
-#companion-frame{min-height:100vh;position:relative;padding:12vh 0}
-.companion-layout{max-width:1000px;margin:0 auto;padding:0 clamp(20px,4vw,60px);display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
-.companion-text h2{color:var(--white-full);margin-bottom:1.5rem}
-.companion-features{display:flex;flex-direction:column;gap:.9rem}
-.cf-item{display:flex;align-items:center;gap:12px;font-size:.88rem;color:var(--text-soft);opacity:0;transform:translateX(-16px)}
-.cf-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;box-shadow:0 0 8px currentColor}
-.bot-container{display:flex;flex-direction:column;align-items:center;position:relative;padding:3rem}
-.bot-bubble{position:absolute;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:14px;padding:10px 16px;font-size:.72rem;color:var(--text-soft);white-space:nowrap;opacity:0;animation:bubbleFloat 7s ease-in-out infinite;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
-.bot-bubble:nth-child(1){top:-10px;left:-30px}
-.bot-bubble:nth-child(2){top:0px;right:-40px;animation-delay:3.5s}
-.bot-bubble:nth-child(3){bottom:20px;left:-20px;animation-delay:5s}
-@keyframes bubbleFloat{0%,100%{opacity:0;transform:translateY(12px) scale(.95)}12%,62%{opacity:1;transform:translateY(0) scale(1)}78%{opacity:0;transform:translateY(-10px) scale(.97)}}
-.bot-body{width:110px;height:130px;background:linear-gradient(145deg,rgba(139,123,247,.1),rgba(139,123,247,.03));border:1px solid rgba(139,123,247,.15);border-radius:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;margin-top:2.5rem;box-shadow:0 20px 60px rgba(139,123,247,.08)}
-.bot-antenna{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:3px;height:16px;background:linear-gradient(to top,rgba(139,123,247,.3),var(--violet));border-radius:2px}
-.bot-antenna::after{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:10px;height:10px;background:var(--violet);border-radius:50%;animation:antPulse 2.5s ease-in-out infinite;box-shadow:0 0 16px var(--violet-glow)}
-@keyframes antPulse{0%,100%{box-shadow:0 0 6px var(--violet-glow);transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 20px var(--violet-glow);transform:translateX(-50%) scale(1.15)}}
-.bot-face{display:flex;gap:18px;margin-bottom:10px}
-.bot-eye{width:14px;height:14px;background:var(--violet);border-radius:50%;animation:blink 4s ease-in-out infinite;box-shadow:0 0 10px rgba(139,123,247,.3)}
-@keyframes blink{0%,40%,48%,100%{transform:scaleY(1)}44%{transform:scaleY(.1)}}
-.bot-mouth{width:22px;height:3px;background:rgba(139,123,247,.35);border-radius:2px}
-.bot-ring{position:absolute;inset:-24px;border:1px solid rgba(139,123,247,.06);border-radius:36px;animation:ringPulse 5s ease-in-out infinite}
-.bot-ring-2{position:absolute;inset:-44px;border:1px solid rgba(139,123,247,.03);border-radius:50px;animation:ringPulse 5s ease-in-out infinite 1.5s}
+/* ========== COMPANION — FULL PIPELINE ========== */
+#companion-frame{min-height:130vh;position:relative;padding:14vh 0 8vh;overflow:hidden}
+.companion-header{text-align:center;max-width:700px;margin:0 auto 6vh;padding:0 clamp(20px,4vw,60px)}
+.companion-header h2{color:var(--white-full);margin-top:.8rem;margin-bottom:.8rem}
+.companion-header p{font-size:clamp(.88rem,1.2vw,1rem);color:var(--text-soft);line-height:1.7}
+
+/* Pipeline: Input → Bot → Output */
+.pipeline{display:flex;align-items:center;justify-content:center;gap:0;max-width:1100px;margin:0 auto;padding:0 clamp(16px,3vw,40px);position:relative}
+
+/* Input side — audio visualization */
+.pipe-input{flex:0 0 240px;display:flex;flex-direction:column;align-items:flex-end;gap:14px;opacity:0;transform:translateX(-40px)}
+.pipe-audio-card{background:rgba(255,90,110,.04);border:1px solid rgba(255,90,110,.1);border-radius:14px;padding:14px 18px;width:220px;position:relative;overflow:hidden}
+.pipe-audio-card::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,90,110,.03),transparent);animation:audioSweep 3s ease-in-out infinite}
+@keyframes audioSweep{0%{transform:translateX(-100%)}50%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
+.pac-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pac-dot{width:6px;height:6px;background:var(--coral);border-radius:50%;animation:rp 1.5s ease-in-out infinite}
+.pac-label{font-size:.6rem;color:var(--coral);font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.pac-timer{font-family:var(--font-m);font-size:.7rem;color:var(--text-muted);margin-left:auto}
+.pac-wave{display:flex;align-items:center;gap:2px;height:28px}
+.pac-wave .wb{width:2px;background:var(--coral);border-radius:2px;animation:w 1.2s ease-in-out infinite;opacity:.6}
+.pac-transcript{font-size:.6rem;color:var(--text-soft);line-height:1.5;margin-top:8px;border-top:1px solid rgba(255,90,110,.06);padding-top:8px}
+.pac-transcript .highlight{color:var(--coral);font-weight:500}
+
+/* Flow arrows */
+.pipe-flow{flex:0 0 60px;display:flex;align-items:center;justify-content:center;position:relative;height:200px}
+.flow-line{width:100%;height:2px;position:relative;overflow:hidden}
+.flow-line::before{content:'';position:absolute;width:30px;height:2px;border-radius:2px;animation:flowPulse 2s ease-in-out infinite}
+.flow-in .flow-line::before{background:linear-gradient(90deg,transparent,var(--coral),var(--violet));right:0;animation-name:flowRight}
+.flow-out .flow-line::before{background:linear-gradient(90deg,var(--violet),var(--teal),transparent);left:0;animation-name:flowLeft}
+@keyframes flowRight{0%{transform:translateX(-60px);opacity:0}40%{opacity:1}100%{transform:translateX(0);opacity:0}}
+@keyframes flowLeft{0%{transform:translateX(0);opacity:0}40%{opacity:1}100%{transform:translateX(60px);opacity:0}}
+.flow-dots{position:absolute;display:flex;flex-direction:column;gap:12px}
+.flow-dot{width:3px;height:3px;border-radius:50%;opacity:.2}
+.flow-in .flow-dot{background:var(--coral)}
+.flow-out .flow-dot{background:var(--teal)}
+
+/* Central bot — larger, more prominent */
+.pipe-center{flex:0 0 auto;position:relative;display:flex;flex-direction:column;align-items:center;z-index:3}
+.bot-container{position:relative;padding:2rem}
+.bot-body{width:130px;height:155px;background:linear-gradient(145deg,rgba(139,123,247,.12),rgba(139,123,247,.03));border:1px solid rgba(139,123,247,.18);border-radius:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;box-shadow:0 24px 70px rgba(139,123,247,.1),0 0 0 1px rgba(139,123,247,.05);transition:box-shadow .6s var(--ease)}
+.bot-body.processing{box-shadow:0 24px 90px rgba(139,123,247,.2),0 0 60px rgba(139,123,247,.08)}
+.bot-antenna{position:absolute;top:-18px;left:50%;transform:translateX(-50%);width:3px;height:18px;background:linear-gradient(to top,rgba(139,123,247,.3),var(--violet));border-radius:2px}
+.bot-antenna::after{content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:12px;height:12px;background:var(--violet);border-radius:50%;animation:antPulse 2.5s ease-in-out infinite;box-shadow:0 0 18px var(--violet-glow)}
+@keyframes antPulse{0%,100%{box-shadow:0 0 8px var(--violet-glow);transform:translateX(-50%) scale(1)}50%{box-shadow:0 0 24px var(--violet-glow);transform:translateX(-50%) scale(1.2)}}
+.bot-face{display:flex;gap:22px;margin-bottom:12px;position:relative}
+.bot-eye{width:16px;height:16px;background:var(--violet);border-radius:50%;box-shadow:0 0 12px rgba(139,123,247,.4);position:relative;overflow:hidden;transition:transform .15s ease-out}
+.bot-eye::after{content:'';position:absolute;width:5px;height:5px;background:rgba(255,255,255,.8);border-radius:50%;top:3px;right:3px;transition:all .1s ease-out}
+.bot-mouth{width:24px;height:3px;background:rgba(139,123,247,.4);border-radius:2px;transition:all .3s var(--ease)}
+.bot-mouth.talking{height:8px;border-radius:4px;background:rgba(139,123,247,.5);animation:botTalk .4s ease-in-out infinite alternate}
+@keyframes botTalk{from{height:4px;width:20px}to{height:10px;width:26px}}
+
+/* Bot processing ring animation */
+.bot-process-ring{position:absolute;inset:-20px;border-radius:40px;border:2px solid transparent;opacity:0;transition:opacity .4s}
+.bot-process-ring.active{opacity:1;border-image:conic-gradient(from var(--border-angle),var(--violet),var(--teal),var(--coral),var(--violet)) 1;animation:spinBorder 3s linear infinite}
+.bot-ring{position:absolute;inset:-28px;border:1px solid rgba(139,123,247,.06);border-radius:40px;animation:ringPulse 5s ease-in-out infinite}
+.bot-ring-2{position:absolute;inset:-50px;border:1px solid rgba(139,123,247,.03);border-radius:55px;animation:ringPulse 5s ease-in-out infinite 1.5s}
 @keyframes ringPulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.08;transform:scale(1.06)}}
+
+/* Bot status label */
+.bot-status{margin-top:16px;font-family:var(--font-m);font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);text-align:center;height:16px;transition:all .3s var(--ease)}
+.bot-status.active{color:var(--violet)}
+
+/* Output side — generated cards */
+.pipe-output{flex:0 0 260px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;opacity:0;transform:translateX(40px)}
+
+/* Output cards */
+.out-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;padding:12px 16px;width:240px;opacity:0;transform:translateY(12px) scale(.96);transition:all .5s var(--ease);position:relative;overflow:hidden}
+.out-card.show{opacity:1;transform:translateY(0) scale(1)}
+.out-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0;opacity:.6}
+.out-card.oc-brief::before{background:linear-gradient(90deg,var(--teal),var(--teal))}
+.out-card.oc-todo::before{background:linear-gradient(90deg,var(--amber),var(--amber))}
+.out-card.oc-chat::before{background:linear-gradient(90deg,var(--violet),var(--violet))}
+.out-card.oc-people::before{background:linear-gradient(90deg,var(--blue),var(--blue))}
+.oc-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.oc-icon{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0}
+.oc-title{font-size:.68rem;font-weight:600;color:var(--white-full)}
+.oc-body{font-size:.6rem;color:var(--text-soft);line-height:1.5}
+.oc-tag{display:inline-block;font-size:.48rem;padding:2px 6px;border-radius:4px;font-weight:500;margin-top:4px}
+
+/* Feature pills below pipeline */
+.companion-features{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:800px;margin:5vh auto 0;padding:0 clamp(16px,4vw,40px)}
+.cf-pill{display:flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;font-size:.78rem;color:var(--text-soft);opacity:0;transform:translateY(16px);transition:all .4s var(--ease);cursor:default}
+.cf-pill:hover{border-color:var(--border-hover);background:rgba(139,123,247,.04)}
+.cf-pill svg{flex-shrink:0;opacity:.7}
+.cf-pill span{white-space:nowrap}
+
+/* Mobile pipeline */
+@media(max-width:860px){
+  .pipeline{flex-direction:column;gap:1.5rem}
+  .pipe-input,.pipe-output{flex:0 0 auto;align-items:center}
+  .pipe-flow{height:40px;width:40px;flex:0 0 40px;transform:rotate(90deg)}
+  .pipe-input{transform:translateX(0) translateY(-20px)!important}
+  .pipe-output{transform:translateX(0) translateY(20px)!important}
+}
 
 /* ========== INTERACTIVE PRODUCT DEMO ========== */
 #product-frame{height:400vh;position:relative}
@@ -370,7 +440,7 @@ footer{text-align:center;padding:3rem 1.5rem;font-size:.65rem;color:rgba(255,255
 .velocity-blur{transition:filter .3s ease-out}
 
 /* RESPONSIVE */
-@media(max-width:1024px){.companion-layout{grid-template-columns:1fr;text-align:center}.companion-visual{order:-1}.side-copy{max-width:260px}}
+@media(max-width:1024px){.side-copy{max-width:260px}}
 @media(max-width:860px){.prod-grid{grid-template-columns:1fr;justify-items:center;gap:1.5rem;padding:4vh 20px}.side-copy.left,.side-copy.right{justify-self:center;text-align:center;padding:0;max-width:360px}.side-copy.right{order:3}.phone-wrap{order:1}.side-copy.left{order:2}.screen-tabs{display:none}}
 @media(max-width:768px){.sc-layout{grid-template-columns:1fr}.sc-illust{display:none}.hero-stats{flex-direction:column;gap:1rem}.devices{flex-direction:column;align-items:center}.cta-form{flex-direction:column;align-items:center}.cta-in{width:100%;max-width:320px}.phone{width:150px;height:320px}.trust{flex-direction:column;align-items:center}.float-label{display:none}.float-quote{position:relative!important;max-width:100%;margin-bottom:1rem;top:auto!important;left:auto!important;right:auto!important}.quote-field{height:auto}.hscroll-wrap{height:auto}.hscroll-pin{position:relative;height:auto;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2rem 0}.hscroll-track{padding:0 20px}}
 @media(max-width:480px){.d-hero{font-size:2.5rem}.d-xl{font-size:2rem}.d-lg{font-size:1.7rem}}
@@ -479,32 +549,112 @@ footer{text-align:center;padding:3rem 1.5rem;font-size:.65rem;color:rgba(255,255
 
 <!-- ===== CH3: COMPANION ===== -->
 <section id="companion-frame" data-chapter="Chapter 3 — The Companion">
-  <div class="companion-layout">
-    <div class="companion-text">
-      <div class="mono" style="margin-bottom:.6rem">Meet Your Companion</div>
-      <h2 class="d d-md" id="companionHeadline">MeetMind listens, understands, and acts.</h2>
-      <div class="companion-features">
-        <div class="cf-item"><div class="cf-dot" style="background:var(--coral);color:var(--coral)"></div><span>Records silently — zero bots join your calls</span></div>
-        <div class="cf-item"><div class="cf-dot" style="background:var(--teal);color:var(--teal)"></div><span>Generates structured briefs in seconds</span></div>
-        <div class="cf-item"><div class="cf-dot" style="background:var(--amber);color:var(--amber)"></div><span>Creates smart todos from your voice</span></div>
-        <div class="cf-item"><div class="cf-dot" style="background:var(--violet);color:var(--violet)"></div><span>Answers any question across all meetings</span></div>
-        <div class="cf-item"><div class="cf-dot" style="background:var(--blue);color:var(--blue)"></div><span>Detects people, companies, and context</span></div>
-      </div>
-    </div>
-    <div class="companion-visual">
-      <div class="bot-container">
-        <div class="bot-bubble">Recording...</div>
-        <div class="bot-bubble">Brief ready!</div>
-        <div class="bot-bubble">3 action items found</div>
-        <div class="bot-body">
-          <div class="bot-antenna"></div>
-          <div class="bot-face"><div class="bot-eye"></div><div class="bot-eye"></div></div>
-          <div class="bot-mouth"></div>
-          <div class="bot-ring"></div>
-          <div class="bot-ring-2"></div>
+  <!-- Header -->
+  <div class="companion-header">
+    <div class="mono">Meet Your Companion</div>
+    <h2 class="d d-md" id="companionHeadline">MeetMind listens, understands, and acts.</h2>
+    <p>Your meeting goes in. Intelligence comes out. Watch how one conversation becomes structured, actionable knowledge.</p>
+  </div>
+
+  <!-- Pipeline: Input → Bot → Output -->
+  <div class="pipeline" id="pipeline">
+    <!-- INPUT: Live audio -->
+    <div class="pipe-input" id="pipeInput">
+      <div class="pipe-audio-card">
+        <div class="pac-header">
+          <div class="pac-dot"></div>
+          <span class="pac-label">Recording</span>
+          <span class="pac-timer" id="pipeTimer">14:32</span>
+        </div>
+        <div class="pac-wave">
+          <div class="wb" style="--h:12px"></div><div class="wb" style="--h:22px;animation-delay:.08s"></div>
+          <div class="wb" style="--h:16px;animation-delay:.16s"></div><div class="wb" style="--h:28px;animation-delay:.12s"></div>
+          <div class="wb" style="--h:18px;animation-delay:.2s"></div><div class="wb" style="--h:32px;animation-delay:.04s"></div>
+          <div class="wb" style="--h:14px;animation-delay:.24s"></div><div class="wb" style="--h:26px;animation-delay:.1s"></div>
+          <div class="wb" style="--h:10px;animation-delay:.18s"></div><div class="wb" style="--h:20px;animation-delay:.06s"></div>
+          <div class="wb" style="--h:24px;animation-delay:.14s"></div><div class="wb" style="--h:15px;animation-delay:.22s"></div>
+        </div>
+        <div class="pac-transcript">
+          <span class="highlight">Sarah:</span> "We need the API finalized before sprint 4. <span class="highlight">James</span>, can you own that?"
         </div>
       </div>
     </div>
+
+    <!-- Flow arrow IN -->
+    <div class="pipe-flow flow-in">
+      <div class="flow-line"></div>
+      <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+    </div>
+
+    <!-- CENTRAL BOT -->
+    <div class="pipe-center">
+      <div class="bot-container" id="botContainer">
+        <div class="bot-body" id="botBody">
+          <div class="bot-antenna"></div>
+          <div class="bot-process-ring" id="botProcessRing"></div>
+          <div class="bot-face">
+            <div class="bot-eye" id="botEyeL"></div>
+            <div class="bot-eye" id="botEyeR"></div>
+          </div>
+          <div class="bot-mouth" id="botMouth"></div>
+          <div class="bot-ring"></div>
+          <div class="bot-ring-2"></div>
+        </div>
+        <div class="bot-status" id="botStatus">Listening</div>
+      </div>
+    </div>
+
+    <!-- Flow arrow OUT -->
+    <div class="pipe-flow flow-out">
+      <div class="flow-line"></div>
+      <div class="flow-dots"><div class="flow-dot"></div><div class="flow-dot"></div><div class="flow-dot"></div></div>
+    </div>
+
+    <!-- OUTPUT: Generated cards -->
+    <div class="pipe-output" id="pipeOutput">
+      <div class="out-card oc-brief" id="oc1">
+        <div class="oc-head">
+          <div class="oc-icon" style="background:var(--teal-soft)"><svg width="13" height="13" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <span class="oc-title">Meeting Brief</span>
+        </div>
+        <div class="oc-body">Ship mobile-first, delay desktop 2 weeks. Design handoff by Mar 15.</div>
+        <span class="oc-tag" style="background:var(--teal-soft);color:var(--teal)">Auto-generated</span>
+      </div>
+      <div class="out-card oc-todo" id="oc2">
+        <div class="oc-head">
+          <div class="oc-icon" style="background:var(--amber-soft)"><svg width="13" height="13" fill="none" stroke="var(--amber)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <span class="oc-title">Smart Todos</span>
+        </div>
+        <div class="oc-body">James: Finalize API contract — <span style="color:var(--coral)">High</span> · Due Mar 18</div>
+        <span class="oc-tag" style="background:var(--amber-soft);color:var(--amber)">Voice-extracted</span>
+      </div>
+      <div class="out-card oc-chat" id="oc3">
+        <div class="oc-head">
+          <div class="oc-icon" style="background:var(--violet-soft)"><svg width="13" height="13" fill="none" stroke="var(--violet)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <span class="oc-title">AI Ready</span>
+        </div>
+        <div class="oc-body">"Who owns the API contract?" → James, assigned Mar 15 meeting</div>
+        <span class="oc-tag" style="background:var(--violet-soft);color:var(--violet)">Searchable</span>
+      </div>
+      <div class="out-card oc-people" id="oc4">
+        <div class="oc-head">
+          <div class="oc-icon" style="background:var(--blue-soft)"><svg width="13" height="13" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="oc-title">People Detected</span>
+        </div>
+        <div class="oc-body">Sarah K. · James R. · Acme Corp — linked to 3 prior meetings</div>
+        <span class="oc-tag" style="background:var(--blue-soft);color:var(--blue)">Auto-linked</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature pills -->
+  <div class="companion-features" id="companionFeatures">
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--coral)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg><span>Zero-bot recording</span></div>
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--teal)" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Structured briefs</span></div>
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--amber)" stroke-width="2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>Voice-to-task</span></div>
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--violet)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Cross-meeting AI chat</span></div>
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span>People &amp; company detection</span></div>
+    <div class="cf-pill"><svg width="14" height="14" fill="none" stroke="var(--white-full)" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg><span>iPhone · Mac · Watch</span></div>
   </div>
 </section>
 
@@ -923,9 +1073,78 @@ document.querySelectorAll('.stack-card').forEach(function(card,i){
 });
 gsap.from('.story-arrow',{height:0,opacity:0,scrollTrigger:{trigger:'.story-transition',start:'top 80%',end:'top 50%',scrub:1}});
 
-/* ===== COMPANION ===== */
-gsap.to('.cf-item',{opacity:1,x:0,duration:.5,stagger:.12,ease:'power2.out',scrollTrigger:{trigger:'.companion-features',start:'top 80%',toggleActions:'play none none none'}});
-gsap.from('.bot-body',{scale:.7,opacity:0,duration:1,ease:'back.out(1.5)',scrollTrigger:{trigger:'.bot-container',start:'top 78%',toggleActions:'play none none none'}});
+/* ===== COMPANION PIPELINE ===== */
+// Pipeline entrance
+gsap.to('#pipeInput',{opacity:1,x:0,duration:.8,ease:'power2.out',scrollTrigger:{trigger:'#pipeline',start:'top 78%',toggleActions:'play none none none'}});
+gsap.from('.bot-body',{scale:.7,opacity:0,duration:1,ease:'back.out(1.5)',scrollTrigger:{trigger:'#pipeline',start:'top 75%',toggleActions:'play none none none'}});
+gsap.to('#pipeOutput',{opacity:1,x:0,duration:.8,ease:'power2.out',delay:.4,scrollTrigger:{trigger:'#pipeline',start:'top 75%',toggleActions:'play none none none'}});
+
+// Output cards stagger reveal
+ScrollTrigger.create({trigger:'#pipeline',start:'top 65%',once:true,onEnter:function(){
+  var cards=document.querySelectorAll('.out-card');
+  var body=document.getElementById('botBody');
+  var ring=document.getElementById('botProcessRing');
+  var mouth=document.getElementById('botMouth');
+  var status=document.getElementById('botStatus');
+
+  // Start processing
+  body.classList.add('processing');
+  ring.classList.add('active');
+  mouth.classList.add('talking');
+  status.textContent='Processing...';
+  status.classList.add('active');
+
+  // Reveal cards one by one
+  cards.forEach(function(c,i){
+    setTimeout(function(){
+      c.classList.add('show');
+      // Update status
+      var labels=['Generating brief...','Extracting todos...','Indexing for chat...','Linking people...'];
+      if(i<labels.length) status.textContent=labels[i];
+    },800+i*600);
+  });
+
+  // Finish processing
+  setTimeout(function(){
+    mouth.classList.remove('talking');
+    body.classList.remove('processing');
+    ring.classList.remove('active');
+    status.textContent='All done';
+    setTimeout(function(){status.classList.remove('active');status.textContent='Listening'},2000);
+  },800+cards.length*600+400);
+}});
+
+// Feature pills
+gsap.to('.cf-pill',{opacity:1,y:0,stagger:.08,duration:.5,ease:'power2.out',scrollTrigger:{trigger:'.companion-features',start:'top 88%',toggleActions:'play none none none'}});
+
+// Bot eyes follow cursor
+(function(){
+var eyeL=document.getElementById('botEyeL');
+var eyeR=document.getElementById('botEyeR');
+if(!eyeL||!eyeR) return;
+document.addEventListener('mousemove',function(e){
+  var rect=document.getElementById('botBody').getBoundingClientRect();
+  var cx=rect.left+rect.width/2;
+  var cy=rect.top+rect.height/2;
+  var dx=(e.clientX-cx)/innerWidth;
+  var dy=(e.clientY-cy)/innerHeight;
+  var mx=Math.max(-3,Math.min(3,dx*8));
+  var my=Math.max(-2,Math.min(2,dy*6));
+  eyeL.style.transform='translate('+mx+'px,'+my+'px)';
+  eyeR.style.transform='translate('+mx+'px,'+my+'px)';
+});
+})();
+
+// Pipe timer counting
+(function(){
+var timer=document.getElementById('pipeTimer');
+if(!timer) return;
+var sec=32,min=14;
+setInterval(function(){
+  sec++;if(sec>=60){sec=0;min++}
+  timer.textContent=min+':'+(sec<10?'0':'')+sec;
+},1000);
+})();
 
 /* ===== 3D MOUSE-REACTIVE PHONE ===== */
 (function(){
