@@ -8,78 +8,119 @@ struct MenuBarView: View {
     @State private var recordingDuration: TimeInterval = 0
     @State private var recordingTimer: Timer?
     @State private var audioFileURL: URL?
+    @State private var hoveredMeetingId: UUID?
 
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            VStack(alignment: .leading, spacing: 4) {
-                Text("MeetMind")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
-                Text(isRecording ? "Recording..." : "Ready to record")
-                    .font(.system(size: 11))
-                    .foregroundColor(.white.opacity(0.8))
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(
+                            LinearGradient(
+                                colors: [MMColors.primary, MMColors.primary.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 32, height: 32)
+                    Image(systemName: "waveform.circle.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("MeetMind")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(MMColors.textPrimary)
+                    Text(isRecording ? "Recording..." : "Ready to record")
+                        .font(.system(size: 10))
+                        .foregroundColor(isRecording ? MMColors.recording : MMColors.textTertiary)
+                }
+                Spacer()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(14)
-            .background(
-                LinearGradient(colors: [MMColors.primary, Color(red: 0.659, green: 0.333, blue: 0.969)],
-                               startPoint: .topLeading, endPoint: .bottomTrailing)
-            )
+
+            Divider()
 
             if isRecording {
                 // Recording state
-                VStack(spacing: 10) {
-                    Text(formatTime(recordingDuration))
-                        .font(.system(size: 18, weight: .bold, design: .monospaced))
+                VStack(spacing: 12) {
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(MMColors.recording)
+                            .frame(width: 8, height: 8)
+                        Text(formatTime(recordingDuration))
+                            .font(.system(size: 20, weight: .bold, design: .monospaced))
+                            .foregroundColor(MMColors.textPrimary)
+                    }
+
+                    // Waveform
+                    HStack(spacing: 2) {
+                        ForEach(0..<12, id: \.self) { _ in
+                            RoundedRectangle(cornerRadius: 1.5)
+                                .fill(MMColors.recording.opacity(0.6))
+                                .frame(width: 3, height: CGFloat.random(in: 4...18))
+                        }
+                    }
+                    .frame(height: 20)
+
                     Button {
                         stopMenuBarRecording()
                     } label: {
-                        HStack {
+                        HStack(spacing: 6) {
                             Image(systemName: "stop.fill")
-                            Text("Stop Recording")
+                                .font(.system(size: 10))
+                            Text("Stop & Process")
+                                .font(.system(size: 12, weight: .semibold))
                         }
-                        .frame(maxWidth: .infinity)
                         .foregroundColor(.white)
-                        .font(.system(size: 12, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(MMColors.recording)
+                        )
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.red)
-                    .controlSize(.large)
+                    .buttonStyle(.plain)
                 }
-                .padding(12)
+                .padding(14)
             } else {
                 // Quick actions
-                HStack(spacing: 8) {
-                    Button {
-                        startMicRecording()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "mic.fill").font(.system(size: 11))
-                            Text("Record Mic").font(.system(size: 11, weight: .semibold))
+                VStack(spacing: 8) {
+                    HStack(spacing: 8) {
+                        recordButton(
+                            title: "Microphone",
+                            icon: "mic.fill",
+                            color: MMColors.primary
+                        ) {
+                            startMicRecording()
                         }
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(MMColors.primary)
-                    .controlSize(.regular)
 
-                    Button {
-                        startSystemRecording()
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "display").font(.system(size: 11))
-                            Text("System").font(.system(size: 11, weight: .semibold))
+                        recordButton(
+                            title: "System Audio",
+                            icon: "display",
+                            color: MMColors.info
+                        ) {
+                            startSystemRecording()
                         }
-                        .frame(maxWidth: .infinity)
-                        .foregroundColor(.white)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(Color(red: 0.102, green: 0.102, blue: 0.180))
-                    .controlSize(.regular)
+
+                    // Quick stats
+                    HStack(spacing: 0) {
+                        menuStatItem(value: "\(meetingService.meetings.count)", label: "Meetings")
+                        Spacer()
+                        menuStatItem(value: "\(pendingActionCount)", label: "Pending")
+                        Spacer()
+                        menuStatItem(value: "\(todayMeetingCount)", label: "Today")
+                    }
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(MMColors.background)
+                    )
                 }
-                .padding(12)
+                .padding(14)
             }
 
             Divider()
@@ -89,56 +130,146 @@ struct MenuBarView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text("RECENT")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundColor(.secondary)
-                        .tracking(0.5)
+                        .foregroundColor(MMColors.textTertiary)
+                        .tracking(0.8)
                         .padding(.horizontal, 14)
                         .padding(.top, 10)
                         .padding(.bottom, 6)
 
-                    ForEach(meetingService.meetings.prefix(3)) { meeting in
-                        HStack {
-                            Text(meeting.title)
-                                .font(.system(size: 12))
-                                .lineLimit(1)
-                            Spacer()
-                            Text(meeting.date, style: .relative)
+                    ForEach(meetingService.meetings.sorted(by: { $0.date > $1.date }).prefix(4)) { meeting in
+                        HStack(spacing: 8) {
+                            Image(systemName: meeting.template.icon)
                                 .font(.system(size: 10))
-                                .foregroundColor(.secondary)
+                                .foregroundColor(MMColors.primary)
+                                .frame(width: 16)
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(meeting.title)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(MMColors.textPrimary)
+                                    .lineLimit(1)
+                                HStack(spacing: 4) {
+                                    Text(meeting.date, style: .relative)
+                                    if let client = meeting.clientName {
+                                        Text("·")
+                                        Text(client)
+                                    }
+                                }
+                                .font(.system(size: 9))
+                                .foregroundColor(MMColors.textTertiary)
+                            }
+
+                            Spacer()
+
+                            Circle()
+                                .fill(meeting.status == .complete ? MMColors.success : MMColors.warning)
+                                .frame(width: 6, height: 6)
                         }
                         .padding(.horizontal, 14)
-                        .padding(.vertical, 5)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(hoveredMeetingId == meeting.id ? MMColors.background : Color.clear)
+                        )
+                        .onHover { h in hoveredMeetingId = h ? meeting.id : nil }
                     }
                 }
                 .padding(.bottom, 6)
+            } else {
+                VStack(spacing: 6) {
+                    Image(systemName: "waveform.circle")
+                        .font(.system(size: 20))
+                        .foregroundColor(MMColors.textTertiary.opacity(0.5))
+                    Text("No meetings yet")
+                        .font(.system(size: 11))
+                        .foregroundColor(MMColors.textTertiary)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
             }
 
             Divider()
 
             // Footer
             HStack {
-                Button("Open MeetMind") {
+                Button {
                     NSApp.activate(ignoringOtherApps: true)
                     if let window = NSApp.windows.first(where: { !($0 is NSPanel) }) {
                         window.makeKeyAndOrderFront(nil)
                     }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "macwindow")
+                            .font(.system(size: 10))
+                        Text("Open MeetMind")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundColor(MMColors.primary)
                 }
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(MMColors.primary)
                 .buttonStyle(.plain)
 
                 Spacer()
 
-                Button("Quit") {
+                Button {
                     NSApp.terminate(nil)
+                } label: {
+                    Text("Quit")
+                        .font(.system(size: 11))
+                        .foregroundColor(MMColors.textTertiary)
                 }
-                .font(.system(size: 11))
-                .foregroundColor(.secondary)
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
         }
-        .frame(width: 280)
+        .frame(width: 300)
+    }
+
+    // MARK: - Components
+
+    private func recordButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 16))
+                    .foregroundColor(color)
+                Text(title)
+                    .font(.system(size: 10, weight: .semibold))
+                    .foregroundColor(MMColors.textSecondary)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(color.opacity(0.08))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(color.opacity(0.15))
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func menuStatItem(value: String, label: String) -> some View {
+        VStack(spacing: 1) {
+            Text(value)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(MMColors.textPrimary)
+            Text(label)
+                .font(.system(size: 8))
+                .foregroundColor(MMColors.textTertiary)
+        }
+    }
+
+    // MARK: - Computed
+
+    private var pendingActionCount: Int {
+        meetingService.meetings.reduce(0) { $0 + $1.briefActionItems.filter { !$0.isCompleted }.count }
+    }
+
+    private var todayMeetingCount: Int {
+        meetingService.meetings.filter { Calendar.current.isDateInToday($0.date) }.count
     }
 
     // MARK: - Recording

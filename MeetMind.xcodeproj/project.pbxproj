@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C7FF8A2C677944E0B5E82F2D /* MacActionItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC767ED27E4CF3ADBD47D3 /* MacActionItemsView.swift */; };
+		DD8367086C194C5EA15028FB /* MacPeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 843A468AEBA4426BA77EFE34 /* MacPeopleView.swift */; };
+		7548E87812BE4BFEA1D856D1 /* MacSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA2A643F332445DD8332660A /* MacSearchView.swift */; };
+		BE5A4CCCD2D045B7A5164E8A /* MacRecipesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C39D0675E2849C2B6371FB0 /* MacRecipesView.swift */; };
 		"'T34M51NTEGR4T10N5ERV1CE1'" = {isa = PBXBuildFile; fileRef = T34M51NTEGR4T10NREF00001; };
 		01766EDDCEF94FE88D74C398 /* OfflineQueueBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C13D61FF31840EC83E745DE /* OfflineQueueBanner.swift */; };
 		04E1B07FD7BCCC0178F442E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C9F44F1AD84C570EE2007E /* ServiceTests.swift */; };
@@ -216,6 +220,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1EBC767ED27E4CF3ADBD47D3 /* MacActionItemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacActionItemsView.swift; sourceTree = "<group>"; };
+		843A468AEBA4426BA77EFE34 /* MacPeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacPeopleView.swift; sourceTree = "<group>"; };
+		CA2A643F332445DD8332660A /* MacSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacSearchView.swift; sourceTree = "<group>"; };
+		3C39D0675E2849C2B6371FB0 /* MacRecipesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacRecipesView.swift; sourceTree = "<group>"; };
 		"'T34M51NTEGR4T10NREF00001'" = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TeamsIntegrationService.swift; path = MeetMind/Services/TeamsIntegrationService.swift; sourceTree = SOURCE_ROOT; };
 		03062A9D3A3A338EFB504CA4 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		0379F3DD718078F4ACACFF99 /* PhoneLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLoginView.swift; sourceTree = "<group>"; };
@@ -1083,6 +1091,10 @@
 				6E7F051B00B64972BDD6B65D /* MacNotesView.swift */,
 				42C7DAAE22BD430DB0683BD5 /* MacLibraryView.swift */,
 				D6001C1705F44D139299B24E /* MacChatView.swift */,
+				1EBC767ED27E4CF3ADBD47D3 /* MacActionItemsView.swift */,
+				843A468AEBA4426BA77EFE34 /* MacPeopleView.swift */,
+				CA2A643F332445DD8332660A /* MacSearchView.swift */,
+				3C39D0675E2849C2B6371FB0 /* MacRecipesView.swift */,
 				E8969C296DEE4DFCAB9B8732 /* MacSettingsView.swift */,
 			);
 			path = Views;
@@ -1430,6 +1442,10 @@
 				9E7BA0BD18214D61ACE3E015 /* MacNotesView.swift in Sources */,
 				E063F844738C4A7AA2A38414 /* MacLibraryView.swift in Sources */,
 				480F48092F6447CF8D0121DE /* MacChatView.swift in Sources */,
+				C7FF8A2C677944E0B5E82F2D /* MacActionItemsView.swift in Sources */,
+				DD8367086C194C5EA15028FB /* MacPeopleView.swift in Sources */,
+				7548E87812BE4BFEA1D856D1 /* MacSearchView.swift in Sources */,
+				BE5A4CCCD2D045B7A5164E8A /* MacRecipesView.swift in Sources */,
 				4FD74B190DC54494932750E3 /* MacSettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

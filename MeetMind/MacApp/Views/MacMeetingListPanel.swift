@@ -5,114 +5,204 @@ struct MacMeetingListPanel: View {
     @EnvironmentObject var meetingService: MeetingService
     @Binding var selectedMeetingId: UUID?
     @State private var searchText = ""
+    @State private var hoveredMeetingId: UUID?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             // Header
-            HStack {
+            HStack(alignment: .center) {
                 Text("Meetings")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(Color(red: 0.102, green: 0.102, blue: 0.180))
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(MMColors.textPrimary)
                 Spacer()
-                Button {
-                    NotificationCenter.default.post(name: .macStartRecording, object: nil)
-                } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 24, height: 24)
-                        .background(RoundedRectangle(cornerRadius: 6).fill(MMColors.primary))
-                }
-                .buttonStyle(.plain)
+                Text("\(meetingService.meetings.count)")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(MMColors.textTertiary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(MMColors.background))
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 16)
-            .padding(.bottom, 12)
-
-            // Search
-            HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                TextField("Search meetings...", text: $searchText)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 12))
-            }
-            .padding(7)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.white)
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color(white: 0.88)))
-            )
-            .padding(.horizontal, 16)
+            .padding(.horizontal, 18)
+            .padding(.top, 18)
             .padding(.bottom, 14)
 
-            // Meeting list
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 0) {
-                    ForEach(groupedMeetings, id: \.key) { group in
-                        Text(group.key)
-                            .font(.system(size: 10, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .textCase(.uppercase)
-                            .tracking(0.5)
-                            .padding(.horizontal, 16)
-                            .padding(.top, 12)
-                            .padding(.bottom, 6)
+            // Search
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 12))
+                    .foregroundColor(MMColors.textTertiary)
+                TextField("Search meetings...", text: $searchText)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 13))
+                if !searchText.isEmpty {
+                    Button {
+                        searchText = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(MMColors.textTertiary)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(MMColors.background)
+            )
+            .padding(.horizontal, 14)
+            .padding(.bottom, 14)
 
-                        ForEach(group.meetings) { meeting in
-                            meetingRow(meeting)
-                                .padding(.horizontal, 16)
+            Divider()
+                .padding(.horizontal, 14)
+
+            // Meeting list
+            if filteredMeetings.isEmpty {
+                emptyState
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 0) {
+                        ForEach(groupedMeetings, id: \.key) { group in
+                            Text(group.key)
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(MMColors.textTertiary)
+                                .textCase(.uppercase)
+                                .tracking(0.6)
+                                .padding(.horizontal, 18)
+                                .padding(.top, 14)
                                 .padding(.bottom, 6)
+
+                            ForEach(group.meetings) { meeting in
+                                meetingRow(meeting)
+                                    .padding(.horizontal, 14)
+                                    .padding(.bottom, 2)
+                            }
                         }
                     }
+                    .padding(.bottom, 14)
                 }
             }
         }
-        .frame(width: 240)
-        .background(Color(red: 0.973, green: 0.973, blue: 0.980)) // #f8f8fa
+        .frame(width: 260)
+        .background(Color(nsColor: .controlBackgroundColor))
     }
 
+    // MARK: - Meeting Row
+
     private func meetingRow(_ meeting: Meeting) -> some View {
-        Button {
+        let isSelected = selectedMeetingId == meeting.id
+        let isHovered = hoveredMeetingId == meeting.id
+
+        return Button {
             selectedMeetingId = meeting.id
         } label: {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack {
-                    Text(meeting.title)
-                        .font(.system(size: 13, weight: .semibold))
-                        .foregroundColor(Color(red: 0.102, green: 0.102, blue: 0.180))
-                        .lineLimit(1)
-                    Spacer()
-                    if meeting.status == .complete {
-                        Circle()
-                            .fill(Color(red: 0.063, green: 0.725, blue: 0.506))
-                            .frame(width: 6, height: 6)
-                    } else if meeting.status == .processing {
-                        Circle()
-                            .fill(Color(red: 0.961, green: 0.620, blue: 0.043))
-                            .frame(width: 6, height: 6)
-                    }
+            HStack(alignment: .top, spacing: 10) {
+                // Template icon
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(templateColor(meeting.template).opacity(0.1))
+                        .frame(width: 32, height: 32)
+                    Image(systemName: meeting.template.icon)
+                        .font(.system(size: 13))
+                        .foregroundColor(templateColor(meeting.template))
                 }
-                Text("\(meeting.date.formatted(date: .omitted, time: .shortened)) · \(formatDuration(meeting.duration))\(meeting.briefActionItems.isEmpty ? "" : " · \(meeting.briefActionItems.count) actions")")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(meeting.title)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(MMColors.textPrimary)
+                        .lineLimit(1)
+
+                    HStack(spacing: 4) {
+                        Text(meeting.date.formatted(date: .omitted, time: .shortened))
+                        Text("·")
+                        Text(formatDuration(meeting.duration))
+                        if !meeting.briefActionItems.isEmpty {
+                            Text("·")
+                            Text("\(meeting.briefActionItems.count) actions")
+                        }
+                    }
+                    .font(.system(size: 10))
+                    .foregroundColor(MMColors.textTertiary)
                     .lineLimit(1)
+                }
+
+                Spacer(minLength: 0)
+
+                // Status dot
+                statusDot(meeting.status)
             }
-            .padding(11)
+            .padding(10)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white)
+                    .fill(isSelected ? MMColors.primary.opacity(0.08) : (isHovered ? MMColors.background : Color.clear))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(selectedMeetingId == meeting.id ? MMColors.primary : Color(white: 0.93), lineWidth: selectedMeetingId == meeting.id ? 2 : 1)
+                            .stroke(isSelected ? MMColors.primary.opacity(0.3) : Color.clear, lineWidth: 1)
                     )
             )
         }
         .buttonStyle(.plain)
+        .onHover { hovering in
+            hoveredMeetingId = hovering ? meeting.id : nil
+        }
     }
 
-    // MARK: - Grouping
+    @ViewBuilder
+    private func statusDot(_ status: MeetingStatus) -> some View {
+        switch status {
+        case .complete:
+            Circle()
+                .fill(MMColors.success)
+                .frame(width: 6, height: 6)
+        case .processing:
+            ProgressView()
+                .scaleEffect(0.4)
+                .frame(width: 12, height: 12)
+        case .recording:
+            Circle()
+                .fill(MMColors.recording)
+                .frame(width: 6, height: 6)
+        case .failed:
+            Image(systemName: "exclamationmark.circle.fill")
+                .font(.system(size: 10))
+                .foregroundColor(.red)
+        }
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "waveform.circle")
+                .font(.system(size: 28))
+                .foregroundColor(MMColors.textTertiary.opacity(0.5))
+            Text(searchText.isEmpty ? "No meetings yet" : "No results")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(MMColors.textSecondary)
+            if searchText.isEmpty {
+                Text("Start a recording to capture your first meeting")
+                    .font(.system(size: 11))
+                    .foregroundColor(MMColors.textTertiary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(20)
+    }
+
+    // MARK: - Helpers
+
+    private func templateColor(_ template: MeetingTemplate) -> Color {
+        switch template {
+        case .general:    return MMColors.primary
+        case .oneOnOne:   return MMColors.info
+        case .salesCall:  return MMColors.success
+        case .interview:  return MMColors.warning
+        case .standup:    return Color.orange
+        case .discovery:  return Color.purple
+        case .brainstorm: return Color.pink
+        }
+    }
 
     private struct MeetingGroup: Identifiable {
         let key: String
