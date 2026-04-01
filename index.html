@@ -54,21 +54,23 @@ body::after{content:'';position:fixed;inset:0;z-index:10000;pointer-events:none;
 
 /* FLOATING PARTICLES */
 .particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
-.particle{position:absolute;border-radius:50%;opacity:0;will-change:transform}
-.particle.glow{box-shadow:0 0 6px currentColor}
+.particle{position:absolute;border-radius:50%;will-change:transform}
+.particle.glow{box-shadow:0 0 8px currentColor}
+.particle.line{border-radius:1px;width:1px!important}
 
-/* AMBIENT BLOBS */
+/* AMBIENT BLOBS — brighter, larger */
 .ambient{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.blob{position:absolute;border-radius:50%;filter:blur(120px);opacity:.04;will-change:transform}
-.blob-1{width:600px;height:600px;background:var(--violet);top:5%;left:-15%;animation:bd1 28s ease-in-out infinite}
-.blob-2{width:450px;height:450px;background:var(--teal);bottom:15%;right:-8%;animation:bd2 32s ease-in-out infinite}
-.blob-3{width:380px;height:380px;background:var(--coral);top:55%;left:35%;animation:bd3 22s ease-in-out infinite}
-@keyframes bd1{0%,100%{transform:translate(0,0)}33%{transform:translate(90px,-70px)}66%{transform:translate(-50px,90px)}}
-@keyframes bd2{0%,100%{transform:translate(0,0)}33%{transform:translate(-80px,60px)}66%{transform:translate(70px,-50px)}}
-@keyframes bd3{0%,100%{transform:translate(0,0)}33%{transform:translate(60px,80px)}66%{transform:translate(-90px,-40px)}}
+.blob{position:absolute;border-radius:50%;filter:blur(140px);opacity:.07;will-change:transform}
+.blob-1{width:700px;height:700px;background:var(--violet);top:0%;left:-18%;animation:bd1 24s ease-in-out infinite}
+.blob-2{width:550px;height:550px;background:var(--teal);bottom:10%;right:-10%;animation:bd2 28s ease-in-out infinite}
+.blob-3{width:450px;height:450px;background:var(--coral);top:50%;left:30%;animation:bd3 20s ease-in-out infinite}
+.blob-4{width:400px;height:400px;background:var(--amber);top:20%;right:20%;animation:bd1 26s ease-in-out infinite reverse;opacity:.04}
+@keyframes bd1{0%,100%{transform:translate(0,0)}33%{transform:translate(100px,-80px)}66%{transform:translate(-60px,100px)}}
+@keyframes bd2{0%,100%{transform:translate(0,0)}33%{transform:translate(-90px,70px)}66%{transform:translate(80px,-60px)}}
+@keyframes bd3{0%,100%{transform:translate(0,0)}33%{transform:translate(70px,90px)}66%{transform:translate(-100px,-50px)}}
 
 /* CURSOR */
-.cursor-glow{position:fixed;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(139,123,247,.06) 0%,transparent 70%);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:opacity .4s;opacity:0}
+.cursor-glow{position:fixed;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(139,123,247,.08) 0%,rgba(77,191,160,.03) 40%,transparent 70%);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:opacity .4s;opacity:0;mix-blend-mode:screen}
 
 /* SIDE NAV DOTS */
 .side-dots{position:fixed;right:clamp(14px,2vw,28px);top:50%;transform:translateY(-50%);z-index:9200;display:flex;flex-direction:column;gap:14px}
@@ -458,7 +460,7 @@ footer{text-align:center;padding:3rem 1.5rem;font-size:.65rem;color:rgba(255,255
 <!-- Background layers -->
 <canvas id="shaderCanvas" aria-hidden="true"></canvas>
 <div class="particles" id="particleField" aria-hidden="true"></div>
-<div class="ambient" aria-hidden="true"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
+<div class="ambient" aria-hidden="true"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div><div class="blob blob-4"></div></div>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
 <!-- Side navigation dots -->
@@ -765,68 +767,118 @@ function resize(){c.width=innerWidth;c.height=innerHeight;gl.viewport(0,0,c.widt
 resize();addEventListener('resize',resize);
 
 var vs='attribute vec2 p;void main(){gl_Position=vec4(p,0,1);}';
-var fs=`precision mediump float;
+var fs=`precision highp float;
 uniform float t;
 uniform vec2 r;
 uniform vec2 m;
 uniform float scroll;
 
+// Better hash for smoother noise
 float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float noise(vec2 p){
-  vec2 i=floor(p);vec2 f=fract(p);f=f*f*(3.-2.*f);
+  vec2 i=floor(p);vec2 f=fract(p);
+  f=f*f*f*(f*(f*6.-15.)+10.); // quintic interpolation for smoothness
   return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
 }
-float fbm(vec2 p){float v=0.;float a=.5;for(int i=0;i<6;i++){v+=a*noise(p);p*=2.01;a*=.49;}return v;}
+float fbm(vec2 p){float v=0.;float a=.5;mat2 rot=mat2(.866,.5,-.5,.866);for(int i=0;i<7;i++){v+=a*noise(p);p=rot*p*2.01+vec2(.3);a*=.48;}return v;}
+
+// Domain warping — creates organic flowing shapes
+vec2 warp(vec2 p,float t){
+  float n1=fbm(p+t*.08);
+  float n2=fbm(p+vec2(5.2,1.3)+t*.06);
+  return p+vec2(n1,n2)*.8;
+}
+
+// Aurora ribbon function
+float aurora(vec2 uv,float t,float offset,float freq){
+  float wave=sin(uv.x*freq+t*.3+offset)*cos(uv.x*freq*.7-t*.2+offset*.5);
+  wave+=sin(uv.x*freq*1.5+t*.15+offset*2.)*.5;
+  float ribbon=smoothstep(.06,.0,abs(uv.y-wave*.15));
+  return ribbon*smoothstep(-1.,0.,uv.x+.5)*smoothstep(-1.,0.,-uv.x+.5);
+}
 
 void main(){
   vec2 uv=(gl_FragCoord.xy-.5*r)/min(r.x,r.y);
   vec2 mouse=(m-.5)*2.;
-  float d=length(uv-mouse*.12);
-
-  // Scroll-driven scene progression
+  float d=length(uv-mouse*.2);
   float s=scroll;
-  float speed=.12+s*.08;
 
-  // Flowing noise that accelerates with scroll
-  float n1=fbm(uv*3.+t*speed+vec2(s*2.,0.));
-  float n2=fbm(uv*2.5-t*(speed*.7)+vec2(5.,s*1.5));
-  float n3=fbm(uv*4.+t*.05+vec2(s*3.,s));
+  // Time flows with scroll acceleration
+  float speed=.1+s*.12;
+  float time=t*speed;
 
-  // Color palette morphs through scenes
-  // Scene 1 (0-0.15): Deep violet void
+  // === LAYER 1: Deep nebula clouds via domain warping ===
+  vec2 warped=warp(uv*2.+vec2(s*1.5,0.),t*.08);
+  float nebula=fbm(warped+time*.3);
+  float nebula2=fbm(warped*1.3-time*.2+vec2(8.));
+  float nebula3=fbm(warp(uv*3.-vec2(0.,s),t*.05));
+
+  // === LAYER 2: Aurora ribbons ===
+  float a1=aurora(uv,t,0.,3.+s*2.);
+  float a2=aurora(uv+vec2(.3,-.1),t,2.5,4.+s);
+  float a3=aurora(uv-vec2(.2,.15),t,5.,2.5+s*1.5);
+
+  // === COLOR PALETTE — morphs through scroll ===
   vec3 c1=vec3(.545,.482,.969);  // violet
   vec3 c2=vec3(.302,.749,.627);  // teal
   vec3 c3=vec3(1.,.353,.431);    // coral
   vec3 c4=vec3(.941,.722,.251);  // amber
   vec3 c5=vec3(.357,.553,.937);  // blue
 
-  // Blend palette based on scroll
-  vec3 primary=mix(c1,c2,smoothstep(.0,.3,s));
-  primary=mix(primary,c3,smoothstep(.25,.55,s));
-  primary=mix(primary,c4,smoothstep(.5,.75,s));
-  primary=mix(primary,c5,smoothstep(.7,.9,s));
+  // Primary palette shift
+  vec3 primary=mix(c1,c2,smoothstep(.0,.25,s));
+  primary=mix(primary,c3,smoothstep(.2,.5,s));
+  primary=mix(primary,c4,smoothstep(.45,.7,s));
+  primary=mix(primary,c5,smoothstep(.65,.85,s));
+  primary=mix(primary,c1,smoothstep(.85,1.,s));
 
-  vec3 secondary=mix(c2,c3,smoothstep(.1,.4,s));
-  secondary=mix(secondary,c1,smoothstep(.4,.7,s));
-  secondary=mix(secondary,c2,smoothstep(.7,1.,s));
+  vec3 secondary=mix(c2,c1,smoothstep(.0,.3,s));
+  secondary=mix(secondary,c5,smoothstep(.25,.5,s));
+  secondary=mix(secondary,c2,smoothstep(.5,.75,s));
+  secondary=mix(secondary,c3,smoothstep(.75,1.,s));
 
-  vec3 col=mix(primary,secondary,n1);
-  col=mix(col,primary*.5+secondary*.5,n2*.35);
+  vec3 tertiary=mix(c3,c4,smoothstep(.0,.4,s));
+  tertiary=mix(tertiary,c1,smoothstep(.4,.7,s));
+  tertiary=mix(tertiary,c2,smoothstep(.7,1.,s));
 
-  // Intensity increases with scroll, creating drama
-  float intensity=.06+.04*s+.03*smoothstep(.8,.0,d);
-  col*=intensity;
+  // === COMPOSITE ===
+  // Nebula base — organic flowing clouds
+  vec3 col=mix(primary,secondary,nebula)*.12;
+  col+=tertiary*nebula2*.06;
+  col+=primary*nebula3*.04;
 
-  // Add noise-based highlights
-  col+=.012*n3*primary;
+  // Aurora ribbons — bright flowing bands
+  col+=primary*a1*.18;
+  col+=secondary*a2*.12;
+  col+=tertiary*a3*.08;
 
-  // Subtle vignette
-  float vig=1.-smoothstep(.4,.95,length(uv)*.7);
-  col*=mix(.7,1.,vig);
+  // Brightness increases as you scroll deeper
+  float brightness=1.+s*.6;
+  col*=brightness;
 
-  // Mouse ripple
-  float ripple=smoothstep(.4,.0,d)*.02;
-  col+=ripple*primary;
+  // === MOUSE INTERACTION — radial glow + distortion ===
+  float mouseGlow=smoothstep(.5,.0,d);
+  col+=primary*mouseGlow*.08;
+  // Mouse ripple ring
+  float ring=smoothstep(.02,.0,abs(d-.15-sin(t)*.03))*.06;
+  col+=secondary*ring;
+
+  // === ATMOSPHERIC DEPTH ===
+  // Soft highlights from noise peaks
+  float highlights=smoothstep(.55,.75,nebula);
+  col+=primary*highlights*.04;
+
+  // Breathing pulse
+  float pulse=sin(t*.3)*.015+.015;
+  col+=primary*pulse;
+
+  // Vignette — darker edges for depth
+  float vig=1.-smoothstep(.3,.95,length(uv)*.65);
+  col*=mix(.5,1.,vig);
+
+  // Subtle stars / sparkle
+  float stars=smoothstep(.97,1.,hash(floor(uv*200.+t*.5)));
+  col+=vec3(stars)*.03;
 
   gl_FragColor=vec4(col,1.);
 }`;
@@ -867,35 +919,40 @@ addEventListener('scroll',updateScrollProgress,{passive:true});
 /* ===== FLOATING DEPTH PARTICLES ===== */
 (function(){
 var field=document.getElementById('particleField');
-var count=40;
+var count=70;
+var colors=['rgba(139,123,247,','rgba(77,191,160,','rgba(255,90,110,','rgba(240,184,64,','rgba(91,141,239,'];
 for(var i=0;i<count;i++){
   var p=document.createElement('div');
-  p.className='particle'+(Math.random()>.7?' glow':'');
-  var size=Math.random()*3+1;
-  var colors=['rgba(139,123,247,','rgba(77,191,160,','rgba(255,90,110,','rgba(240,184,64,'];
+  var isLine=Math.random()>.85;
+  var isGlow=Math.random()>.5;
+  p.className='particle'+(isGlow?' glow':'')+(isLine?' line':'');
+  var size=isLine?(Math.random()*20+8):(Math.random()*3.5+1);
   var color=colors[Math.floor(Math.random()*colors.length)];
-  var alpha=Math.random()*.15+.05;
-  p.style.cssText='width:'+size+'px;height:'+size+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;background:'+color+alpha+');color:'+color+'.3);opacity:1';
-  p.dataset.speed=(Math.random()*.5+.2).toFixed(2);
-  p.dataset.drift=(Math.random()*40-20).toFixed(0);
+  var alpha=Math.random()*.2+.06;
+  var w=isLine?1:size;
+  var h=isLine?size:size;
+  p.style.cssText='width:'+w+'px;height:'+h+'px;left:'+Math.random()*100+'%;top:'+Math.random()*100+'%;background:'+color+alpha+');color:'+color+'.4);opacity:1';
+  p.dataset.speed=(Math.random()*.7+.15).toFixed(2);
+  p.dataset.drift=(Math.random()*50-25).toFixed(0);
+  p.dataset.phase=(Math.random()*6.28).toFixed(2);
   field.appendChild(p);
 }
 
-// Parallax particles on scroll
+// Parallax particles on scroll with organic movement
 var particles=field.querySelectorAll('.particle');
-var lastY=0;
 function moveParticles(){
   var y=scrollY;
+  var t=performance.now()*.0005;
   particles.forEach(function(p){
     var speed=parseFloat(p.dataset.speed);
     var drift=parseFloat(p.dataset.drift);
+    var phase=parseFloat(p.dataset.phase);
     var yOff=-(y*speed)%innerHeight;
-    var xOff=Math.sin((y*.002+parseFloat(p.dataset.speed)*10))*drift;
-    p.style.transform='translate('+xOff+'px,'+yOff+'px)';
+    var xOff=Math.sin(t+phase)*drift+Math.cos(t*.7+phase*1.3)*drift*.3;
+    p.style.transform='translate('+xOff.toFixed(1)+'px,'+yOff.toFixed(1)+'px)';
   });
-  lastY=y;
+  requestAnimationFrame(moveParticles);
 }
-addEventListener('scroll',moveParticles,{passive:true});
 moveParticles();
 })();
 
