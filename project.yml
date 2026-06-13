@@ -1,3 +1,9 @@
+# ⚠️  STALE — DO NOT RUN `xcodegen generate`.
+# This file only declares the iOS `MeetMind` app target. The real project
+# (MeetMind.xcodeproj) additionally contains the Watch app, Watch widgets,
+# and iOS widget targets with hand-configured signing, entitlements, and
+# embedding. Regenerating from this file would WIPE those targets.
+# MeetMind.xcodeproj is the source of truth; edit it directly in Xcode.
 name: MeetMind
 options:
   bundleIdPrefix: com.meetmind

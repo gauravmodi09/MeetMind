@@ -44,12 +44,41 @@ class MeetingService: ObservableObject {
             }
         }
 
+        #if os(iOS)
+        // Ingest audio recordings transferred from the Apple Watch. The
+        // phone-side WatchConnectivityService saves the file and posts this
+        // notification; we turn it into a processed meeting using the exact
+        // same pipeline a phone recording uses.
+        NotificationCenter.default.addObserver(
+            forName: WatchConnectivityService.audioFileReceivedNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            guard let url = note.userInfo?["fileURL"] as? URL else { return }
+            Task { @MainActor [weak self] in
+                await self?.ingestWatchRecording(url: url)
+            }
+        }
+        #endif
+
         loadMeetings()
 
         // Seed sample data for demo/walkthrough
         if meetings.isEmpty {
             seedSampleMeetings()
         }
+    }
+
+    // MARK: - Watch ingest
+
+    /// Turn an audio file received from the Apple Watch into a processed
+    /// meeting. Reuses `processRecordedAudio` so transcription + notes match a
+    /// phone recording exactly.
+    func ingestWatchRecording(url: URL) async {
+        let df = DateFormatter()
+        df.dateStyle = .medium
+        df.timeStyle = .short
+        await processRecordedAudio(url: url, title: "Watch recording · \(df.string(from: Date()))")
     }
 
     // MARK: - Sample Data
