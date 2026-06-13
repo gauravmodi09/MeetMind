@@ -8,6 +8,7 @@ struct SettingsView: View {
     @AppStorage("aiPromptStyle") private var aiPromptStyle = AIPromptStyle.concise.rawValue
     @AppStorage("audioRetention") private var audioRetention = AudioRetention.fourteenDays.rawValue
     @AppStorage("autoDeleteAudioAfterProcessing") private var autoDeleteAudio = true
+    @AppStorage("includeTranscriptInPDF") private var includeTranscriptInPDF = true
     @AppStorage("iCloudSyncEnabled") private var iCloudSyncEnabled = false
     @AppStorage("teamsWebhookURL") private var teamsWebhookURL = ""
     @AppStorage("appTheme") private var appTheme = "system"
@@ -507,6 +508,24 @@ struct SettingsView: View {
                             .padding(.vertical, 14)
 
                             Text("Requires app restart to take effect. Your meetings and todos will sync across all your Apple devices.")
+                                .font(MMTypography.caption1)
+                                .foregroundColor(MMColors.textTertiary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+
+                            sectionDivider
+
+                            Toggle(isOn: $includeTranscriptInPDF) {
+                                Text("Include transcript in PDF")
+                                    .font(MMTypography.body)
+                                    .foregroundColor(MMColors.textPrimary)
+                            }
+                            .tint(MMColors.primary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 14)
+
+                            Text("Appends the full meeting transcript as an appendix when you export a meeting as PDF.")
                                 .font(MMTypography.caption1)
                                 .foregroundColor(MMColors.textTertiary)
                                 .frame(maxWidth: .infinity, alignment: .leading)

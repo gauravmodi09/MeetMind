@@ -14,6 +14,7 @@
 		"'T34M51NTEGR4T10N5ERV1CE1'" = {isa = PBXBuildFile; fileRef = T34M51NTEGR4T10NREF00001; };
 		01766EDDCEF94FE88D74C398 /* OfflineQueueBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C13D61FF31840EC83E745DE /* OfflineQueueBanner.swift */; };
 		04E1B07FD7BCCC0178F442E4 /* ServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C9F44F1AD84C570EE2007E /* ServiceTests.swift */; };
+		AABB010000000000000006 /* MeetingPDFRendererTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB010000000000000005 /* MeetingPDFRendererTests.swift */; };
 		080C6F328D4A422B86978983 /* LiveTranscriptOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689F2304037C47898AE5E0DF /* LiveTranscriptOverlay.swift */; };
 		08FB4C26A7C60AA55F339B96 /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524D4D2FBCBC66091AD63D68 /* TodayView.swift */; };
 		095A4D4BB031F153E873CFB0 /* QuickAddMedicineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F2459AB1E44540A9359122 /* QuickAddMedicineView.swift */; };
@@ -72,6 +73,8 @@
 		997A0AC8732F42ADA53AEE85 /* MeetMind/Features/Meetings/CitationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2082AAB23B8045A4844A729E /* MeetMind/Features/Meetings/CitationView.swift */; };
 		9E1CA6D194AD41C3A4768E7B /* MeetMind/Services/NoteEnhancementService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A81A90F05974CDFA824E134 /* MeetMind/Services/NoteEnhancementService.swift */; };
 		9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22C43F2AF83E1632F507ACC /* DataExportService.swift */; };
+		AABB010000000000000002 /* MeetingPDFRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB010000000000000001 /* MeetingPDFRenderer.swift */; };
+		AABB010000000000000004 /* PDFLayoutContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABB010000000000000003 /* PDFLayoutContext.swift */; };
 		A1B2C3D4E5F60718293A4B5C /* NotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F23F6B7CA948408F74212F /* NotepadView.swift */; };
 		A1E34EB3B1474C05AD2B302C /* DemoMeetingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70946479A42F23B31FBA395 /* DemoMeetingView.swift */; };
 		A6C0A570D3F04320875B7ADD /* MeetingPrepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC96060C7D074106AD8AF067 /* MeetingPrepView.swift */; };
@@ -259,6 +262,7 @@
 		2E93F8220F2CE84FE9F98E81 /* PharmaDataNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmaDataNetwork.swift; sourceTree = "<group>"; };
 		3265BC1F24127DAF25A3CCE2 /* ProfileSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSetupView.swift; sourceTree = "<group>"; };
 		32C9F44F1AD84C570EE2007E /* ServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceTests.swift; sourceTree = "<group>"; };
+		AABB010000000000000005 /* MeetingPDFRendererTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingPDFRendererTests.swift; sourceTree = "<group>"; };
 		33B93A5950B339B58BA65880 /* ProfileFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFilesView.swift; sourceTree = "<group>"; };
 		35476A8040C8ADA50698F85F /* RemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemindersView.swift; sourceTree = "<group>"; };
 		3A714E9C8D8451E378CC6266 /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ShareSheet.swift; path = MeetMind/Features/Meetings/Components/ShareSheet.swift; sourceTree = SOURCE_ROOT; };
@@ -372,6 +376,8 @@
 		BD0ACC24CD6541D98A782375 /* MeetingCoachService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingCoachService.swift; path = MeetMind/Services/MeetingCoachService.swift; sourceTree = SOURCE_ROOT; };
 		C03CEA0FE3E6EB18BF663D63 /* DrugInteractionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrugInteractionService.swift; sourceTree = "<group>"; };
 		C22C43F2AF83E1632F507ACC /* DataExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DataExportService.swift; path = MeetMind/Services/DataExportService.swift; sourceTree = SOURCE_ROOT; };
+		AABB010000000000000001 /* MeetingPDFRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingPDFRenderer.swift; path = MeetMind/Services/MeetingPDFRenderer.swift; sourceTree = SOURCE_ROOT; };
+		AABB010000000000000003 /* PDFLayoutContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PDFLayoutContext.swift; path = MeetMind/Services/PDFLayoutContext.swift; sourceTree = SOURCE_ROOT; };
 		C295CB0060698E0AEA624EDA /* MCCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MCCard.swift; sourceTree = "<group>"; };
 		C38C4B529E5D0FC770857F59 /* MeetingPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MeetingPipeline.swift; path = MeetMind/Services/MeetingPipeline.swift; sourceTree = SOURCE_ROOT; };
 		C420655CA9F0488A7FBDA2E0 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -573,6 +579,8 @@
 				D74A477A9E3FCE22F0840148 /* AudioRecordingService.swift */,
 				1B8746C4B259964BF8C01E48 /* BackgroundTaskService.swift */,
 				C22C43F2AF83E1632F507ACC /* DataExportService.swift */,
+				AABB010000000000000001 /* MeetingPDFRenderer.swift */,
+				AABB010000000000000003 /* PDFLayoutContext.swift */,
 				9278463BAF4B45E41B1D87E4 /* GroqService.swift */,
 				72C1A9941B39B1C27EEC66D5 /* GeminiService.swift */,
 				T34M51NTEGR4T10NREF00001,
@@ -733,6 +741,7 @@
 			children = (
 				997F201D1F278640A7006269 /* ModelTests.swift */,
 				32C9F44F1AD84C570EE2007E /* ServiceTests.swift */,
+				AABB010000000000000005 /* MeetingPDFRendererTests.swift */,
 			);
 			path = MeetMindTests;
 			sourceTree = "<group>";
@@ -1309,6 +1318,7 @@
 			files = (
 				5833EB0BAAD399C81137702E /* ModelTests.swift in Sources */,
 				04E1B07FD7BCCC0178F442E4 /* ServiceTests.swift in Sources */,
+				AABB010000000000000006 /* MeetingPDFRendererTests.swift in Sources */,
 				095A4D4BB031F153E873CFB0 /* QuickAddMedicineView.swift in Sources */,
 				65814B64ABC1BC4EC227D1D1 /* DoseCalendarView.swift in Sources */,
 				49094E89A3CFE88264478693 /* StreakBadgeView.swift in Sources */,
@@ -1381,6 +1391,8 @@
 				C0924905982AEEE69C90DB73 /* AudioRecordingService.swift in Sources */,
 				6AE045C49DE0A15B9D8C8CA8 /* BackgroundTaskService.swift in Sources */,
 				9FB64E2C8D68BFB697222392 /* DataExportService.swift in Sources */,
+				AABB010000000000000002 /* MeetingPDFRenderer.swift in Sources */,
+				AABB010000000000000004 /* PDFLayoutContext.swift in Sources */,
 				89D9425FA7988C5C757253CF /* GroqService.swift in Sources */,
 				A84E12F12213FFA629470B54 /* GeminiService.swift in Sources */,
 				T34M51NTEGR4T10N5ERV1CE1,

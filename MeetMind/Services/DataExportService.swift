@@ -53,6 +53,39 @@ enum DataExportService {
         return urls
     }
 
+    // MARK: - PDF Export
+
+    #if os(iOS)
+    /// Renders a single meeting's notes to a branded PDF and writes it to the
+    /// temp export dir for share-sheet handoff. Returns the file URL, or nil
+    /// on render/write failure.
+    static func exportMeetingAsPDF(_ meeting: Meeting, includeTranscript: Bool) -> URL? {
+        let data = MeetingPDFRenderer.render(meeting: meeting, includeTranscript: includeTranscript)
+        guard !data.isEmpty else {
+            print("[Export] PDF render produced no data")
+            return nil
+        }
+        let url = tempFileURL(name: "\(safeFileName(meeting.title)).pdf")
+        do {
+            try data.write(to: url)
+            print("[Export] PDF written to \(url.path)")
+            return url
+        } catch {
+            print("[Export] PDF export failed: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Sanitizes a meeting title into a filesystem-safe base name.
+    private static func safeFileName(_ title: String) -> String {
+        let allowed = CharacterSet.alphanumerics.union(.whitespaces).union(CharacterSet(charactersIn: "-_"))
+        let cleaned = title.unicodeScalars.map { allowed.contains($0) ? Character($0) : "-" }
+        let collapsed = String(cleaned).trimmingCharacters(in: .whitespaces)
+        let base = collapsed.isEmpty ? "Meeting" : collapsed
+        return String(base.prefix(60))
+    }
+    #endif
+
     // MARK: - Private: Meetings CSV
 
     private static func exportMeetingsCSV(_ meetings: [Meeting]) -> URL? {

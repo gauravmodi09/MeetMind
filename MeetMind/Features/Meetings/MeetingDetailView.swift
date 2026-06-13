@@ -10,6 +10,10 @@ struct MeetingDetailView: View {
     @State private var isRegenerating = false
     @State private var completedItems: Set<UUID> = []
     @State private var showShareSheet = false
+    @State private var showPDFShare = false
+    @State private var pdfURL: URL?
+    @State private var pdfError = false
+    @State private var isGeneratingPDF = false
     @State private var showFollowUpEmail = false
     @State private var showMeetingChat = false
     @State private var showCoaching = false
@@ -263,6 +267,17 @@ struct MeetingDetailView: View {
             ShareSheet(items: shareItems)
                 .presentationDetents([.medium, .large])
         }
+        .sheet(isPresented: $showPDFShare) {
+            if let pdfURL {
+                ShareSheet(items: [pdfURL])
+                    .presentationDetents([.medium, .large])
+            }
+        }
+        .alert("Couldn't create PDF", isPresented: $pdfError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Something went wrong generating the PDF. Please try again.")
+        }
         #endif
         .sheet(isPresented: $showMeetingChat) {
             MeetingChatSheet(meeting: meeting)
@@ -402,6 +417,29 @@ struct MeetingDetailView: View {
             }
             .accessibilityLabel("Share brief")
             .accessibilityHint("Double-tap to share the meeting brief")
+
+            Button {
+                exportPDF()
+            } label: {
+                HStack(spacing: 8) {
+                    if isGeneratingPDF {
+                        ProgressView().controlSize(.small).tint(MMColors.primary)
+                    } else {
+                        Image(systemName: "doc.richtext")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                    Text("PDF")
+                        .font(MMTypography.footnoteMedium)
+                }
+                .foregroundColor(MMColors.primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(MMColors.primaryLight)
+                .cornerRadius(12)
+            }
+            .disabled(isGeneratingPDF)
+            .accessibilityLabel("Export meeting notes as PDF")
+            .accessibilityHint("Double-tap to create and share a PDF of the meeting notes")
 
             Spacer()
         }
@@ -1099,6 +1137,29 @@ struct MeetingDetailView: View {
 
     private func shareBrief() {
         showShareSheet = true
+    }
+
+    private func exportPDF() {
+        #if os(iOS)
+        guard !isGeneratingPDF else { return }
+        isGeneratingPDF = true
+        let includeTranscript = UserDefaults.standard.object(forKey: "includeTranscriptInPDF") as? Bool ?? true
+        let meetingToRender = meeting
+        // Rendering is CPU work (and the transcript can be long) — keep it off
+        // the main thread so the button's spinner stays responsive.
+        DispatchQueue.global(qos: .userInitiated).async {
+            let url = DataExportService.exportMeetingAsPDF(meetingToRender, includeTranscript: includeTranscript)
+            DispatchQueue.main.async {
+                isGeneratingPDF = false
+                if let url {
+                    pdfURL = url
+                    showPDFShare = true
+                } else {
+                    pdfError = true
+                }
+            }
+        }
+        #endif
     }
 
     private func emailMeetingNotes() {
